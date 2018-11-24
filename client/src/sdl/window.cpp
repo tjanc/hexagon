@@ -3,7 +3,7 @@
 
 #include "window.hpp"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "sdl.hpp"
 
 using namespace hexagon::sdl;

@@ -1,11 +1,9 @@
 #include "map_textures.hpp"
 
-#include <SDL2/SDL.h>
-#include <cassert>
-#include <iostream>
+#include <SDL.h>
 
-#include "model/map.hpp"
-#include "model/map_loader.hpp"
+#include <hexagon/model/map.hpp>
+#include <hexagon/model/map_loader.hpp>
 
 #include "sdl/renderer.hpp"
 

@@ -1,7 +1,7 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#include "tile.hpp"
+#include <hexagon/model/tile.hpp>
 
 using namespace hexagon;
 

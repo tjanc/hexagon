@@ -1,9 +1,9 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#include "map_loader.hpp"
+#include <hexagon/model/map_loader.hpp>
 
-#include <emscripten.h>
+#include <cstdio>
 
 using namespace hexagon;
 

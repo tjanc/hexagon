@@ -8,7 +8,7 @@
 #include "sdl/sdl.hpp"
 #include "sdl/window.hpp"
 
-#include "model/game_projection.hpp"
+#include <hexagon/model/game_projection.hpp>
 
 namespace hexagon
 {

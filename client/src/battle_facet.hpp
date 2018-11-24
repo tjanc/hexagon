@@ -1,9 +1,7 @@
 #ifndef HEXAGON_BATTLE_FACET_H_
 #define HEXAGON_BATTLE_FACET_H_
 
-#include <SDL2/SDL.h>
-
-#include "model/battle_projection.hpp"
+#include <hexagon/model/battle_projection.hpp>
 
 #include "sdl/texture.hpp"
 
