@@ -8,6 +8,7 @@
 #include "sdl/renderer.hpp"
 
 using namespace hexagon;
+using namespace hexagon::model;
 
 map_textures::map_textures(sdl::renderer& renderer)
     : tiles_{sdl::load_texture(renderer, "assets/grs00.png"),

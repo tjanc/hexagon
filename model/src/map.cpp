@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
-using namespace hexagon;
+using namespace hexagon::model;
 namespace
 {
     template <typename It>

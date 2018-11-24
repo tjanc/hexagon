@@ -25,18 +25,18 @@ namespace hexagon
         int width_ = 0;
         int height_ = 0;
 
-        map::tile_container::iterator hover_tile_;
+        model::map::tile_container::iterator hover_tile_;
 
        public:
         explicit map_facet(sdl::renderer&);
 
        public:
-        void hover(map::tile_container::iterator t) { hover_tile_ = t; }
-        map::tile_container::iterator hover() { return hover_tile_; }
+        void hover(model::map::tile_container::iterator t) { hover_tile_ = t; }
+        model::map::tile_container::iterator hover() { return hover_tile_; }
 
-        void mouse_over(int x, int y, map&);
+        void mouse_over(int x, int y, model::map&);
 
-        void draw(sdl::renderer&, const map&);
+        void draw(sdl::renderer&, const model::map&);
     };
 }  // namespace hexagon
 

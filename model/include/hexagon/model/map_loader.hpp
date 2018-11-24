@@ -7,7 +7,7 @@
 #include "map.hpp"
 #include "unit.hpp"
 
-namespace hexagon
+namespace hexagon::model
 {
     struct file_not_found {
         const char* file;

@@ -3,7 +3,7 @@
 
 #include <hexagon/model/tile.hpp>
 
-using namespace hexagon;
+using namespace hexagon::model;
 
 namespace
 {

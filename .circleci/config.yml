@@ -27,6 +27,7 @@ jobs:
       - run:
           name: Configure & build
           command: |
+            git submodule update --init --recursive
             source ./emsdk/emsdk_env.sh
             mkdir build && cd build
             emconfigure

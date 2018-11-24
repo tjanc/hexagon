@@ -6,6 +6,7 @@
 #include "sdl/renderer.hpp"
 
 using namespace hexagon;
+using namespace hexagon::model;
 
 namespace
 {
@@ -88,7 +89,9 @@ void map_facet::draw(sdl::renderer& renderer, const map& model)
             sdl::texture& unit_texture =
                 unit_textures_.at(u->race_, perspective::fright);
             destination.y -= BOX_HEIGHT + BOX_HEIGHT / 2;
-            renderer.copy(unit_texture, destination);
+            SDL_Rect unit_dest = {.x = destination.x, .y = destination.y - TILE_HEIGHT/3, .w = 45, .h = 64};
+
+            renderer.copy(unit_texture, unit_dest);
         }
     }
 }
