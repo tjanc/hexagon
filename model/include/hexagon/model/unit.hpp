@@ -14,7 +14,7 @@ namespace hexagon::model
     struct unit {
         race race_ = race::human;
         level level_ = 1;
-        range range_ = 3;
+        range range_ = 5;
         unit() = default;
     };
 }  // namespace hexagon
