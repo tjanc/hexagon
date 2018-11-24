@@ -4,7 +4,7 @@
 #ifndef HEXAGON_UNIT_H_
 #define HEXAGON_UNIT_H_
 
-namespace hexagon
+namespace hexagon::model
 {
     enum class race { human };
 

@@ -12,6 +12,7 @@
 #include "battle_facet.hpp"
 
 using namespace hexagon;
+using namespace hexagon::model;
 
 namespace
 {

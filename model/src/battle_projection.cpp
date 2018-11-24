@@ -83,7 +83,7 @@ namespace
     }
 
     struct mark_reachable_visitor {
-        hexagon::map& map_;
+        map& map_;
 
         void operator()(const move_state& state) const
         {

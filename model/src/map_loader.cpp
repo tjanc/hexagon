@@ -5,7 +5,7 @@
 
 #include <cstdio>
 
-using namespace hexagon;
+using namespace hexagon::model;
 
 namespace
 {
@@ -13,7 +13,7 @@ namespace
 
 }  // namespace
 
-map hexagon::load_map(const char* file_name)
+map hexagon::model::load_map(const char* file_name)
 {
     map::tile_container tiles;
     int width = -1;

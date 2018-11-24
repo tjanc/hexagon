@@ -7,9 +7,10 @@
 #include "sdl/texture.hpp"
 
 using namespace hexagon;
+using namespace hexagon::model;
 
 unit_texture_cache::unit_texture_cache(sdl::renderer& renderer)
-    : units_{sdl::load_texture(renderer, "assets/character1.png")}
+    : units_{sdl::load_texture(renderer, "assets/unit_warrior.png")}
 {
 }
 

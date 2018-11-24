@@ -9,7 +9,7 @@
 #include <variant>
 #include "unit.hpp"
 
-namespace hexagon
+namespace hexagon::model
 {
     enum class tile_type : std::uint16_t {
         grass0 = 0,
@@ -29,7 +29,7 @@ namespace hexagon
 
        public:
         tile() = default;
-        tile(tile_type type, int elev, bool spawn);
+        tile(tile_type type, int elev = 0, bool spawn = false);
 
        public:
         bool is_spawn() const;

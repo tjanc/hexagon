@@ -34,7 +34,7 @@ namespace hexagon
        public:
         explicit unit_texture_cache(sdl::renderer& renderer);
 
-        sdl::texture& at(race r, perspective p);
+        sdl::texture& at(model::race r, perspective p);
 
         auto begin() const { return units_.begin(); }
         auto end() const { return units_.end(); }

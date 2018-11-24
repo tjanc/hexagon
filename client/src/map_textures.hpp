@@ -20,8 +20,8 @@ namespace hexagon
        public:
         explicit map_textures(sdl::renderer& renderer);
 
-        sdl::texture& tile_surface(tile_type type);
-        sdl::texture& tile_filler(tile_type type);
+        sdl::texture& tile_surface(model::tile_type type);
+        sdl::texture& tile_filler(model::tile_type type);
 
         auto begin() const { return tiles_.begin(); }
         auto end() const { return tiles_.end(); }

@@ -8,7 +8,7 @@
 #include "tile.hpp"
 #include "unit.hpp"
 
-namespace hexagon
+namespace hexagon::model
 {
     class map
     {

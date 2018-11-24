@@ -26,7 +26,7 @@ void battle_facet::mouse_up(model::battle_projection& model)
     int y = 0;
     const auto state = SDL_GetMouseState(&y, &x);
 
-    map& m = model.get_map();
+    model::map& m = model.get_map();
     map_facet_.mouse_over(x, y, m);
 
     auto hover = map_facet_.hover();
