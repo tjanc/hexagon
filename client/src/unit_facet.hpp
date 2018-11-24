@@ -6,7 +6,7 @@
 
 #include <array>
 
-#include "model/unit.hpp"
+#include <hexagon/model/unit.hpp>
 #include "sdl/texture.hpp"
 
 namespace hexagon::sdl

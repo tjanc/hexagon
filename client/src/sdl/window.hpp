@@ -4,7 +4,7 @@
 #ifndef HEXAGON_SDL_WINDOW_H_
 #define HEXAGON_SDL_WINDOW_H_
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <memory>
 #include "sdl.hpp"
 

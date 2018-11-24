@@ -3,7 +3,7 @@
 
 #include "font.hpp"
 
-#include <SDL2/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 using namespace hexagon::sdl;
 

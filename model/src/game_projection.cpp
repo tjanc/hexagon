@@ -1,7 +1,7 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#include "game_projection.hpp"
+#include <hexagon/model/game_projection.hpp>
 
 using namespace hexagon::model;
 

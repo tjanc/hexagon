@@ -1,12 +1,15 @@
 #include "game.hpp"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <iostream>
 #include <memory>
+
+#include <SDL.h>
+#include <SDL_image.h>
+
+#include <hexagon/model/battle.hpp>
+#include <hexagon/model/map_loader.hpp>
+
 #include "battle_facet.hpp"
-#include "model/battle.hpp"
-#include "model/map_loader.hpp"
 
 using namespace hexagon;
 

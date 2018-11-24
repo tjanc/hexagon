@@ -1,7 +1,7 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#include "map.hpp"
+#include <hexagon/model/map.hpp>
 
 #include <algorithm>
 #include <iostream>

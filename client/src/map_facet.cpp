@@ -1,9 +1,7 @@
 #include "map_facet.hpp"
 
-#include <SDL2/SDL.h>
-
-#include "model/map.hpp"
-#include "model/map_loader.hpp"
+#include <hexagon/model/map.hpp>
+#include <hexagon/model/map_loader.hpp>
 
 #include "sdl/renderer.hpp"
 

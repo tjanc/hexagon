@@ -3,7 +3,7 @@
 
 #include <array>
 
-#include "model/tile.hpp"
+#include <hexagon/model/tile.hpp>
 #include "sdl/texture.hpp"
 
 namespace hexagon::sdl

@@ -1,13 +1,13 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#include "battle_projection.hpp"
+#include <hexagon/model/battle_projection.hpp>
 
 #include <algorithm>
 #include <cassert>
 #include <deque>
 
-#include "map.hpp"
+#include <hexagon/model/map.hpp>
 
 using namespace hexagon::model;
 

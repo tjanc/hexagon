@@ -3,8 +3,8 @@
 
 #include "surface.hpp"
 
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <iostream>
 #include "font.hpp"
 

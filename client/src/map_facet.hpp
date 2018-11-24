@@ -1,9 +1,7 @@
 #ifndef HEXAGON_MAP_FACET_H_
 #define HEXAGON_MAP_FACET_H_
 
-#include <SDL2/SDL.h>
-
-#include "model/map.hpp"
+#include <hexagon/model/map.hpp>
 
 #include "sdl/texture.hpp"
 
