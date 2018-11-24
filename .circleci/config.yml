@@ -31,6 +31,28 @@ jobs:
             emmake make -j4 model-test
             ctest -j4
 
+  test-model-binary:
+    docker:
+      - image: ubuntu:latest
+    working_directory: /tmp/hexagon
+    environment:
+    steps:
+      - run:
+          name: Update
+          command: 'apt-get update'
+      - run:
+          name: Install dev dependencies
+          command: 'apt-get install -y cmake git build-essential'
+      - checkout
+      - run:
+          name: Configure, build & test
+          command: |
+            git submodule update --init --recursive
+            mkdir build && cd build
+            cmake ..
+            make -j4 model-test
+            ctest -j4
+
   build-client:
     docker:
       - image: ubuntu:latest
@@ -60,28 +82,30 @@ jobs:
             mkdir build && cd build
             emconfigure cmake ..
             emmake make -j4
+            cpack -G 7Z
+            mkdir /tmp/hexagon/release
+            mv *.7z -t /tmp/hexagon/release
+            cp ../VERSION /tmp/hexagon/release
+            chmod -R o+rw /tmp/hexagon
 
-  test-model-binary:
+      - persist_to_workspace:
+          root: /tmp/hexagon
+          paths:
+            - ./release
+
+  publish-github-release:
     docker:
-      - image: ubuntu:latest
+      - image: cibuilds/github:0.12
     working_directory: /tmp/hexagon
-    environment:
     steps:
+      - attach_workspace:
+          at: /tmp/hexagon
       - run:
-          name: Update
-          command: 'apt-get update'
-      - run:
-          name: Install dev dependencies
-          command: 'apt-get install -y cmake git build-essential'
-      - checkout
-      - run:
-          name: Configure, build & test
+          name: Publish Release on GitHub
           command: |
-            git submodule update --init --recursive
-            mkdir build && cd build
-            cmake ..
-            make -j4 model-test
-            ctest -j4
+            TAG="$(cat release/VERSION)"
+            rm /tmp/hexagon/release/VERSION
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete "$TAG" /tmp/hexagon/release
 
 workflows:
   version: 2
@@ -89,4 +113,16 @@ workflows:
     jobs:
       - test-model-binary
       - test-model-js
-      - build-client
+      - build-client:
+          filters:
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+      - publish-github-release:
+          requires:
+            - build-client
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+
