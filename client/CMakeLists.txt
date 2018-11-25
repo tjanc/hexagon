@@ -1,9 +1,9 @@
 #  Copyright 2018 Thomas Jandecka.
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
-project(HexagonClient VERSION 0.1 LANGUAGES CXX)
+project(HexagonClient VERSION 0.1.0 LANGUAGES CXX)
 
-find_package(HexagonModel 0.1 REQUIRED)
+find_package(HexagonModel 0.1.0 REQUIRED)
 
 add_executable(client
     src/sdl/renderer.cpp
@@ -49,3 +49,18 @@ install(
         bin
     )
 
+# Packaging support
+set(CPACK_PACKAGE_VENDOR "Thomas Jandecka")
+set(CPACK_PACKAGE_NAME "hexagon")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Some summary")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+
+set(CPACK_INSTALL_CMAKE_PROJECTS
+    ".;hexagon;ALL;."
+    )
+
+include(CPack)
