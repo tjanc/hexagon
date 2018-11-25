@@ -118,10 +118,11 @@ namespace
                     else if (d_elev < 0 && d_elev > -2)
                         reach = *current - 1;
 
-                    if (*next < reach) {
+                    if (map_tile->empty() && *next < reach) {
                         *next = reach;
                         queue.emplace_front(next);
                     }
+
                 }
             };
 
@@ -195,6 +196,7 @@ void battle_projection::move(map::tile_container::iterator target)
 {
     if (target == battle_->get_map().end()) assert(!"cannot move out of map");
     assert(target->is_reachable());
+    assert(target->empty());
 
     if (move_state* state = std::get_if<move_state>(&state_)) {
         map& field = battle_->get_map();

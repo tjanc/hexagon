@@ -30,5 +30,6 @@ void battle_facet::mouse_up(model::battle_projection& model)
     map_facet_.mouse_over(x, y, m);
 
     auto hover = map_facet_.hover();
-    if (hover != m.end() && hover->is_reachable()) model.move(hover);
+    if (hover != m.end() && hover->is_reachable() && hover->empty())
+        model.move(hover);
 }

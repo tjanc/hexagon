@@ -27,6 +27,7 @@ namespace hexagon::model
        public:
         team_container::iterator join(team);
         team leave(team_container::iterator);
+        team_container& teams() { return teams_; }
 
        public:
         auto& get_map() { return map_; }
