@@ -51,4 +51,6 @@ install(
 
 add_library(hexagon::model ALIAS model)
 
-include(test/CMakeLists.txt)
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()

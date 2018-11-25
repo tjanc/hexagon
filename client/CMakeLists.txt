@@ -21,11 +21,11 @@ add_executable(client
     src/unit_facet.cpp
     )
 
-# emcripten specific begin
-add_compile_options(client "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s WASM=0")
-set(CMAKE_EXECUTABLE_SUFFIX ".html")
-set_target_properties(client PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 --embed-file assets -s WASM=0 -s SDL2_IMAGE_FORMATS=[\"png\"]")
-# emcripten specific end
+if(EMSCRIPTEN)
+    add_compile_options(-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s WASM=0)
+    set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    set_target_properties(client PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 --embed-file assets -s WASM=0 -s SDL2_IMAGE_FORMATS=[\"png\"]")
+endif()
 
 set_target_properties(client PROPERTIES OUTPUT_NAME hexagon-client)
 target_compile_features(client PUBLIC cxx_std_17)
