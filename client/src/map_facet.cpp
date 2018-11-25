@@ -10,19 +10,22 @@ using namespace hexagon::model;
 
 namespace
 {
-    constexpr int TILE_WIDTH = 56;
-    constexpr int TILE_HEIGHT = 56;
+    constexpr int TILE_WIDTH = 37;
+    constexpr int TILE_HEIGHT = 37;
 
     constexpr int TOP_VERTEX_X_OFFSET = TILE_WIDTH / 2;
-    constexpr int TOP_LEFT_Y_VERTEX_OFFSET = 12;
-    constexpr int BOTTOM_LEFT_Y_VERTEX_OFFSET = 33;
+    constexpr int TOP_LEFT_Y_VERTEX_OFFSET = 8;
+    constexpr int BOTTOM_LEFT_Y_VERTEX_OFFSET = 22;
 
     constexpr int BY_ROW_X_OFFSET = TOP_VERTEX_X_OFFSET;
 
     constexpr int ROW_HEIGHT = BOTTOM_LEFT_Y_VERTEX_OFFSET;
     constexpr int COLUMN_WIDTH = TILE_WIDTH;
 
-    constexpr int BOX_HEIGHT = 11;
+    constexpr int BOX_HEIGHT = 7;
+
+    constexpr int UNIT_HEIGHT = 43;
+    constexpr int UNIT_WIDTH = 30;
 
 }  // namespace
 
@@ -89,7 +92,10 @@ void map_facet::draw(sdl::renderer& renderer, const map& model)
             sdl::texture& unit_texture =
                 unit_textures_.at(u->race_, perspective::fright);
             destination.y -= BOX_HEIGHT + BOX_HEIGHT / 2;
-            SDL_Rect unit_dest = {.x = destination.x, .y = destination.y - TILE_HEIGHT/3, .w = 45, .h = 64};
+            SDL_Rect unit_dest = {.x = destination.x,
+                                  .y = destination.y - TILE_HEIGHT / 3,
+                                  .w = UNIT_WIDTH,
+                                  .h = UNIT_HEIGHT};
 
             renderer.copy(unit_texture, unit_dest);
         }

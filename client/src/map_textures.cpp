@@ -12,10 +12,10 @@ using namespace hexagon::model;
 
 map_textures::map_textures(sdl::renderer& renderer)
     : tiles_{sdl::load_texture(renderer, "assets/grs00.png"),
-             sdl::load_texture(renderer, "assets/grs01.png"),
-             sdl::load_texture(renderer, "assets/grs02.png"),
-             sdl::load_texture(renderer, "assets/grs03.png"),
-             sdl::load_texture(renderer, "assets/grs04.png"),
+             sdl::load_texture(renderer, "assets/grs01_small.png"),
+             sdl::load_texture(renderer, "assets/grs02_small.png"),
+             sdl::load_texture(renderer, "assets/grs03_small.png"),
+             sdl::load_texture(renderer, "assets/grs04_small.png"),
              sdl::load_texture(renderer, "assets/dirt00.png"),
              sdl::load_texture(renderer, "assets/dirt01.png"),
              sdl::load_texture(renderer, "assets/filler.png")}
