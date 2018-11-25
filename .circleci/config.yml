@@ -105,7 +105,7 @@ jobs:
           command: |
             TAG="$(cat release/VERSION)"
             rm /tmp/hexagon/release/VERSION
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete "$TAG" /tmp/hexagon/release
+            ghr -t ${GITHUB_TOKEN} -n v${TAG} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${TAG} /tmp/hexagon/release
 
 workflows:
   version: 2
