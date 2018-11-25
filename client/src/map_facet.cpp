@@ -77,7 +77,7 @@ void map_facet::draw(sdl::renderer& renderer, const map& model)
             if (hover_tile_ == it)
                 tile_texture.set_color_mod(255, 255, 255);
             else {
-                if (it->is_reachable()) {
+                if (it->is_reachable() && it->empty()) {
                     tile_texture.set_color_mod(200, 200, 255);
                 } else {
                     const uint8_t c = elev < 3 ? (170 + elev * 20) : 230;

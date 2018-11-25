@@ -60,6 +60,12 @@ namespace
         }
     };
 
+    battle& with_opponent(battle& b)
+    {
+        b.join(team{});
+        return b;
+    }
+
 }  // namespace
 
 game::game(int x, int y, int width, int height, bool fullscreen)
@@ -67,7 +73,7 @@ game::game(int x, int y, int width, int height, bool fullscreen)
       window_(graphics_, "Hexagon 0.1", x, y, width, height, fullscreen),
       renderer_(window_),
       battle_model_(load_map("assets/map1.map")),
-      game_projection_(battle_model_, model::team{}),
+      game_projection_(with_opponent(battle_model_), model::team{}),
       battle_(renderer_)
 {
     if (!renderer_ || !window_) {
@@ -75,6 +81,8 @@ game::game(int x, int y, int width, int height, bool fullscreen)
         running_ = false;
         return;
     }
+
+    battle_model_.join(team{});
 }
 
 bool game::handleEvents()
