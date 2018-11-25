@@ -1,7 +1,7 @@
 #  Copyright 2018 Thomas Jandecka.
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
-project(HexagonModel VERSION 0.1 LANGUAGES CXX)
+project(HexagonModel VERSION 0.0.2 LANGUAGES CXX)
 
 add_library(model STATIC
     src/map_loader.cpp
