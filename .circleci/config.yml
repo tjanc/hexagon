@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  test-model-js:
     docker:
       - image: ubuntu:latest
     working_directory: /tmp/hexagon
@@ -10,11 +10,8 @@ jobs:
           name: Update
           command: 'apt-get update'
       - run:
-          name: Install CMake
-          command: 'apt-get install -y cmake'
-      - run:
-          name: Install Emscripten dependencies
-          command: 'apt-get install -y git python2.7-minimal python-minimal'
+          name: Install dev dependencies
+          command: 'apt-get install -y cmake git python2.7-minimal python-minimal'
       - checkout
       - run:
           name: Install and configure Emscripten
@@ -25,11 +22,71 @@ jobs:
             ./emsdk install latest
             ./emsdk activate latest
       - run:
-          name: Configure & build
+          name: Configure, build & test
           command: |
             git submodule update --init --recursive
             source ./emsdk/emsdk_env.sh
             mkdir build && cd build
-            emconfigure
             emconfigure cmake ..
-            emmake make
+            emmake make -j4 model-test
+            ctest -j4
+
+  build-client:
+    docker:
+      - image: ubuntu:latest
+    working_directory: /tmp/hexagon
+    environment:
+    steps:
+      - run:
+          name: Update
+          command: 'apt-get update'
+      - run:
+          name: Install dev dependencies
+          command: 'apt-get install -y cmake git python2.7-minimal python-minimal'
+      - checkout
+      - run:
+          name: Install and configure Emscripten
+          command: |
+            git clone https://github.com/juj/emsdk.git
+            cd emsdk
+            git pull
+            ./emsdk install latest
+            ./emsdk activate latest
+      - run:
+          name: Configure, build & test
+          command: |
+            git submodule update --init --recursive
+            source ./emsdk/emsdk_env.sh
+            mkdir build && cd build
+            emconfigure cmake ..
+            emmake make -j4
+
+  test-model-binary:
+    docker:
+      - image: ubuntu:latest
+    working_directory: /tmp/hexagon
+    environment:
+    steps:
+      - run:
+          name: Update
+          command: 'apt-get update'
+      - run:
+          name: Install dev dependencies
+          command: 'apt-get install -y cmake git build-essential'
+      - checkout
+      - run:
+          name: Configure, build & test
+          command: |
+            git submodule update --init --recursive
+            mkdir build && cd build
+            cmake ..
+            make -j4 model-test
+            ctest -j4
+
+workflows:
+  version: 2
+  integration:
+    jobs:
+      - test-model-binary
+      - test-model-js
+      - build-client
