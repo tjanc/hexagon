@@ -1,9 +1,9 @@
 #  Copyright 2018 Thomas Jandecka.
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
-project(HexagonClient VERSION 0.1.0 LANGUAGES CXX)
+project(HexagonClient VERSION 0.0.2 LANGUAGES CXX)
 
-find_package(HexagonModel 0.1.0 REQUIRED)
+find_package(HexagonModel 0.0.2 REQUIRED)
 
 add_executable(client
     src/sdl/renderer.cpp
