@@ -10,6 +10,7 @@
 #include <hexagon/model/map_loader.hpp>
 
 #include "battle_facet.hpp"
+#include "version.hpp"
 
 using namespace hexagon;
 using namespace hexagon::model;
@@ -70,7 +71,8 @@ namespace
 
 game::game(int x, int y, int width, int height, bool fullscreen)
     : graphics_(),
-      window_(graphics_, "Hexagon 0.1", x, y, width, height, fullscreen),
+      window_(graphics_, "Hexagon " HEXAGON_CLIENT_VERSION, x, y, width,
+              height, fullscreen),
       renderer_(window_),
       battle_model_(load_map("assets/map1.map")),
       game_projection_(with_opponent(battle_model_), model::team{}),

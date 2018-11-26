@@ -21,6 +21,8 @@ add_executable(client
     src/unit_facet.cpp
     )
 
+target_compile_definitions(client PRIVATE HEXAGON_CLIENT_VERSION="${PROJECT_VERSION}")
+
 if(EMSCRIPTEN)
     add_compile_options(-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s WASM=0)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")

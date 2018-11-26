@@ -85,7 +85,6 @@ jobs:
             cpack -G 7Z
             mkdir /tmp/hexagon/release
             mv *.7z -t /tmp/hexagon/release
-            cp ../VERSION /tmp/hexagon/release
             chmod -R o+rw /tmp/hexagon
 
       - persist_to_workspace:
@@ -103,7 +102,7 @@ jobs:
       - run:
           name: Publish Release on GitHub
           command: |
-            TAG="$(cat release/VERSION)"
+            TAG=$(git describe --tags)
             rm /tmp/hexagon/release/VERSION
             ghr -t ${GITHUB_TOKEN} -n v${TAG} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${TAG} /tmp/hexagon/release
 
