@@ -83,14 +83,18 @@ jobs:
             emconfigure cmake ..
             emmake make -j4
             cpack -G 7Z
+
+            git describe --tags > /tmp/hexagon/VERSION
             mkdir /tmp/hexagon/release
             mv *.7z -t /tmp/hexagon/release
-            chmod -R o+rw /tmp/hexagon
+            chmod -R o+rw /tmp/hexagon/release
+            chmod o+rw /tmp/hexagon/VERSION
 
       - persist_to_workspace:
           root: /tmp/hexagon
           paths:
-            - ./release
+            - release
+            - VERSION
 
   publish-github-release:
     docker:
@@ -102,9 +106,9 @@ jobs:
       - run:
           name: Publish Release on GitHub
           command: |
-            TAG=$(git describe --tags)
-            rm /tmp/hexagon/release/VERSION
-            ghr -t ${GITHUB_TOKEN} -n v${TAG} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${TAG} /tmp/hexagon/release
+            TAG=$(cat VERSION | head -n 1)
+            echo "Releasing Hexagon v${TAG}"
+            ghr -t ${GITHUB_TOKEN} -n v${TAG} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${TAG} ./release
 
 workflows:
   version: 2
