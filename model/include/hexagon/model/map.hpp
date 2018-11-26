@@ -17,10 +17,11 @@ namespace hexagon::model
 
        private:
         tile_container tiles_;
-        int width_;
+        int width_ = 0;
 
        public:
         map(tile_container tiles, int width);
+        map() = default;
 
         tile_container::iterator find(int column, int row);
         tile_container::const_iterator find(int column, int row) const;

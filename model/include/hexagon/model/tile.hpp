@@ -29,7 +29,7 @@ namespace hexagon::model
 
        public:
         tile() = default;
-        tile(tile_type type, int elev = 0, bool spawn = false);
+        explicit tile(tile_type type, int elev = 0, bool spawn = false);
 
        public:
         bool is_spawn() const;

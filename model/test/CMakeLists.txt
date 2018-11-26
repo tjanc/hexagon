@@ -1,6 +1,6 @@
 #  Copyright 2018 Thomas Jandecka.
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
-cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
 find_package(HexagonModel 0.1 REQUIRED)
 find_package(Catch2 1.0 REQUIRED)

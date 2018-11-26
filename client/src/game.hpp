@@ -1,5 +1,8 @@
-#ifndef HEXAGON_GAME_H_
-#define HEXAGON_GAME_H_
+//  Copyright 2018 Thomas Jandecka.
+//  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
+
+#ifndef HEXAGON_CLIENT_GAME_H_
+#define HEXAGON_CLIENT_GAME_H_
 
 #include "battle_facet.hpp"
 #include "mouse.hpp"
@@ -8,9 +11,9 @@
 #include "sdl/sdl.hpp"
 #include "sdl/window.hpp"
 
-#include <hexagon/model/game_projection.hpp>
+#include "game_controller.hpp"
 
-namespace hexagon
+namespace hexagon::client
 {
     class game
     {
@@ -21,11 +24,8 @@ namespace hexagon
         sdl::window window_;
         sdl::renderer renderer_;
 
-        // proxys
-        model::battle battle_model_;  // TODO should be proxy to server
-
         // models
-        model::game_projection game_projection_;
+        game_controller game_controller_;
 
         // screens
         battle_facet battle_;
@@ -43,6 +43,6 @@ namespace hexagon
         void clean();
         bool running() const { return running_; }
     };
-}  // namespace hexagon
+}  // namespace hexagon::client
 
 #endif

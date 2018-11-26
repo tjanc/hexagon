@@ -1,5 +1,8 @@
-#ifndef HEXAGON_MAP_TEXTURES_H_
-#define HEXAGON_MAP_TEXTURES_H_
+//  Copyright 2018 Thomas Jandecka.
+//  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
+
+#ifndef HEXAGON_CLIENT_MAP_TEXTURES_H_
+#define HEXAGON_CLIENT_MAP_TEXTURES_H_
 
 #include <array>
 
@@ -11,7 +14,7 @@ namespace hexagon::sdl
     class renderer;
 }
 
-namespace hexagon
+namespace hexagon::client
 {
     class map_textures
     {

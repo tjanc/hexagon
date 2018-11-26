@@ -1,5 +1,12 @@
-#ifndef HEXAGON_VERSION_H
-#define HEXAGON_VERSION_H
+//  Copyright 2018 Thomas Jandecka.
+//  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
+
+#ifndef HEXAGON_CLIENT_VERSION_H_
+#define HEXAGON_CLIENT_VERSION_H_
+
+#ifndef HEXAGON_CLIENT_VERSION
+#define HEXAGON_CLIENT_VERSION "experimental"
+#endif
 
 namespace hexagon
 {
