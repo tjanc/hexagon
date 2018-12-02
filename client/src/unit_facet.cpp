@@ -6,15 +6,16 @@
 #include "sdl/surface.hpp"
 #include "sdl/texture.hpp"
 
-using namespace hexagon;
+using namespace hexagon::client;
 using namespace hexagon::model;
+using namespace hexagon::sdl;
 
-unit_texture_cache::unit_texture_cache(sdl::renderer& renderer)
-    : units_{sdl::load_texture(renderer, "assets/unit_warrior_small.png")}
+unit_texture_cache::unit_texture_cache(renderer& renderer)
+    : units_{load_texture(renderer, "assets/unit_warrior_small.png")}
 {
 }
 
-sdl::texture& unit_texture_cache::at(race r, perspective p)
+texture& unit_texture_cache::at(race r, perspective p)
 {
     switch (r) {
         default:

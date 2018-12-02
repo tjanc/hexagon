@@ -1,5 +1,8 @@
-#ifndef HEXAGON_FONT_CACHE_H_
-#define HEXAGON_FONT_CACHE_H_
+//  Copyright 2018 Thomas Jandecka.
+//  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
+
+#ifndef HEXAGON_CLIENT_FONT_CACHE_H_
+#define HEXAGON_CLIENT_FONT_CACHE_H_
 
 #include <array>
 
@@ -10,7 +13,7 @@ namespace hexagon::sdl
     class renderer;
 }
 
-namespace hexagon
+namespace hexagon::client
 {
     class font_cache
     {
@@ -24,6 +27,6 @@ namespace hexagon
         auto begin() const { return fonts_.begin(); }
         auto end() const { return fonts_.end(); }
     };
-}  // namespace hexagon
+}  // namespace hexagon::client
 
 #endif

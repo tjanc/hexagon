@@ -1,4 +1,30 @@
 version: 2
+
+aliases:
+  - &model-deps
+    run:
+      name: Install dev dependencies
+      command: 'apt-get install -y cmake git python2.7-minimal python-minimal'
+  - &install-emscripten
+    run:
+      name: Install and configure Emscripten
+      command: |
+        git clone https://github.com/juj/emsdk.git
+        cd emsdk
+        git pull
+        ./emsdk install latest
+        ./emsdk activate latest
+  - &server-update
+    run:
+      name: "Add buster && Update"
+      command: |
+          echo "deb http://ftp.debian.org/debian buster main" >> /etc/apt/sources.list
+          apt-get update
+  - &server-deps
+    run:
+      name: Install cmake from buster
+      command: 'apt-get -t buster install -y --no-install-recommends cmake libboost-system-dev libboost-program-options-dev git openssl'
+
 jobs:
   test-model-js:
     docker:
@@ -9,18 +35,9 @@ jobs:
       - run:
           name: Update
           command: 'apt-get update'
-      - run:
-          name: Install dev dependencies
-          command: 'apt-get install -y cmake git python2.7-minimal python-minimal'
+      - <<: *model-deps
       - checkout
-      - run:
-          name: Install and configure Emscripten
-          command: |
-            git clone https://github.com/juj/emsdk.git
-            cd emsdk
-            git pull
-            ./emsdk install latest
-            ./emsdk activate latest
+      - <<: *install-emscripten
       - run:
           name: Configure, build & test
           command: |
@@ -33,16 +50,12 @@ jobs:
 
   test-model-binary:
     docker:
-      - image: ubuntu:latest
+      - image: gcc:latest
     working_directory: /tmp/hexagon
     environment:
     steps:
-      - run:
-          name: Update
-          command: 'apt-get update'
-      - run:
-          name: Install dev dependencies
-          command: 'apt-get install -y cmake git build-essential'
+      - <<: *server-update
+      - <<: *server-deps
       - checkout
       - run:
           name: Configure, build & test
@@ -52,6 +65,36 @@ jobs:
             cmake ..
             make -j4 model-test
             ctest -j4
+
+  build-server:
+    docker:
+      - image: gcc:latest
+    working_directory: /tmp/hexagon
+    environment:
+    steps:
+      - <<: *server-update
+      - <<: *server-deps
+      - checkout
+      - run:
+          name: Configure, build & test
+          command: |
+            git submodule update --init --recursive
+            mkdir build && cd build
+            cmake ..
+            make -j4
+            cpack -G 7Z
+
+            git describe --tags > /tmp/hexagon/VERSION
+            mkdir /tmp/hexagon/release
+            mv *.7z -t /tmp/hexagon/release
+            chmod -R o+rw /tmp/hexagon/release
+            chmod o+rw /tmp/hexagon/VERSION
+
+      - persist_to_workspace:
+          root: /tmp/hexagon
+          paths:
+            - release
+            - VERSION
 
   build-client:
     docker:
@@ -116,13 +159,12 @@ workflows:
     jobs:
       - test-model-binary
       - test-model-js
-      - build-client:
-          filters:
-            tags:
-              only: /^\d+\.\d+\.\d+$/
+      - build-client
+      - build-server
       - publish-github-release:
           requires:
             - build-client
+            - build-server
           filters:
             branches:
               ignore: /.*/

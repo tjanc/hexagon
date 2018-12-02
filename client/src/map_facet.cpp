@@ -1,3 +1,6 @@
+//  Copyright 2018 Thomas Jandecka.
+//  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
+
 #include "map_facet.hpp"
 
 #include <hexagon/model/map.hpp>
@@ -5,7 +8,7 @@
 
 #include "sdl/renderer.hpp"
 
-using namespace hexagon;
+using namespace hexagon::client;
 using namespace hexagon::model;
 
 namespace

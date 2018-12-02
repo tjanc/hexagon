@@ -1,8 +1,8 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#ifndef HEXAGON_UNIT_FACET_H_
-#define HEXAGON_UNIT_FACET_H_
+#ifndef HEXAGON_CLIENT_UNIT_FACET_H_
+#define HEXAGON_CLIENT_UNIT_FACET_H_
 
 #include <array>
 
@@ -14,7 +14,7 @@ namespace hexagon::sdl
     class renderer;
 }
 
-namespace hexagon
+namespace hexagon::client
 {
     enum class perspective {
         front,
@@ -29,16 +29,16 @@ namespace hexagon
 
     class unit_texture_cache
     {
-        std::array<sdl::texture, 1> units_;
+        std::array<hexagon::sdl::texture, 1> units_;
 
        public:
-        explicit unit_texture_cache(sdl::renderer& renderer);
+        explicit unit_texture_cache(hexagon::sdl::renderer& renderer);
 
         sdl::texture& at(model::race r, perspective p);
 
         auto begin() const { return units_.begin(); }
         auto end() const { return units_.end(); }
     };
-}  // namespace hexagon
+}  // namespace hexagon::client
 
 #endif

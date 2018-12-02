@@ -1,6 +1,6 @@
 #  Copyright 2018 Thomas Jandecka.
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
-cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 set(CMAKE_CXX17_COMPILE_FEATURES "cxx_std_17")
 
 set(CMAKE_PREFIX_PATH "/prefix")
@@ -10,7 +10,8 @@ set(as_subproject
     HexagonModel
     HexagonClient
     HexagonServer
-    Catch2)
+    Catch2
+    BoostBeast)
 
 macro(find_package)
     if(NOT "${ARGV0}" IN_LIST as_subproject)
@@ -18,6 +19,16 @@ macro(find_package)
     endif()
 endmacro()
 
+# dependencies
+if(NOT EMSCRIPTEN)
+    add_subdirectory(ext/boost-beast EXCLUDE_FROM_ALL)
+    add_library(boost-beast INTERFACE)
+    target_include_directories(boost-beast INTERFACE ext/boost-beast/include)
+    add_library(Boost::beast ALIAS boost-beast)
+endif()
+
+
+# testing dependencies
 set(BUILD_TESTING ON)
 add_subdirectory(ext/Catch2 EXCLUDE_FROM_ALL)
 include(CTest)
@@ -26,6 +37,9 @@ enable_testing()
 
 # targets developed in this super project
 add_subdirectory(model EXCLUDE_FROM_ALL)
-add_subdirectory(client)
-# add_subdirectory(server)
+if(EMSCRIPTEN)
+    add_subdirectory(client)
+else()
+    add_subdirectory(server)
+endif()
 

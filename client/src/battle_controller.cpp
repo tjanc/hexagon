@@ -1,14 +1,16 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#include <hexagon/model/battle_projection.hpp>
+#include "battle_controller.hpp"
 
 #include <algorithm>
 #include <cassert>
 #include <deque>
+#include <iostream>
 
 #include <hexagon/model/map.hpp>
 
+using namespace hexagon::client;
 using namespace hexagon::model;
 
 namespace
@@ -91,7 +93,6 @@ namespace
             for (auto& t : map_) t.reset_reachable();
 
             if (tile == map_.end()) {
-                assert(false);
                 return;
             }
 
@@ -122,7 +123,6 @@ namespace
                         *next = reach;
                         queue.emplace_front(next);
                     }
-
                 }
             };
 
@@ -181,25 +181,27 @@ namespace
     };
 }  // namespace
 
-void battle_projection::mark_reachable()
+void battle_controller::mark_reachable()
 {
-    std::visit(mark_reachable_visitor{battle_->get_map()}, state_);
+    std::visit(mark_reachable_visitor{battle_.get_map()}, state_);
 }
 
-battle_projection::battle_projection(battle& b, team t)
-    : battle_(&b), team_(b.join(std::move(t))), state_(move_state{*team_})
+battle_controller::battle_controller(battle b, team t)
+    : battle_(std::move(b)),
+      team_(battle_.join(std::move(t))),
+      state_(move_state{*team_})
 {
     mark_reachable();
 }
 
-void battle_projection::move(map::tile_container::iterator target)
+void battle_controller::move(map::tile_container::iterator target)
 {
-    if (target == battle_->get_map().end()) assert(!"cannot move out of map");
+    if (target == battle_.get_map().end()) assert(!"cannot move out of map");
     assert(target->is_reachable());
     assert(target->empty());
 
     if (move_state* state = std::get_if<move_state>(&state_)) {
-        map& field = battle_->get_map();
+        map& field = battle_.get_map();
 
         auto source = field.find_unit(*state->current_unit_);
         assert(source != field.end());
@@ -209,8 +211,8 @@ void battle_projection::move(map::tile_container::iterator target)
 
         // if everyone in team is moved, commit and transfer to next state
         if (state->current_unit_ == team_->units.end()) {
-            battle_->commit_movements(std::begin(state->commands_),
-                                      std::end(state->commands_));
+            battle_.commit_movements(std::begin(state->commands_),
+                                     std::end(state->commands_));
 
             // TODO XXX loop on move_state for debug purposes
             // state_ = move_state_committed{};
