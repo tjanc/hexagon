@@ -3,7 +3,11 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 project(HexagonClient VERSION 0.0.2 LANGUAGES CXX)
 
-find_package(HexagonModel 0.0.2 REQUIRED)
+if(EMSCRIPTEN)
+    find_package(HexagonModel 0.0.2 REQUIRED)
+endif()
+
+set(EMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES TRUE)
 
 add_executable(client
     src/sdl/renderer.cpp
@@ -31,9 +35,9 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/pre.js DESTINATION ${CMAKE_CURRENT_BIN
 target_compile_definitions(client PRIVATE HEXAGON_CLIENT_VERSION="${PROJECT_VERSION}")
 
 if(EMSCRIPTEN)
-    add_compile_options(-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s WASM=0)
+    add_compile_options(-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s WASM=0 -flto)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    set_target_properties(client PROPERTIES LINK_FLAGS "-s DISABLE_EXCEPTION_CATCHING=0 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 --embed-file assets -s WASM=0 -s SDL2_IMAGE_FORMATS=[\"png\"] -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"stringToUTF8\",\"lengthBytesUTF8\",\"writeStringToMemory\"] --pre-js pre.js")
+    set_target_properties(client PROPERTIES LINK_FLAGS "-s DISABLE_EXCEPTION_CATCHING=0 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 --use-preload-plugins --preload-file assets -s WASM=0 -s SDL2_IMAGE_FORMATS=[\"png\"] -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"stringToUTF8\",\"lengthBytesUTF8\",\"writeStringToMemory\"] --pre-js pre.js -flto")
 endif()
 
 set_target_properties(client PROPERTIES OUTPUT_NAME hexagon-client)
@@ -54,6 +58,8 @@ install(TARGETS client EXPORT client-targets
 install(
     FILES
         "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.js"
+        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.data"
+        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.html.mem"
     DESTINATION
         bin
     )
