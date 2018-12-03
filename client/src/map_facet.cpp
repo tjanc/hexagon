@@ -14,21 +14,21 @@ using namespace hexagon::model;
 namespace
 {
     constexpr int TILE_WIDTH = 37;
-    constexpr int TILE_HEIGHT = 37;
+    constexpr int TILE_HEIGHT = 26;
 
     constexpr int TOP_VERTEX_X_OFFSET = TILE_WIDTH / 2;
     constexpr int TOP_LEFT_Y_VERTEX_OFFSET = 8;
-    constexpr int BOTTOM_LEFT_Y_VERTEX_OFFSET = 22;
+    constexpr int BOTTOM_LEFT_Y_VERTEX_OFFSET = TILE_HEIGHT - 8;
 
     constexpr int BY_ROW_X_OFFSET = TOP_VERTEX_X_OFFSET;
 
     constexpr int ROW_HEIGHT = BOTTOM_LEFT_Y_VERTEX_OFFSET;
     constexpr int COLUMN_WIDTH = TILE_WIDTH;
 
-    constexpr int BOX_HEIGHT = 7;
+    constexpr int BOX_HEIGHT = 8;
 
-    constexpr int UNIT_HEIGHT = 43;
-    constexpr int UNIT_WIDTH = 30;
+    constexpr int UNIT_HEIGHT = 62;
+    constexpr int UNIT_WIDTH = 72;
 
 }  // namespace
 
@@ -55,16 +55,16 @@ void map_facet::draw(sdl::renderer& renderer, const map& model)
         const int j = n / model.width();
 
         const int elev = it->elevation();
+
         SDL_Rect destination = {
             .x = i * COLUMN_WIDTH + (j % 2) * BY_ROW_X_OFFSET,
-            .y = j * ROW_HEIGHT,
+            .y = j * ROW_HEIGHT + TILE_HEIGHT - 15,
             .w = TILE_WIDTH,
-            .h = TILE_HEIGHT};
-
+            .h = 15};
         // elevation filler
         {
             sdl::texture& filler = tile_textures_.tile_filler(it->type());
-            for (int e = 0; e < elev; ++e) {
+            for (int e = 0; e <= elev; ++e) {
                 const uint8_t c = e < 3 ? (170 + e * 20) : 230;
                 filler.set_color_mod(c, c, c);
 
@@ -72,6 +72,9 @@ void map_facet::draw(sdl::renderer& renderer, const map& model)
                 renderer.copy(filler, destination);
             }
         }
+
+        destination.h = TILE_HEIGHT;
+        destination.y -= TILE_HEIGHT - 15;
 
         // tile surface
         {
@@ -95,10 +98,11 @@ void map_facet::draw(sdl::renderer& renderer, const map& model)
             sdl::texture& unit_texture =
                 unit_textures_.at(u->race_, perspective::fright);
             destination.y -= BOX_HEIGHT + BOX_HEIGHT / 2;
-            SDL_Rect unit_dest = {.x = destination.x,
-                                  .y = destination.y - TILE_HEIGHT / 3,
-                                  .w = UNIT_WIDTH,
-                                  .h = UNIT_HEIGHT};
+            SDL_Rect unit_dest = {
+                .x = destination.x - (UNIT_WIDTH - TILE_WIDTH) / 2,
+                .y = destination.y - (UNIT_HEIGHT - TILE_HEIGHT) / 2,
+                .w = UNIT_WIDTH,
+                .h = UNIT_HEIGHT};
 
             renderer.copy(unit_texture, unit_dest);
         }
