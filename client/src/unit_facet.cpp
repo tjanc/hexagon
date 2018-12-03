@@ -11,7 +11,7 @@ using namespace hexagon::model;
 using namespace hexagon::sdl;
 
 unit_texture_cache::unit_texture_cache(renderer& renderer)
-    : units_{load_texture(renderer, "assets/unit_warrior_small.png")}
+    : units_{load_texture(renderer, "assets/unit_warrior.png")}
 {
 }
 
