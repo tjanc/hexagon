@@ -6,10 +6,9 @@
 #include <hexagon/protocol/version_message.hpp>
 
 // clang-format off
-EM_JS(void, ws_connect_js, (const char* addr), {
+EM_JS(void, ws_connect_js, (), {
   console.log("connecting");
-  var address = Pointer_stringify(addr);
-  web_socket_ = new WebSocket(address);
+  web_socket_ = new WebSocket("ws://" + window.location.hostname + ":8080");
   web_socket_.binary_type = "arraybuffer";
 
   web_socket_.addEventListener('open', function(event) {
@@ -66,6 +65,8 @@ void connection::_message_buffered()
 
     messages_.emplace_back(std::move(result));
 }
+
+connection::connection() { ws_connect_js(); }
 
 connection::~connection() { ws_close_js(); }
 

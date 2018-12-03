@@ -15,7 +15,6 @@
 extern "C" {
 EMSCRIPTEN_KEEPALIVE void* ws_alloc_buf(std::size_t n);
 EMSCRIPTEN_KEEPALIVE void ws_message();
-EMSCRIPTEN_KEEPALIVE void ws_connect_js(const char*);
 bool ws_send_js(const char*);
 }
 
@@ -28,10 +27,10 @@ namespace hexagon::client
         std::deque<hexagon::protocol::server_message> messages_;
 
        private:
-        connection() = default;
+        connection();
 
        public:
-        static void open(const std::string& uri) { ws_connect_js(uri.c_str()); }
+        static void open(const std::string& uri) {}
 
         static connection& instance()
         {

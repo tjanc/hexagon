@@ -4,7 +4,6 @@
 #include <emscripten.h>
 #include <iostream>
 
-#include "connection.hpp"
 #include "game.hpp"
 
 using namespace hexagon::client;
@@ -25,9 +24,6 @@ void game_loop(void *arg)
 
 int main()
 {
-    connection::open("ws://127.0.0.1:8080");
-
-
     game hexagon(0, 0, 600, 480, false);
 
     int simulate_main_loop = 1;
