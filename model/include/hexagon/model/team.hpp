@@ -10,10 +10,12 @@
 
 namespace hexagon::model
 {
+    using team_id = std::size_t;
+
     struct team {
         using unit_container = std::vector<unit>;
         unit_container units;
-        team() : units{unit{}} {}
+        team() : units{unit{}, unit{}} {}
     };
 }  // namespace hexagon::model
 

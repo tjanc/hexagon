@@ -29,7 +29,6 @@ endif()
 
 
 # testing dependencies
-set(BUILD_TESTING ON)
 add_subdirectory(ext/Catch2 EXCLUDE_FROM_ALL)
 include(CTest)
 include(ext/Catch2/contrib/Catch.cmake)

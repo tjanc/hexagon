@@ -4,35 +4,32 @@
 #ifndef HEXAGON_CLIENT_BATTLE_FACET_H_
 #define HEXAGON_CLIENT_BATTLE_FACET_H_
 
-#include "battle_controller.hpp"
 #include "map_facet.hpp"
-#include "sdl/texture.hpp"
 
-namespace hexagon::sdl
+namespace hexagon::client
 {
-    class renderer;
+    class canvas;
+    class moving_controller;
 }
 
 namespace hexagon::client
 {
     class battle_facet
     {
-        map_facet map_facet_;
-
-        // sdl::texture active_unit_name_;
-
         int width_ = 0;
         int height_ = 0;
 
-       public:
-        explicit battle_facet(sdl::renderer&);
+        map_facet map_facet_;
 
        public:
-        void mouse_move(battle_controller& model);
-        void mouse_down(battle_controller& model);
-        void mouse_up(battle_controller& model);
+        battle_facet(int width, int height) noexcept;
 
-        void draw(sdl::renderer& r, battle_controller& model);
+       public:
+        void draw(canvas& r, const moving_controller& model) const;
+
+       public:
+        const map_facet& map() const noexcept { return map_facet_; }
+        map_facet& map() noexcept { return map_facet_; }
     };
 }  // namespace hexagon::client
 

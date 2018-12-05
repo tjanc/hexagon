@@ -17,6 +17,9 @@ add_executable(client
     src/sdl/window.cpp
     src/sdl/text.cpp
 
+    src/canvas.cpp
+    src/mouse.cpp
+
     src/game.cpp
     src/main.cpp
     src/map_facet.cpp
@@ -28,6 +31,7 @@ add_executable(client
 
     src/battle_controller.cpp
     src/game_controller.cpp
+    src/moving_controller.cpp
     )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/pre.js DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -59,7 +63,6 @@ install(
     FILES
         "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.js"
         "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.data"
-        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.html.mem"
     DESTINATION
         bin
     )

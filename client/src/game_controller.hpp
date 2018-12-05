@@ -13,35 +13,46 @@
 
 namespace hexagon::client
 {
+    class mouse;
+    class canvas;
+}  // namespace hexagon::client
+
+namespace hexagon::client
+{
     struct connecting_controller {
     };
 
+    using game_state = std::variant<  //
+        connecting_controller,        //
+        world_controller,             //
+        battle_controller             //
+        >;
+
     class game_controller
     {
-        using state = std::variant<  //
-            connecting_controller,   //
-            world_controller,        //
-            battle_controller        //
-            >;
-
        private:
-        state state_;
+        game_state state_;
+        bool updated_ = true;
 
        public:
         game_controller();
 
-        template <typename Visitor>
-        friend decltype(auto) visit(Visitor&& v, game_controller& self)
-        {
-            return std::visit(std::forward<Visitor>(v), self.state_);
-        }
-
-        void enter_battle(hexagon::model::battle b, hexagon::model::team t);
+       public:  // game controller visiting messages
+        void update(const hexagon::protocol::version_response&);
+        void update(const hexagon::protocol::map_response&);
+        void update(const hexagon::protocol::unknown_message&);
+        void update(const mouse&);
 
        public:
-        void operator()(const hexagon::protocol::version_response& msg);
-        void operator()(const hexagon::protocol::map_response& msg);
-        void operator()(const hexagon::protocol::unknown_message& msg);
+        void draw(canvas&);
+        bool updated() const noexcept;
+
+       public:
+        template <typename T>
+        void state(T&& s)
+        {
+            state_ = std::forward<T>(s);
+        }
     };
 }  // namespace hexagon::client
 

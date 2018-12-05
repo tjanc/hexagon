@@ -12,6 +12,7 @@ using namespace hexagon::sdl;
 renderer::renderer(window& window)
     : raw_{SDL_CreateRenderer(window.get(), -1, 0)}
 {
+    if (!raw_) throw exception{"unable to create renderer"};
 }
 
 void renderer::set_draw_blend_mode(SDL_BlendMode mode)

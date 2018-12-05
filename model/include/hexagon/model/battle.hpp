@@ -12,6 +12,8 @@
 
 namespace hexagon::model
 {
+    using battle_id = std::size_t;
+
     class battle
     {
        public:

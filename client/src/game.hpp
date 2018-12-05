@@ -7,34 +7,35 @@
 #include "battle_facet.hpp"
 #include "mouse.hpp"
 
-#include "sdl/renderer.hpp"
 #include "sdl/sdl.hpp"
 #include "sdl/window.hpp"
 
+#include "canvas.hpp"
 #include "game_controller.hpp"
 
 namespace hexagon::client
 {
+    class connection;
+
     class game
     {
+        connection& server_;
         // graphics
         sdl::sdl graphics_;
         mouse mouse_;
 
         sdl::window window_;
-        sdl::renderer renderer_;
+        canvas canvas_;
 
         // models
         game_controller game_controller_;
-
-        // screens
-        battle_facet battle_;
 
         // running?
         bool running_ = true;
 
        public:
-        game(int x, int y, int width, int height, bool fullscreen);
+        game(connection& c, int x, int y, int width, int height,
+             bool fullscreen);
 
        public:
         bool handleEvents();

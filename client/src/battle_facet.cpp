@@ -3,36 +3,17 @@
 
 #include "battle_facet.hpp"
 
+#include "moving_controller.hpp"
+
 using namespace hexagon::client;
 
-battle_facet::battle_facet(sdl::renderer& r) : map_facet_(r) {}
-
-void battle_facet::draw(sdl::renderer& r, battle_controller& model)
+battle_facet::battle_facet(int width, int height) noexcept
+    : width_{width}, height_{height}, map_facet_{0, 0}
 {
-    map_facet_.draw(r, model.get_map());
 }
 
-void battle_facet::mouse_move(battle_controller& model)
+void battle_facet::draw(canvas& c, const moving_controller& controller) const
 {
-    int x = 0;
-    int y = 0;
-    SDL_GetMouseState(&y, &x);
-
-    map_facet_.mouse_over(x, y, model.get_map());
-}
-
-void battle_facet::mouse_down(battle_controller&) {}
-
-void battle_facet::mouse_up(battle_controller& model)
-{
-    int x = 0;
-    int y = 0;
-    const auto state = SDL_GetMouseState(&y, &x);
-
-    auto& m = model.get_map();
-    map_facet_.mouse_over(x, y, m);
-
-    auto hover = map_facet_.hover();
-    if (hover != m.end() && hover->is_reachable() && hover->empty())
-        model.move(hover);
+    const auto& m = controller.model().get_map();
+    map_facet_.draw(c, m, m.find_unit(*controller.unit()));
 }
