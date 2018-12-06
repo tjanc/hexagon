@@ -4,8 +4,15 @@
 #ifndef HEXAGON_SDL_SDL_H_
 #define HEXAGON_SDL_SDL_H_
 
+#include <string>
+
 namespace hexagon::sdl
 {
+    struct exception
+    {
+        std::string what;
+    };
+
     class sdl
     {
        public:

@@ -55,7 +55,15 @@ map::tile_container::iterator map::spawn(unit& u)
     return it;
 }
 
-map::tile_container::iterator map::find_unit(const unit& u)
+map::tile_container::iterator map::find_unit(const unit& u) noexcept
+{
+    return std::find_if(     //
+        std::begin(tiles_),  //
+        std::end(tiles_),    //
+        [&u](const auto& tile) { return tile.has_unit(u); });
+}
+
+map::tile_container::const_iterator map::find_unit(const unit& u) const noexcept
 {
     return std::find_if(     //
         std::begin(tiles_),  //

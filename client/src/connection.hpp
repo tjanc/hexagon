@@ -42,7 +42,7 @@ namespace hexagon::client
 
        public:
         template <typename Visitor>
-        void handle_all(Visitor& visit)
+        void handle_all(Visitor visit)
         {
             for (const auto& msg : messages_) std::visit(visit, msg);
             messages_.clear();

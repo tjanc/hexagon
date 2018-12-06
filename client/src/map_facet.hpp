@@ -6,41 +6,38 @@
 
 #include <hexagon/model/map.hpp>
 
-#include "sdl/texture.hpp"
+#include <tuple>
 
-#include "map_textures.hpp"
-#include "unit_facet.hpp"
-
-namespace hexagon::sdl
+namespace hexagon::client
 {
-    class renderer;
-}
+    class canvas;
+    class moving_controller;
+}  // namespace hexagon::client
 
 namespace hexagon::client
 {
     class map_facet
     {
-        // textures
-        map_textures tile_textures_;
-        unit_texture_cache unit_textures_;
-
-        // box
-        int width_ = 0;
-        int height_ = 0;
+        // start point
+        int x_ = 0;
+        int y_ = 0;
 
         model::map::tile_container::iterator hover_tile_;
 
        public:
-        explicit map_facet(sdl::renderer&);
+        explicit map_facet(int x, int y) noexcept;
 
        public:
-        void hover(model::map::tile_container::iterator t) { hover_tile_ = t; }
-        model::map::tile_container::iterator hover() { return hover_tile_; }
+        std::pair<int, int> transpose(int x, int y) const noexcept;
 
-        void mouse_over(int x, int y, model::map&);
+       public:
+        void hover(model::map::tile_container::iterator) noexcept;
+        model::map::tile_container::iterator hover() const noexcept;
 
-        void draw(sdl::renderer&, const model::map&);
+       public:
+        void draw(canvas&, const model::map&,
+                  model::map::tile_container::const_iterator) const;
     };
-}  // namespace hexagon
+}  // namespace hexagon::client
 
 #endif

@@ -8,55 +8,43 @@
 #include <vector>
 
 #include <hexagon/model/battle.hpp>
+#include <hexagon/model/team.hpp>
+
+#include "moving_controller.hpp"
 
 namespace hexagon::client
 {
-    struct move_state {
-        std::vector<hexagon::model::move_command> commands_;
-        hexagon::model::team::unit_container::iterator current_unit_;
+    class battle_controller;
 
-        explicit move_state(hexagon::model::team& t)
-            : commands_{}, current_unit_(t.units.begin())
-        {
-        }
+    struct moved_controller {
+        void update(battle_controller&, const mouse&) noexcept {}
+
+        void draw(canvas&) const {}
     };
 
-    struct move_state_committed {
-    };
-
-    struct attack_state {
-        std::vector<hexagon::model::attack_command> commands_;
-    };
-
-    struct attack_state_committed {
-    };
+    using battle_state = std::variant<  //
+        moving_controller,              //
+        moved_controller>;
 
     class battle_controller
     {
-        using state = std::variant<  //
-            move_state,              //
-            move_state_committed,    //
-            attack_state,            //
-            attack_state_committed   //
-            >;
-
-       private:
-        hexagon::model::battle battle_;
-        hexagon::model::battle::team_container::iterator team_;
-        state state_;
-
-       private:
-        void mark_reachable();
+        battle_state state_;
 
        public:
-        battle_controller(hexagon::model::battle b, hexagon::model::team t);
+        battle_controller(hexagon::model::battle b, hexagon::model::team team);
 
-       public:  // commands
-        void move(hexagon::model::map::tile_container::iterator target);
+       public:
+        void update(const mouse&) noexcept;
 
-       public:  // access submodels
-        hexagon::model::map& get_map() { return battle_.get_map(); }
-        const hexagon::model::map& get_map() const { return battle_.get_map(); }
+       public:
+        void draw(canvas&) const;
+
+       public:
+        template <typename T>
+        void state(T&& s)
+        {
+            state_ = std::forward<T>(s);
+        }
     };
 }  // namespace hexagon::client
 

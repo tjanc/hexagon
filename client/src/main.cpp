@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "game.hpp"
+#include "connection.hpp"
 
 using namespace hexagon::client;
 
@@ -24,7 +25,7 @@ void game_loop(void *arg)
 
 int main()
 {
-    game hexagon(0, 0, 600, 480, false);
+    game hexagon(connection::instance(), 0, 0, 600, 480, false);
 
     int simulate_main_loop = 1;
     emscripten_set_main_loop_arg(game_loop, &hexagon, -1, simulate_main_loop);

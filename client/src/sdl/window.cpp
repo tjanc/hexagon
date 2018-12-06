@@ -13,9 +13,11 @@ window::window(sdl&, const char* title, int x, int y, int width, int height,
     : raw_{SDL_CreateWindow(title, x, y, width, height,
                             fullscreen ? SDL_WINDOW_FULLSCREEN : 0)}
 {
+    if (!raw_) throw exception{"unable to create window"};
 }
 
-SDL_Rect window::size() const {
+SDL_Rect window::size() const
+{
     SDL_Rect dim{0, 0, 0, 0};
     SDL_GetWindowSize(raw_.get(), &dim.w, &dim.h);
     return dim;
