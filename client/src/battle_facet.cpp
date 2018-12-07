@@ -15,5 +15,5 @@ battle_facet::battle_facet(int width, int height) noexcept
 void battle_facet::draw(canvas& c, const moving_controller& controller) const
 {
     const auto& m = controller.model().get_map();
-    map_facet_.draw(c, m, m.find_unit(*controller.unit()));
+    map_facet_.draw(c, m, controller.unit_tile());
 }
