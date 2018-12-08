@@ -178,11 +178,11 @@ moving_controller::moving_controller(battle b,
       facet_{0, 0},
       team_ptr_{t},
       unit_ptr_{u},
+      unit_tile_ptr_{model_.get_map().find_unit(*u)},
       commands_{}
 {
-    auto& m = model_.get_map();
-    auto u_tile = m.find_unit(*unit_ptr_);
-    if (u_tile != m.end()) mark_reachable(m, u_tile);
+    if (unit_tile_ptr_ != model_.get_map().end())
+        mark_reachable(model_.get_map(), unit_tile_ptr_);
 }
 
 void moving_controller::update(battle_controller& c, const mouse& m) noexcept
@@ -196,7 +196,7 @@ void moving_controller::update(battle_controller& c, const mouse& m) noexcept
     }
 
     if (m.released()) {
-        auto source = field.find_unit(*unit_ptr_);
+        auto source = unit_tile_ptr_;
         auto target = facet_.map().hover();
 
         if (source != field.end()      //
@@ -206,17 +206,19 @@ void moving_controller::update(battle_controller& c, const mouse& m) noexcept
             //
             move_unit(source, target);
             commands_.emplace_back(source, target);
-            ++unit_ptr_;
+
+            auto next = unit_ptr_ + 1;
 
             // if everyone in team is moved, commit and transfer to next state
-            if (unit_ptr_ == team_ptr_->units.end()) {
+            if (next == team_ptr_->units.end()) {
                 std::cout << "TODO: commit movements\n";
                 c.state(moving_controller{std::move(model_), team_ptr_,
                                           team_ptr_->units.begin()});
             } else {
                 c.state(
-                    moving_controller{std::move(model_), team_ptr_, unit_ptr_});
+                    moving_controller{std::move(model_), team_ptr_, next});
             }
+
         }
     }
 }
@@ -227,12 +229,13 @@ const battle& moving_controller::model() const noexcept { return model_; }
 
 battle& moving_controller::model() noexcept { return model_; }
 
-team::unit_container::iterator moving_controller::unit() noexcept
+map::tile_container::iterator moving_controller::unit_tile() noexcept
 {
-    return unit_ptr_;
+    return unit_tile_ptr_;
 }
 
-team::unit_container::const_iterator moving_controller::unit() const noexcept
+map::tile_container::const_iterator moving_controller::unit_tile() const
+    noexcept
 {
-    return unit_ptr_;
+    return unit_tile_ptr_;
 }

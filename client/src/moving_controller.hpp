@@ -21,19 +21,19 @@ namespace hexagon::client
 {
     class moving_controller
     {
-        hexagon::model::battle model_;
+        model::battle model_;
         battle_facet facet_;
 
-        hexagon::model::battle::team_container::iterator team_ptr_;
-        hexagon::model::team::unit_container::iterator unit_ptr_;
+        model::battle::team_container::iterator team_ptr_;
+        model::team::unit_container::iterator unit_ptr_;
+        model::map::tile_container::iterator unit_tile_ptr_;
 
         std::vector<hexagon::model::move_command> commands_;
 
        public:
-        moving_controller(
-            hexagon::model::battle b,
-            hexagon::model::battle::team_container::iterator t,
-            hexagon::model::team::unit_container::iterator u) noexcept;
+        moving_controller(model::battle b,
+                          model::battle::team_container::iterator t,
+                          model::team::unit_container::iterator u) noexcept;
 
         moving_controller(const moving_controller&) noexcept = delete;
         moving_controller(moving_controller&&) noexcept = default;
@@ -48,12 +48,11 @@ namespace hexagon::client
         void draw(canvas&) const;
 
        public:
-        const hexagon::model::battle& model() const noexcept;
-        hexagon::model::battle& model() noexcept;
+        const model::battle& model() const noexcept;
+        model::battle& model() noexcept;
 
-        hexagon::model::team::unit_container::iterator unit() noexcept;
-        hexagon::model::team::unit_container::const_iterator unit() const
-            noexcept;
+        model::map::tile_container::iterator unit_tile() noexcept;
+        model::map::tile_container::const_iterator unit_tile() const noexcept;
     };
 }  // namespace hexagon::client
 

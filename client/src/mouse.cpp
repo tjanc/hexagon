@@ -22,11 +22,12 @@ mouse::mouse(std::uint16_t x_, std::uint16_t y_) noexcept : x(x_), y(y_) {}
 
 void mouse::event(const SDL_MouseMotionEvent& e) noexcept
 {
-    if (released()) std::cout << "WARN: losing click precision? TODO\n";
-    x = e.x;
-    y = e.y;
-    flags_.set(MOVED_FLAG);
-    flags_.set(DIRTY_FLAG);
+    if (!released()) {
+        x = e.x;
+        y = e.y;
+        flags_.set(MOVED_FLAG);
+        flags_.set(DIRTY_FLAG);
+    }
 }
 
 void mouse::event(const SDL_MouseButtonEvent& e) noexcept
@@ -35,12 +36,12 @@ void mouse::event(const SDL_MouseButtonEvent& e) noexcept
     y = e.y;
 
     if (e.state == SDL_PRESSED) {
-        if (flags_.test(RELEASED_FLAG)) {
-            flags_.reset(RELEASED_FLAG);
-            std::cout << "WARN: unhandled click\n";
-        }
+        if (flags_.test(DIRTY_FLAG))
+            std::cout << "WARN: pressed dirty\n";
         flags_.set(PRESSED_FLAG);
     } else if (e.state == SDL_RELEASED) {
+        if (flags_.test(DIRTY_FLAG))
+            std::cout << "WARN: released dirty\n";
         if (!flags_.test(PRESSED_FLAG)) {
             std::cout << "WARN: released without pressed\n";
         }
