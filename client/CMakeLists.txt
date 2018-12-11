@@ -63,6 +63,7 @@ install(
     FILES
         "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.js"
         "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.data"
+        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.html.mem"
     DESTINATION
         bin
     )

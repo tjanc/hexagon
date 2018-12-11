@@ -14,7 +14,7 @@ battle::team_container::iterator battle::join(team t)
     teams_.emplace_back(std::move(t));
 
     for (auto& u : teams_.back().units)
-        if (map_.end() == map_.spawn(u)) break;
+        if (map_.end() == spawn(map_, u)) break;
 
     return --teams_.end();
 }

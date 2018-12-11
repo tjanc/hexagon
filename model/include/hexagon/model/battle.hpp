@@ -48,11 +48,10 @@ namespace hexagon::model
     };
 
     struct move_command {
-        map::tile_container::iterator source;
-        map::tile_container::iterator target;
+        basic_map_index source;
+        basic_map_index target;
 
-        move_command(map::tile_container::iterator s,
-                     map::tile_container::iterator t)
+        move_command(basic_map_index s, basic_map_index t)
             : source(s), target(t)
         {
         }
@@ -66,8 +65,8 @@ namespace hexagon::model
     };
 
     struct attack_command {
-        map::tile_container::iterator source;
-        map::tile_container::iterator target;
+        basic_map_index source;
+        basic_map_index target;
     };
 
 }  // namespace hexagon::model

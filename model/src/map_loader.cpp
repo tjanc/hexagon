@@ -15,7 +15,7 @@ namespace
 
 map hexagon::model::load_map(const char* file_name)
 {
-    map::tile_container tiles;
+    map::tiles_container tiles;
     int width = -1;
 
     FILE* file = fopen(file_name, "r");
@@ -87,5 +87,5 @@ map hexagon::model::load_map(const char* file_name)
     }
 
     fclose(file);
-    return {tiles, width};
+    return {tiles, static_cast<std::uint32_t>(width)};
 }  // namespace

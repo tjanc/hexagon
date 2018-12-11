@@ -3,6 +3,8 @@
 
 #include "map_facet.hpp"
 
+#include <iostream>
+
 #include <hexagon/model/map.hpp>
 #include <hexagon/model/map_loader.hpp>
 
@@ -20,7 +22,8 @@ namespace
 
     constexpr int TOP_VERTEX_X_OFFSET = TILE_WIDTH / 2;
     constexpr int TOP_LEFT_Y_VERTEX_OFFSET = 8;
-    constexpr int BOTTOM_LEFT_Y_VERTEX_OFFSET = TILE_HEIGHT - TOP_LEFT_Y_VERTEX_OFFSET;
+    constexpr int BOTTOM_LEFT_Y_VERTEX_OFFSET =
+        TILE_HEIGHT - TOP_LEFT_Y_VERTEX_OFFSET;
 
     constexpr int BY_ROW_X_OFFSET = TOP_VERTEX_X_OFFSET;
 
@@ -36,30 +39,34 @@ namespace
 
 map_facet::map_facet(int x, int y) noexcept : x_(x), y_(y), hover_tile_{} {}
 
-std::pair<int, int> map_facet::transpose(int x, int y) const noexcept
+basic_map_index map_facet::transpose(int x, int y) const noexcept
 {
     const int y_t = y / ROW_HEIGHT;
     const int x_t = (x - (y_t % 2) * (COLUMN_WIDTH / 2)) / COLUMN_WIDTH;
 
-    return {x_t, y_t};
+    return basic_map_index{static_cast<std::uint32_t>(x_t),
+                           static_cast<std::uint32_t>(y_t)};
 }
 
-void map_facet::draw(canvas& renderer, const map& model,
-                     map::tile_container::const_iterator center_tile) const
+void map_facet::draw(canvas& renderer, const unit_moving& model) const
 {
     renderer->set_draw_blend_mode(SDL_BLENDMODE_ADD);
 
-    tiles(model, [&renderer, this](auto it, auto i, auto j) {
-        const int elev = it->elevation();
+    const auto& m = model.battlefield().get_map();
+    iterate(m, [&model, &renderer, this](const auto& t, auto idx) {
+        const int elev = t.elevation();
+
+        const int x = idx.x;
+        const int y = idx.y;
 
         SDL_Rect destination = {
-            .x = i * COLUMN_WIDTH + (j % 2) * BY_ROW_X_OFFSET,
-            .y = j * ROW_HEIGHT + TILE_HEIGHT - 15,
+            .x = x * COLUMN_WIDTH + (y % 2) * BY_ROW_X_OFFSET,
+            .y = y * ROW_HEIGHT + TILE_HEIGHT - 15,
             .w = TILE_WIDTH,
             .h = 15};
         // elevation filler
         {
-            sdl::texture& filler = renderer.tiles().tile_filler(it->type());
+            sdl::texture& filler = renderer.tiles().tile_filler(t.type());
             for (int e = 0; e <= elev; ++e) {
                 const uint8_t c = e < 3 ? (170 + e * 20) : 230;
                 filler.set_color_mod(c, c, c);
@@ -75,11 +82,11 @@ void map_facet::draw(canvas& renderer, const map& model,
         // tile surface
         {
             sdl::texture& tile_texture =
-                renderer.tiles().tile_surface(it->type());
-            if (hover_tile_ == it)
+                renderer.tiles().tile_surface(t.type());
+            if (hover_tile_ == idx)
                 tile_texture.set_color_mod(255, 255, 255);
             else {
-                if (it->is_reachable() && it->empty()) {
+                if (model.reachable(idx)) {
                     tile_texture.set_color_mod(200, 200, 255);
                 } else {
                     const uint8_t c = elev < 3 ? (170 + elev * 20) : 230;
@@ -90,9 +97,9 @@ void map_facet::draw(canvas& renderer, const map& model,
         }
 
         // object
-        if (const unit* u = it->get_if_unit()) {
+        if (const unit* u = t.get_if_unit()) {
             auto& unit_texture =
-                renderer.units().at(u->race_, perspective::fright);
+                renderer.units().at(u->job(), perspective::fright);
             destination.y -= BOX_HEIGHT + BOX_HEIGHT / 2;
             SDL_Rect unit_dest = {
                 .x = destination.x - (UNIT_WIDTH - TILE_WIDTH) / 2,
@@ -105,12 +112,6 @@ void map_facet::draw(canvas& renderer, const map& model,
     });
 }
 
-void map_facet::hover(map::tile_container::iterator t) noexcept
-{
-    hover_tile_ = t;
-}
+void map_facet::hover(basic_map_index t) noexcept { hover_tile_ = t; }
 
-map::tile_container::iterator map_facet::hover() const noexcept
-{
-    return hover_tile_;
-}
+basic_map_index map_facet::hover() const noexcept { return hover_tile_; }

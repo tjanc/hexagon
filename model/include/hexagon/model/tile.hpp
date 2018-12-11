@@ -7,7 +7,11 @@
 #include <cstdint>
 #include <memory>
 #include <variant>
-#include "unit.hpp"
+
+namespace hexagon::model
+{
+    class unit;
+}
 
 namespace hexagon::model
 {

@@ -1,17 +1,17 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#include <hexagon/protocol/map_response.hpp>
+#include <hexagon/protocol/battle_message.hpp>
 
 #include <iomanip>
 #include <iostream>
-#include "map_io.hpp"
+#include "battle_io.hpp"
 
 using namespace hexagon::model;
 
 namespace hexagon::protocol
 {
-    std::istream& operator>>(std::istream& in, map_response& msg)
+    std::istream& operator>>(std::istream& in, battle_message& msg)
     {
         using namespace hexagon::protocol::io;
 
@@ -23,12 +23,12 @@ namespace hexagon::protocol
         return in;
     }
 
-    std::ostream& operator<<(std::ostream& out, const map_response& msg)
+    std::ostream& operator<<(std::ostream& out, const battle_message& msg)
     {
         using namespace hexagon::protocol::io;
 
-        out << MAP_RESPONSE_ID << ' ';
-        out << msg.map;
+        out << BATTLE_MESSAGE_ID << ' ';
+        out << msg.battle;
 
         return out;
     }

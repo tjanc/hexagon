@@ -11,15 +11,18 @@ using namespace hexagon::model;
 using namespace hexagon::sdl;
 
 unit_texture_cache::unit_texture_cache(renderer& renderer)
-    : units_{load_texture(renderer, "assets/unit_warrior.png")}
+    : units_{load_texture(renderer, "assets/unit_warrior.png"),
+             load_texture(renderer, "assets/unit_mage.png")}
 {
 }
 
-texture& unit_texture_cache::at(race r, perspective p)
+texture& unit_texture_cache::at(unit_job r, perspective p)
 {
     switch (r) {
         default:
-        case race::human:
+        case unit_job::warrior:
             return units_.at(0);
+        case unit_job::mage:
+            return units_.at(1);
     }
 }

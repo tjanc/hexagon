@@ -10,8 +10,8 @@ namespace
 {
     auto start_battle(battle b, team t)
     {
-        auto t_ptr = b.join(t);
-        return moving_controller{std::move(b), t_ptr, t_ptr->units.begin()};
+        auto t_ptr = b.join(std::move(t));
+        return moving_controller{unit_moving{std::move(b), t_ptr}, 0, 0};
     }
 }  // namespace
 

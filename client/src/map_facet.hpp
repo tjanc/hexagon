@@ -8,6 +8,11 @@
 
 #include <tuple>
 
+namespace hexagon::model
+{
+    class unit_moving;
+}
+
 namespace hexagon::client
 {
     class canvas;
@@ -22,21 +27,20 @@ namespace hexagon::client
         int x_ = 0;
         int y_ = 0;
 
-        model::map::tile_container::iterator hover_tile_;
+        model::basic_map_index hover_tile_;
 
        public:
         explicit map_facet(int x, int y) noexcept;
 
        public:
-        std::pair<int, int> transpose(int x, int y) const noexcept;
+        model::basic_map_index transpose(int x, int y) const noexcept;
 
        public:
-        void hover(model::map::tile_container::iterator) noexcept;
-        model::map::tile_container::iterator hover() const noexcept;
+        void hover(model::basic_map_index) noexcept;
+        model::basic_map_index hover() const noexcept;
 
        public:
-        void draw(canvas&, const model::map&,
-                  model::map::tile_container::const_iterator) const;
+        void draw(canvas&, const model::unit_moving&) const;
     };
 }  // namespace hexagon::client
 

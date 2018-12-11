@@ -7,7 +7,11 @@ add_library(model STATIC
     src/map_loader.cpp
     src/battle.cpp
     src/map.cpp
+    src/map_io.cpp
     src/tile.cpp
+    src/tile_io.cpp
+    src/unit.cpp
+    src/unit_moving.cpp
     src/message.cpp
     src/version_message.cpp
     src/map_request.cpp

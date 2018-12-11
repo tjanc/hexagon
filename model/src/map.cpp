@@ -2,6 +2,7 @@
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
 #include <hexagon/model/map.hpp>
+#include <hexagon/model/unit.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -18,35 +19,13 @@ namespace
     }
 }  // namespace
 
-map::map(map::tile_container tiles, int width) : tiles_(tiles), width_(width) {}
-
-map::tile_container::iterator map::find(int column, int row)
-{
-    if (column >= width_) return tiles_.end();
-
-    const int offset = row * width_ + column;
-    if (offset >= tiles_.size()) return tiles_.end();
-
-    return std::next(tiles_.begin(), offset);
-}
-
-map::tile_container::const_iterator map::find(int column, int row) const
-{
-    if (column >= width_) return tiles_.end();
-
-    const int offset = row * width_ + column;
-    if (offset >= tiles_.size()) return tiles_.end();
-
-    return std::next(tiles_.begin(), offset);
-}
-
-map::tile_container::iterator map::spawn(unit& u)
+map::iterator hexagon::model::spawn(map& m, unit& u)
 {
     using std::begin;
     using std::end;
 
-    auto it = find_spawnable(begin(tiles_), end(tiles_));
-    if (it == end(tiles_)) {
+    auto it = find_spawnable(m.begin(), m.end());
+    if (it == m.end()) {
         std::cout << "no spawn point found\n";
         return it;
     }
@@ -55,18 +34,69 @@ map::tile_container::iterator map::spawn(unit& u)
     return it;
 }
 
-map::tile_container::iterator map::find_unit(const unit& u) noexcept
+basic_map_index hexagon::model::find_unit(const map& m, const unit& u) noexcept
 {
-    return std::find_if(     //
-        std::begin(tiles_),  //
-        std::end(tiles_),    //
-        [&u](const auto& tile) { return tile.has_unit(u); });
+    auto it = std::find_if(m.begin(), m.end(),
+                           [&u](const auto& tile) { return tile.has_unit(u); });
+
+    if (m.end() == it) return basic_map_index{};
+    return to_index(m, it);
 }
 
-map::tile_container::const_iterator map::find_unit(const unit& u) const noexcept
+bool hexagon::model::operator==(const basic_map_index& lhs,
+                                const basic_map_index& rhs) noexcept
 {
-    return std::find_if(     //
-        std::begin(tiles_),  //
-        std::end(tiles_),    //
-        [&u](const auto& tile) { return tile.has_unit(u); });
+    return lhs.x == rhs.x && lhs.y == rhs.y;
+}
+
+basic_map_index hexagon::model::operator+(const basic_map_index& lhs,
+                                          const basic_map_index& rhs) noexcept
+{
+    return basic_map_index{lhs.x + rhs.x, lhs.y + rhs.y};
+}
+
+basic_map_index hexagon::model::operator-(const basic_map_index& lhs,
+                                          const basic_map_index& rhs) noexcept
+{
+    return basic_map_index{lhs.x - rhs.x, lhs.y - rhs.y};
+}
+
+basic_map_index hexagon::model::west(basic_map_index i) noexcept
+{
+    --i.x;
+    return i;
+}
+
+basic_map_index hexagon::model::north_west(basic_map_index i) noexcept
+{
+    --i.y;
+    i.x -= i.y % 2;
+    return i;
+}
+
+basic_map_index hexagon::model::north_east(basic_map_index i) noexcept
+{
+    auto result = north_west(i);
+    ++result.x;
+    return result;
+}
+
+basic_map_index hexagon::model::east(basic_map_index i) noexcept
+{
+    ++i.x;
+    return i;
+}
+
+basic_map_index hexagon::model::south_east(basic_map_index i) noexcept
+{
+    ++i.y;
+    i.x += (i.y - 1) % 2;
+    return i;
+}
+
+basic_map_index hexagon::model::south_west(basic_map_index i) noexcept
+{
+    auto result = south_east(i);
+    --result.x;
+    return result;
 }

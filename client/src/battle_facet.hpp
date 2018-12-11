@@ -6,11 +6,16 @@
 
 #include "map_facet.hpp"
 
+namespace hexagon::model
+{
+    class unit_moving;
+}
+
 namespace hexagon::client
 {
     class canvas;
     class moving_controller;
-}
+}  // namespace hexagon::client
 
 namespace hexagon::client
 {
@@ -25,11 +30,15 @@ namespace hexagon::client
         battle_facet(int width, int height) noexcept;
 
        public:
-        void draw(canvas& r, const moving_controller& model) const;
+        void draw(canvas&, const model::unit_moving&) const;
 
        public:
-        const map_facet& map() const noexcept { return map_facet_; }
-        map_facet& map() noexcept { return map_facet_; }
+        const map_facet& map() const noexcept;
+        map_facet& map() noexcept;
+
+       public:
+        int width() const noexcept;
+        int height() const noexcept;
     };
 }  // namespace hexagon::client
 
