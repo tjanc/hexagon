@@ -6,9 +6,12 @@
 #include <algorithm>
 #include <cassert>
 #include <deque>
+#include <iostream>
 
 #include <hexagon/model/map.hpp>
 #include <hexagon/model/unit.hpp>
+#include <hexagon/protocol/io/map_io.hpp>
+#include <hexagon/protocol/io/unit_io.hpp>
 
 using namespace hexagon::model;
 
@@ -40,6 +43,10 @@ namespace
     unit_moving::reach_map generate_reach_map(const map& m,
                                               basic_map_index center)
     {
+        using namespace hexagon::protocol::io;
+
+        std::cout << "Generate reach map at " << center << '\n';
+
         unit_moving::reach_map result{
             unit_moving::reach_map::tiles_container(m.size(), 0), m.width()};
 
@@ -53,6 +60,7 @@ namespace
         idxs.emplace_back(center);
 
         result.at(center) = u.range();
+        std::cout << "Stats " << u.statistics() << '\n';
 
         while (!idxs.empty()) {
             const auto& idx = idxs.front();
@@ -68,20 +76,47 @@ namespace
 
         return result;
     }
+
+    battle init_explore(battle b, std::size_t tidx, std::size_t uidx) noexcept
+    {
+        using namespace hexagon::protocol::io;
+
+        const auto& t = *(b.teams().begin() + tidx);
+        [](const auto& t) {
+            std::cout << "Your team has " << t.units.size() << " units:\n";
+
+            using namespace hexagon::protocol::io;
+            for (const auto& u : t.units) std::cout << " - " << u << '\n';
+        }(t);
+
+        std::cout << "The map has " << b.get_map().width() << " columns and "
+                  << b.get_map().height() << " rows\n";
+
+        const auto& u = *(t.units.begin() + uidx);
+        std::cout << "Preparing for moving unit " << u << '\n';
+
+        auto it = find_unit(b.get_map(), u);
+        if(contains(b.get_map(), it))
+            std::cout << "Found referenced unit.\n";
+        else
+            std::cerr << "Referenced unit not found.\n";
+
+        return std::move(b);
+    }
 }  // namespace
 
-unit_moving::unit_moving(battle b, battle::team_container::iterator t,
-                         team::unit_container::iterator u) noexcept
-    : model_{std::move(b)},
-      team_{t},
-      unit_{u},
-      unit_position_{find_unit(model_.get_map(), *u)},
+unit_moving::unit_moving(battle b, std::size_t tidx, std::size_t uidx) noexcept
+    : model_{init_explore(std::move(b), tidx, uidx)},
+      team_{std::next(model_.teams().begin(), tidx)},
+      unit_{std::next(team_->units.begin(), uidx)},
+      unit_position_{find_unit(model_.get_map(), *unit_)},
       reach_map_{generate_reach_map(model_.get_map(), unit_position_)}
 {
+    std::cout << "Unit moving loaded.\n";
 }
 
-unit_moving::unit_moving(battle b, battle::team_container::iterator t) noexcept
-    : unit_moving(std::move(b), t, t->units.begin())
+unit_moving::unit_moving(battle b, std::size_t tidx) noexcept
+    : unit_moving(std::move(b), tidx, 0)
 {
 }
 
@@ -110,8 +145,13 @@ bool unit_moving::has_next() const noexcept
 
 namespace hexagon::model
 {
-    unit_moving move_unit(unit_moving model, basic_map_index idx) noexcept
+    void move_unit(unit_moving& model, basic_map_index idx) noexcept
     {
+        using namespace hexagon::protocol::io;
+
+        std::cout << "Moving unit from " << model.unit_position_ << " to "
+                  << idx << '\n';
+
         auto& m = model.model_.get_map();
 
         auto& source = m.at(model.unit_position_);
@@ -125,10 +165,16 @@ namespace hexagon::model
 
         ++model.unit_;
         if (model.team_->units.end() == model.unit_) {
-            return unit_moving(std::move(model.model_), model.team_);
-        }
+            auto ntidx = model.team_ - model.model_.teams().begin();
+            unit_moving n(std::move(model.model_), ntidx);
+            model = std::move(n);
 
-        return unit_moving(std::move(model.model_), model.team_, model.unit_);
+        } else {
+            auto ntidx = model.team_ - model.model_.teams().begin();
+            auto nuidx = model.unit_ - model.team_->units.begin();
+            unit_moving n(std::move(model.model_), ntidx, nuidx);
+            model = std::move(n);
+        }
     }
 }  // namespace hexagon::model
 

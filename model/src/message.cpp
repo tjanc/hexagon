@@ -29,6 +29,18 @@ namespace
             return visit(std::move(arg));
         }
 
+        if (name == id<battle_message>) {
+            battle_message arg{};
+            iss >> arg;
+            return visit(std::move(arg));
+        }
+
+        if (name == id<login_response>) {
+            login_response arg{};
+            iss >> arg;
+            return visit(std::move(arg));
+        }
+
         {
             unknown_message arg{std::move(name)};
             iss >> arg.content;
@@ -50,6 +62,12 @@ namespace
             return visit(std::move(arg));
         }
 
+        if (name == id<login_request>) {
+            login_request arg{};
+            iss >> arg;
+            return visit(std::move(arg));
+        }
+
         {
             unknown_message arg{std::move(name)};
             iss >> arg.content;
@@ -61,13 +79,13 @@ namespace
 server_message hexagon::protocol::read_server_message(const std::string& msg)
 {
     return visit_server_message(msg, [](auto msg) {  //
-        return server_message{msg};
+        return server_message{std::move(msg)};
     });
 }
 
 client_message hexagon::protocol::read_client_message(const std::string& msg)
 {
     return visit_client_message(msg, [](auto msg) {  //
-        return client_message{msg};
+        return client_message{std::move(msg)};
     });
 }

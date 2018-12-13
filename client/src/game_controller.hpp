@@ -38,9 +38,11 @@ namespace hexagon::client
         game_controller();
 
        public:  // game controller visiting messages
-        void update(const hexagon::protocol::version_response&);
-        void update(const hexagon::protocol::map_response&);
-        void update(const hexagon::protocol::unknown_message&);
+        void update(hexagon::protocol::version_response);
+        void update(hexagon::protocol::login_response);
+        void update(hexagon::protocol::map_response);
+        void update(hexagon::protocol::battle_message);
+        void update(hexagon::protocol::unknown_message);
         void update(const mouse&);
 
        public:
@@ -52,6 +54,7 @@ namespace hexagon::client
         void state(T&& s)
         {
             state_ = std::forward<T>(s);
+            updated_ = true;
         }
     };
 }  // namespace hexagon::client

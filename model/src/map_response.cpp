@@ -5,7 +5,8 @@
 
 #include <iomanip>
 #include <iostream>
-#include "map_io.hpp"
+#include <hexagon/protocol/io/map_io.hpp>
+#include <hexagon/protocol/io/tile_io.hpp>
 
 using namespace hexagon::model;
 
@@ -27,7 +28,6 @@ namespace hexagon::protocol
     {
         using namespace hexagon::protocol::io;
 
-        out << MAP_RESPONSE_ID << ' ';
         out << msg.map;
 
         return out;

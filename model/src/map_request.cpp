@@ -14,7 +14,6 @@ namespace hexagon::protocol
 
     std::ostream& operator<<(std::ostream& out, const map_request& msg)
     {
-        out << MAP_REQUEST_ID << ' ';
         out << msg.id << ' ';
 
         return out;

@@ -3,21 +3,15 @@
 
 #include "battle_controller.hpp"
 
+#include <iostream>
+
 using namespace hexagon::client;
 using namespace hexagon::model;
 
-namespace
+battle_controller::battle_controller(battle b, std::size_t team_index) noexcept
+    : state_{moving_controller{unit_moving{std::move(b), team_index}, 0, 0}}
 {
-    auto start_battle(battle b, team t)
-    {
-        auto t_ptr = b.join(std::move(t));
-        return moving_controller{unit_moving{std::move(b), t_ptr}, 0, 0};
-    }
-}  // namespace
-
-battle_controller::battle_controller(battle b, team t)
-    : state_{start_battle(std::move(b), std::move(t))}
-{
+    std::cout << "Battle loaded, controlling team " << team_index << ".\n";
 }
 
 void battle_controller::update(const mouse& m) noexcept

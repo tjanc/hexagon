@@ -4,6 +4,7 @@
 #ifndef HEXAGON_MAP_H_
 #define HEXAGON_MAP_H_
 
+#include <cassert>
 #include <limits>
 #include <vector>
 #include "tile.hpp"
@@ -141,10 +142,15 @@ namespace hexagon::model
         basic_map_index center_;
 
        public:
+        basic_map_overlay() = default;
         basic_map_overlay(overlay_type m, basic_map_index center) noexcept
             : overlay_{std::move(m)}, center_{center}
         {
         }
+
+       public:
+        basic_map_index center() const noexcept { return center_; }
+        const overlay_type& overlay() const noexcept { return overlay_; }
 
        public:
         template <typename R, typename Visitor>

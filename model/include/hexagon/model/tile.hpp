@@ -32,33 +32,29 @@ namespace hexagon::model
         unit* object_ = nullptr;
 
        public:
-        tile() = default;
-        explicit tile(tile_type type, int elev = 0, bool spawn = false);
+        tile() noexcept = default;
+        explicit tile(tile_type type, int elev = 0,
+                      bool spawn = false) noexcept;
 
        public:
-        bool is_spawn() const;
-        bool is_spawnable() const;
-        bool is_reachable() const;
-        void set_reachable();
-        void reset_reachable();
+        bool is_spawn() const noexcept;
+        bool is_spawnable() const noexcept;
 
-        tile_type type() const;
-        int elevation() const;
+        tile_type type() const noexcept;
+        int elevation() const noexcept;
 
-        unit* get_if_unit() { return object_; }
-        const unit* get_if_unit() const { return object_; }
+        unit* get_if_unit() noexcept;
+        const unit* get_if_unit() const noexcept;
 
-        bool has_unit(const unit& u) const
-        {
-            const auto* u2 = get_if_unit();
-            return u2 == &u;
-        }
+        bool has_unit() const noexcept;
 
-        bool empty() const;
+        bool has_unit(const unit& u) const noexcept;
+
+        bool empty() const noexcept;
         void attach(unit& u);
-        unit* detach_unit();
+        unit* detach_unit() noexcept;
     };
 
-}  // namespace hexagon
+}  // namespace hexagon::model
 
 #endif

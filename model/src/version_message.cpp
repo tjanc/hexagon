@@ -3,10 +3,7 @@
 
 #include <hexagon/protocol/version_message.hpp>
 
-#include <cassert>
-#include <iomanip>
 #include <iostream>
-#include <sstream>
 
 namespace hexagon::protocol
 {
@@ -21,8 +18,6 @@ namespace hexagon::protocol
 
     std::ostream& operator<<(std::ostream& out, const version_response& msg)
     {
-        out << VERSION_RESPONSE_ID << ' ';
-
         out << msg.major_version << ' '  //
             << msg.minor_version << ' '  //
             << msg.patch_version << ' ';

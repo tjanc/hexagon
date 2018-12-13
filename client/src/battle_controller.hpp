@@ -31,7 +31,7 @@ namespace hexagon::client
         battle_state state_;
 
        public:
-        battle_controller(hexagon::model::battle b, hexagon::model::team team);
+        battle_controller(model::battle, std::size_t) noexcept;
 
        public:
         void update(const mouse&) noexcept;

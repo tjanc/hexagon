@@ -41,12 +41,12 @@ namespace hexagon::model
     };
 
     struct unit_statistics {
-        std::uint16_t agility = 50;
-        std::uint16_t presence = 50;
-        std::uint16_t strength = 50;
-        std::uint16_t intelligence = 50;
-        std::uint16_t wisdom = 50;
-        std::uint16_t endurance = 50;
+        std::uint16_t agility = 100;
+        std::uint16_t presence = 100;
+        std::uint16_t strength = 100;
+        std::uint16_t intelligence = 100;
+        std::uint16_t wisdom = 100;
+        std::uint16_t endurance = 100;
         unit_statistics() = default;
     };
 
@@ -63,17 +63,21 @@ namespace hexagon::model
     class power
     {
        private:
-        std::string name_;
+        std::string name_ = "None";
 
-        std::bitset<16> flags_;
-        std::uint16_t jp_req_;
-        std::uint16_t jp_;
-        std::uint8_t range_;
+        std::bitset<16> flags_ = 0;
+        std::uint16_t jp_req_ = 0xFFFF;
+        std::uint16_t jp_ = 0;
+        std::uint8_t range_ = 0;
 
-        damage_overlay damage_map_;
+        damage_overlay damage_map_ = {};
 
        public:
+        power() = default;
         power(std::string, unit_job, power_class, std::uint16_t,
+              damage_overlay) noexcept;
+
+        power(std::string, unit_job, power_class, std::uint16_t, std::uint16_t,
               damage_overlay) noexcept;
 
         const std::string& name() const noexcept;
@@ -95,10 +99,11 @@ namespace hexagon::model
     };
 
     struct unit_status {
-        std::uint16_t health;
-        std::uint16_t stamina;
-        std::uint16_t magica;
+        std::uint16_t health = 0;
+        std::uint16_t stamina = 0;
+        std::uint16_t magica = 0;
 
+        unit_status() noexcept = default;
         explicit unit_status(const unit_statistics&) noexcept;
         void regenerate(const unit_statistics&) noexcept;
     };
@@ -109,7 +114,8 @@ namespace hexagon::model
         using powers_container = std::vector<power>;
 
        private:
-        unit_job job_ = unit_job::none;
+        std::size_t id_;
+        unit_job job_;
 
         std::uint16_t level_;
         std::uint16_t exp_;
@@ -121,11 +127,23 @@ namespace hexagon::model
         powers_container powers_;
 
        public:
-        unit();
+        unit() = default;
+        unit(std::size_t,      //
+             unit_job,         //
+             std::uint16_t,    //
+             std::uint16_t,    //
+             unit_statistics,  //
+             unit_status,      //
+             equipment,        //
+             powers_container  //
+        );
+
+        unit(std::size_t);
 
        public:
         std::uint16_t level() const noexcept;
         unit_job job() const noexcept;
+        std::size_t id() const noexcept;
 
        public:  // move
         std::uint16_t hmove_penalty() const noexcept;
@@ -134,6 +152,9 @@ namespace hexagon::model
         std::uint16_t range() const noexcept;
 
        public:  // attack
+        std::uint16_t experience() const noexcept;
+        const unit_statistics& statistics() const noexcept;
+        const unit_status& status() const noexcept;
         const powers_container& powers() const noexcept;
         const equipment& weapon() const noexcept;
         float defense() const noexcept;

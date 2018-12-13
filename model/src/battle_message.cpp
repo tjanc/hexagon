@@ -3,22 +3,23 @@
 
 #include <hexagon/protocol/battle_message.hpp>
 
-#include <iomanip>
+#include <hexagon/model/battle.hpp>
+#include <hexagon/protocol/io/battle_io.hpp>
 #include <iostream>
-#include "battle_io.hpp"
-
-using namespace hexagon::model;
 
 namespace hexagon::protocol
 {
+    battle_message::battle_message(model::battle b, std::size_t tid) noexcept
+        : battle{std::move(b)}, team_id{tid}
+    {
+    }
+
     std::istream& operator>>(std::istream& in, battle_message& msg)
     {
         using namespace hexagon::protocol::io;
 
-        using hexagon::model::map;
-        using hexagon::model::tile;
-
-        in >> msg.map;
+        in >> msg.team_id;
+        in >> msg.battle;
 
         return in;
     }
@@ -27,8 +28,7 @@ namespace hexagon::protocol
     {
         using namespace hexagon::protocol::io;
 
-        out << BATTLE_MESSAGE_ID << ' ';
-        out << msg.battle;
+        out << msg.team_id << ' ' << msg.battle;
 
         return out;
     }

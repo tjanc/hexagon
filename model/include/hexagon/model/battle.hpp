@@ -4,8 +4,7 @@
 #ifndef HEXAGON_MODEL_BATTLE_H_
 #define HEXAGON_MODEL_BATTLE_H_
 
-#include <cassert>
-#include <list>
+#include <vector>
 
 #include "map.hpp"
 #include "team.hpp"
@@ -17,34 +16,35 @@ namespace hexagon::model
     class battle
     {
        public:
-        using team_container = std::list<team>;
+        using team_container = std::vector<team>;
 
        private:
-        map map_;
-        team_container teams_;
+        map map_ = {};
+        team_container teams_ = {};
 
        public:
+        battle() = default;
         explicit battle(map);
+        battle(map, team_container);
+
+        battle(const battle&) = delete;
+        battle(battle&&) noexcept = default;
+
+        battle& operator=(const battle&) = delete;
+        battle& operator=(battle&&) noexcept = default;
+
+        ~battle() = default;
 
        public:
         team_container::iterator join(team);
         team leave(team_container::iterator);
-        team_container& teams() { return teams_; }
+
+        team_container& teams() noexcept;
+        const team_container& teams() const noexcept;
 
        public:
-        auto& get_map() { return map_; }
-        const auto& get_map() const { return map_; }
-
-       public:
-        template <typename It>
-        void commit_movements(It begin, It end)
-        {
-            for (; begin != end; ++begin) {
-                unit* u = begin->source->detach_unit();
-                assert(u);
-                begin->target->attach(*u);
-            }
-        }
+        map& get_map() noexcept;
+        const map& get_map() const noexcept;
     };
 
     struct move_command {

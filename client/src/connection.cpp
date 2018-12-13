@@ -60,7 +60,11 @@ void connection::_message_buffered()
     // ignore null terminator from JS
     // TODO: solve in inline JS before writing to buffer
     input_buffer_.pop_back();
+    std::cout << "Reading server message\n";
+    std::cout << "Input buffer: `" << input_buffer_ << "`\n";
     auto result = read_server_message(input_buffer_);
+    std::cout << "Message read.\n";
+
     input_buffer_.clear();
 
     messages_.emplace_back(std::move(result));

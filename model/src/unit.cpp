@@ -194,14 +194,29 @@ void unit_status::regenerate(const unit_statistics& stats) noexcept
     magica = magica_candidate > magica_max ? magica_max : magica_candidate;
 }
 
-unit::unit()
-    : job_{unit_job::none},
-      level_{1},
-      exp_{0},
-      statistics_{100, 100, 100, 100, 100, 100},
-      status_{statistics_},
+unit::unit(std::size_t id)
+    : id_{id},
+      job_{},
+      level_{},
+      exp_{},
+      statistics_{},
+      status_{},
       weapon_{make_fists()},
       powers_{}
+{
+}
+
+unit::unit(std::size_t id, unit_job job, std::uint16_t level, std::uint16_t exp,
+           unit_statistics statistics, unit_status status, equipment weapon,
+           powers_container powers)
+    : id_{id},
+      job_{job},
+      level_{level},
+      exp_{exp},
+      statistics_{statistics},
+      status_{status},
+      weapon_{std::move(weapon)},
+      powers_{std::move(powers)}
 {
 }
 
@@ -266,13 +281,23 @@ power::power(std::string name,      //
              unit_job jtype,        //
              power_class ptype,     //
              std::uint16_t jp_req,  //
+             std::uint16_t jp,      //
              damage_overlay overlay) noexcept
     : name_{std::move(name)},
       flags_(static_cast<std::uint16_t>(jtype) |
              static_cast<std::uint16_t>(ptype)),
       jp_req_{jp_req},
-      jp_{0},
+      jp_{jp},
       damage_map_{std::move(overlay)}
+{
+}
+
+power::power(std::string name,      //
+             unit_job jtype,        //
+             power_class ptype,     //
+             std::uint16_t jp_req,  //
+             damage_overlay overlay) noexcept
+    : power{std::move(name), jtype, ptype, jp_req, 0, std::move(overlay)}
 {
 }
 
@@ -354,3 +379,11 @@ std::uint16_t unit::range() const noexcept
 {
     return statistics_.agility + statistics_.endurance;
 }
+
+std::uint16_t unit::experience() const noexcept { return exp_; }
+
+const unit_statistics& unit::statistics() const noexcept { return statistics_; }
+
+const unit_status& unit::status() const noexcept { return status_; }
+
+std::size_t unit::id() const noexcept { return id_; }

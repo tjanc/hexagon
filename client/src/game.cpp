@@ -65,8 +65,8 @@ void game::update()
     });
 
     // process network input
-    server_.handle_all([& c = game_controller_](const auto& msg) {  //
-        c.update(msg);
+    server_.handle_all([& c = game_controller_](auto msg) {  //
+        c.update(std::move(msg));
     });
 }
 

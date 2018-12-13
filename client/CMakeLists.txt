@@ -41,7 +41,7 @@ target_compile_definitions(client PRIVATE HEXAGON_CLIENT_VERSION="${PROJECT_VERS
 if(EMSCRIPTEN)
     add_compile_options(-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s WASM=0 -flto)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    set_target_properties(client PROPERTIES LINK_FLAGS "-s DISABLE_EXCEPTION_CATCHING=0 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 --use-preload-plugins --preload-file assets -s WASM=0 -s SDL2_IMAGE_FORMATS=[\"png\"] -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"stringToUTF8\",\"lengthBytesUTF8\",\"writeStringToMemory\"] --pre-js pre.js -flto")
+    set_target_properties(client PROPERTIES LINK_FLAGS "-s DEMANGLE_SUPPORT=1 -s DISABLE_EXCEPTION_CATCHING=0 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 --use-preload-plugins --preload-file assets -s WASM=0 -s SDL2_IMAGE_FORMATS=[\"png\"] -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"stringToUTF8\",\"lengthBytesUTF8\",\"writeStringToMemory\"] --pre-js pre.js -flto")
 endif()
 
 set_target_properties(client PROPERTIES OUTPUT_NAME hexagon-client)

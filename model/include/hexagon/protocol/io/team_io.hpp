@@ -4,13 +4,14 @@
 #ifndef HEXAGON_PROTOCOL_TEAM_IO_H_
 #define HEXAGON_PROTOCOL_TEAM_IO_H_
 
-#include <hexagon/model/team.hpp>
 #include <iostream>
+
+#include <hexagon/model/team.hpp>
 
 namespace hexagon::protocol::io
 {
-    std::istream& operator>>(std::istream& in, model::team& t);
-    std::ostream& operator<<(std::ostream& out, const model::team& t);
+    std::istream& operator>>(std::istream&, model::team&);
+    std::ostream& operator<<(std::ostream&, const model::team&);
 }  // namespace hexagon::protocol::io
 
 #endif

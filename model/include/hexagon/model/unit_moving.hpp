@@ -35,9 +35,8 @@ namespace hexagon::model
         // std::vector<hexagon::move_command> commands_;
 
        public:
-        unit_moving(battle b, battle::team_container::iterator t,
-                    team::unit_container::iterator u) noexcept;
-        unit_moving(battle b, battle::team_container::iterator t) noexcept;
+        unit_moving(battle b, std::size_t tidx, std::size_t uidx) noexcept;
+        unit_moving(battle b, std::size_t tidx) noexcept;
 
         unit_moving(const unit_moving&) noexcept = delete;
         unit_moving(unit_moving&&) noexcept = default;
@@ -56,7 +55,7 @@ namespace hexagon::model
         bool reachable(basic_map_index) const noexcept;
         bool has_next() const noexcept;
 
-        friend unit_moving move_unit(unit_moving, basic_map_index) noexcept;
+        friend void move_unit(unit_moving&, basic_map_index) noexcept;
     };
 
 }  // namespace hexagon::model

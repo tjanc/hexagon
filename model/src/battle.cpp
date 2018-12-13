@@ -7,7 +7,12 @@
 
 using namespace hexagon::model;
 
-battle::battle(map m) : map_{m} {}
+battle::battle(map m) : battle(std::move(m), battle::team_container{}) {}
+
+battle::battle(map m, battle::team_container teams)
+    : map_{std::move(m)}, teams_{std::move(teams)}
+{
+}
 
 battle::team_container::iterator battle::join(team t)
 {
@@ -28,3 +33,11 @@ team battle::leave(battle::team_container::iterator it)
     teams_.erase(it);
     return result;
 }
+
+battle::team_container& battle::teams() noexcept { return teams_; }
+
+const battle::team_container& battle::teams() const noexcept { return teams_; }
+
+map& battle::get_map() noexcept { return map_; }
+
+const map& battle::get_map() const noexcept { return map_; }

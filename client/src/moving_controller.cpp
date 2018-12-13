@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include <hexagon/model/map.hpp>
+#include <hexagon/protocol/io/unit_io.hpp>
 
 #include "battle_controller.hpp"
 #include "mouse.hpp"
@@ -20,6 +21,13 @@ moving_controller::moving_controller(model::unit_moving model,  //
                                      int width, int height) noexcept
     : model_{std::move(model)}, facet_{width, height}, commands_{}
 {
+    [](const auto& t) {
+        std::cout << "Your team has " << t.units.size() << " units:\n";
+
+        using namespace hexagon::protocol::io;
+        for (const auto& u : t.units) std::cout << " - " << u << '\n';
+    }(model_.my_team());
+    std::cout << "Move phase loaded.\n";
 }
 
 void moving_controller::update(battle_controller& c, const mouse& m) noexcept
@@ -43,8 +51,15 @@ void moving_controller::update(battle_controller& c, const mouse& m) noexcept
                 std::cout << "TODO: commit movements\n";
             }
 
-            c.state(moving_controller{move_unit(std::move(model_), target),
-                                      facet_.width(), facet_.height()});
+            std::cout << "IT BLOWS\n";
+            [](const auto& t) {
+                std::cout << "Your team has " << t.units.size() << " units:\n";
+
+                using namespace hexagon::protocol::io;
+                for (const auto& u : t.units) std::cout << " - " << u << '\n';
+            }(model_.my_team());
+
+            move_unit(model_, target);
         }
     }
 }
