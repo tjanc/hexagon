@@ -168,6 +168,7 @@ namespace hexagon::model
 
     map::iterator spawn(map&, unit&);
     basic_map_index find_unit(const map&, const unit&) noexcept;
+    void move_unit(map&, basic_map_index, basic_map_index);
 
     // template <std::size_t Radius, typename Visitor>
     // void tiles_around(const map& m, map::const_iterator c, Visitor v)

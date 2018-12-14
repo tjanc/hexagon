@@ -44,11 +44,14 @@ namespace hexagon::model
         unit_moving& operator=(unit_moving&&) noexcept = default;
 
        public:
+        void move(basic_map_index);
+        void next();
+       public:
         const battle& battlefield() const noexcept;
         battle& battlefield() noexcept;
 
-        const team& my_team() const noexcept;
-        team& my_team() noexcept;
+        battle::team_container::const_iterator my_team() const noexcept;
+        battle::team_container::iterator my_team() noexcept;
 
         basic_map_index position() const noexcept;
 

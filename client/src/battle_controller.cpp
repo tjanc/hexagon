@@ -8,8 +8,10 @@
 using namespace hexagon::client;
 using namespace hexagon::model;
 
-battle_controller::battle_controller(battle b, std::size_t team_index) noexcept
-    : state_{moving_controller{unit_moving{std::move(b), team_index}, 0, 0}}
+battle_controller::battle_controller(battle_facet facet, battle b,
+                                     std::size_t team_index) noexcept
+    : state_{moving_controller{std::move(facet),
+                               unit_moving{std::move(b), team_index}}}
 {
     std::cout << "Battle loaded, controlling team " << team_index << ".\n";
 }

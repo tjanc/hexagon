@@ -34,8 +34,8 @@ namespace hexagon::client
         std::vector<model::move_command> commands_;
 
        public:
-        moving_controller(model::unit_moving model,  //
-                          int width, int height) noexcept;
+        moving_controller(battle_facet facet,
+                          model::unit_moving model) noexcept;
 
         moving_controller(const moving_controller&) noexcept = delete;
         moving_controller(moving_controller&&) noexcept = default;
@@ -52,6 +52,10 @@ namespace hexagon::client
        public:
         const model::unit_moving& model() const noexcept;
         model::unit_moving& model() noexcept;
+
+       public:
+        const battle_facet& facet() const noexcept;
+        battle_facet& facet() noexcept;
     };
 }  // namespace hexagon::client
 

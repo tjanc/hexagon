@@ -15,6 +15,7 @@ add_library(model STATIC
     src/unit.cpp
     src/unit_io.cpp
     src/unit_moving.cpp
+    src/unit_moved.cpp
     src/message.cpp
     src/version_message.cpp
     src/map_request.cpp

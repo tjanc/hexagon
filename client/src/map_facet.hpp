@@ -4,13 +4,13 @@
 #ifndef HEXAGON_CLIENT_MAP_FACET_H_
 #define HEXAGON_CLIENT_MAP_FACET_H_
 
+#include <SDL.h>
 #include <hexagon/model/map.hpp>
-
-#include <tuple>
 
 namespace hexagon::model
 {
     class unit_moving;
+    class unit_moved;
 }
 
 namespace hexagon::client
@@ -23,14 +23,12 @@ namespace hexagon::client
 {
     class map_facet
     {
-        // start point
-        int x_ = 0;
-        int y_ = 0;
+        SDL_Rect dimensions_;
 
         model::basic_map_index hover_tile_;
 
        public:
-        explicit map_facet(int x, int y) noexcept;
+        explicit map_facet(int x, int y, int width, int height) noexcept;
 
        public:
         model::basic_map_index transpose(int x, int y) const noexcept;
@@ -41,6 +39,7 @@ namespace hexagon::client
 
        public:
         void draw(canvas&, const model::unit_moving&) const;
+        void draw(canvas&, const model::unit_moved&) const;
     };
 }  // namespace hexagon::client
 

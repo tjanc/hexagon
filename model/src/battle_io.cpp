@@ -61,13 +61,13 @@ std::istream& io::operator>>(std::istream& in, battle& obj)
         in >> position;
 
         if (!contains(m, position)) {
-            std::cout << "WARN: position out of bounds `" << position << "`\n";
+            std::cerr << "WARN: position out of bounds `" << position << "`\n";
             continue;
         }
 
         unit* u = find_unit(teams, unit_id);
         if (!u) {
-            std::cout << "WARN: referenced unit not found `" << unit_id
+            std::cerr << "WARN: referenced unit not found `" << unit_id
                       << "`\n";
             continue;
         }

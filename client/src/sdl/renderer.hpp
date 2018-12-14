@@ -41,6 +41,7 @@ namespace hexagon::sdl
         void set_draw_color(std::uint8_t r, std::uint8_t g, std::uint8_t b,
                             std::uint8_t a);
         void copy(texture& texture, const SDL_Rect& desination);
+        void fill_rect(const SDL_Rect& rect);
 
        public:
         void present();

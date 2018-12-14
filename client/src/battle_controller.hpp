@@ -11,16 +11,11 @@
 #include <hexagon/model/team.hpp>
 
 #include "moving_controller.hpp"
+#include "moved_controller.hpp"
 
 namespace hexagon::client
 {
     class battle_controller;
-
-    struct moved_controller {
-        void update(battle_controller&, const mouse&) noexcept {}
-
-        void draw(canvas&) const {}
-    };
 
     using battle_state = std::variant<  //
         moving_controller,              //
@@ -31,7 +26,7 @@ namespace hexagon::client
         battle_state state_;
 
        public:
-        battle_controller(model::battle, std::size_t) noexcept;
+        battle_controller(battle_facet, model::battle, std::size_t) noexcept;
 
        public:
         void update(const mouse&) noexcept;

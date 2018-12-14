@@ -17,17 +17,11 @@
 using namespace hexagon::client;
 using namespace hexagon::model;
 
-moving_controller::moving_controller(model::unit_moving model,  //
-                                     int width, int height) noexcept
-    : model_{std::move(model)}, facet_{width, height}, commands_{}
+moving_controller::moving_controller(battle_facet facet,
+                                     model::unit_moving model) noexcept
+    : model_{std::move(model)}, facet_{std::move(facet)}, commands_{}
 {
-    [](const auto& t) {
-        std::cout << "Your team has " << t.units.size() << " units:\n";
-
-        using namespace hexagon::protocol::io;
-        for (const auto& u : t.units) std::cout << " - " << u << '\n';
-    }(model_.my_team());
-    std::cout << "Move phase loaded.\n";
+    std::cout << "Move phase.\n";
 }
 
 void moving_controller::update(battle_controller& c, const mouse& m) noexcept
@@ -46,20 +40,16 @@ void moving_controller::update(battle_controller& c, const mouse& m) noexcept
         assert(contains(field, source));
         if (model_.reachable(target)) {
             commands_.emplace_back(source, target);
+            model_.move(target);
 
             if (!model_.has_next()) {
-                std::cout << "TODO: commit movements\n";
+                for (auto&& cmd : commands_) {
+                    std::cout << "TODO: commit movement\n";
+                }
+                c.state(moved_controller{std::move(*this)});
+            } else {
+                model_.next();
             }
-
-            std::cout << "IT BLOWS\n";
-            [](const auto& t) {
-                std::cout << "Your team has " << t.units.size() << " units:\n";
-
-                using namespace hexagon::protocol::io;
-                for (const auto& u : t.units) std::cout << " - " << u << '\n';
-            }(model_.my_team());
-
-            move_unit(model_, target);
         }
     }
 }
@@ -69,3 +59,7 @@ void moving_controller::draw(canvas& c) const { facet_.draw(c, model_); }
 const unit_moving& moving_controller::model() const noexcept { return model_; }
 
 unit_moving& moving_controller::model() noexcept { return model_; }
+
+const battle_facet& moving_controller::facet() const noexcept { return facet_; }
+
+battle_facet& moving_controller::facet() noexcept { return facet_; }

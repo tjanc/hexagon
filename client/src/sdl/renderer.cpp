@@ -30,6 +30,11 @@ void renderer::present() { SDL_RenderPresent(raw_.get()); }
 
 void renderer::clear() { SDL_RenderClear(raw_.get()); }
 
+void renderer::fill_rect(const SDL_Rect& rect)
+{
+    SDL_RenderFillRect(raw_.get(), &rect);
+}
+
 void renderer::set_draw_color(std::uint8_t r, std::uint8_t g, std::uint8_t b,
                               std::uint8_t a)
 {

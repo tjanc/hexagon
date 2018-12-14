@@ -47,9 +47,9 @@ namespace
     void draw_specific(const world_controller&, canvas&) {}
 }  // namespace
 
-game_controller::game_controller() : state_{connecting_controller{}}
+game_controller::game_controller(connecting_facet facet)
+    : state_{connecting_controller{std::move(facet)}}
 {
-    std::cout << "Starting game...\n";
 }
 
 void game_controller::update(version_response msg)
@@ -57,7 +57,7 @@ void game_controller::update(version_response msg)
     std::cout << "Connected to server running version: " << msg << '\n';
     // TODO test client/server version comopatibility
 
-    std::cout << "Log in as anonymous\n";
+    std::cout << "Log in as Johnny\n";
     login_request request{"Johnny"};
     connection::instance().async_send(request);
 }
@@ -94,7 +94,7 @@ void game_controller::update(battle_message msg)
         return;
     }
 
-    this->state(battle_controller{std::move(msg.battle), msg.team_id});
+    this->state(battle_controller{battle_facet{0, 0, 0, 0}, std::move(msg.battle), msg.team_id});
 }
 
 void game_controller::update(const mouse& m)

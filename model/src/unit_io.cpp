@@ -4,8 +4,6 @@
 #include <hexagon/protocol/io/unit_io.hpp>
 
 #include <cassert>
-#include <iomanip>
-#include <ios>
 #include <iostream>
 
 #include <hexagon/protocol/io/map_io.hpp>
@@ -29,7 +27,9 @@ std::istream& io::operator>>(std::istream& in, equipment& obj)
         in >> p;
         es.emplace_back(std::move(p));
     }
-    //
+
+    obj.powers = std::move(es);
+
     return in;
 }
 
@@ -95,7 +95,7 @@ std::istream& io::operator>>(std::istream& in, power& obj)
     using namespace hexagon::protocol::io;
 
     std::string name;
-    in >> name >> std::ws;
+    in >> name;
 
     power_class klass;
     in >> klass;

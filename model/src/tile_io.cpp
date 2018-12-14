@@ -3,7 +3,6 @@
 
 #include <hexagon/protocol/io/tile_io.hpp>
 
-#include <iomanip>
 #include <iostream>
 
 using namespace hexagon::model;

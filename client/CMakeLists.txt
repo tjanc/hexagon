@@ -22,16 +22,20 @@ add_executable(client
 
     src/game.cpp
     src/main.cpp
+
     src/map_facet.cpp
     src/map_textures.cpp
     src/battle_facet.cpp
     src/unit_facet.cpp
+    src/connecting_facet.cpp
 
     src/connection.cpp
 
     src/battle_controller.cpp
     src/game_controller.cpp
     src/moving_controller.cpp
+    src/moved_controller.cpp
+    src/connecting_controller.cpp
     )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/pre.js DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

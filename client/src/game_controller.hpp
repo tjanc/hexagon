@@ -9,6 +9,7 @@
 #include <hexagon/protocol/message.hpp>
 
 #include "battle_controller.hpp"
+#include "connecting_controller.hpp"
 #include "world_controller.hpp"
 
 namespace hexagon::client
@@ -19,9 +20,6 @@ namespace hexagon::client
 
 namespace hexagon::client
 {
-    struct connecting_controller {
-    };
-
     using game_state = std::variant<  //
         connecting_controller,        //
         world_controller,             //
@@ -35,7 +33,7 @@ namespace hexagon::client
         bool updated_ = true;
 
        public:
-        game_controller();
+        explicit game_controller(connecting_facet);
 
        public:  // game controller visiting messages
         void update(hexagon::protocol::version_response);

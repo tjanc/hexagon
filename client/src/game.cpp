@@ -31,7 +31,7 @@ game::game(connection& c, int x, int y, int width, int height, bool fullscreen)
       window_(graphics_, "Hexagon " HEXAGON_CLIENT_VERSION, x, y, width, height,
               fullscreen),
       canvas_(window_),
-      game_controller_()
+      game_controller_(connecting_facet{x, y, width, height})
 {
 }
 
@@ -41,7 +41,6 @@ bool game::handleEvents()
     if (1 == SDL_PollEvent(&event)) {
         switch (event.type) {
             default:
-                std::cout << "WARN: ignoring an SDL event\n";
                 break;
             case SDL_MOUSEMOTION:
                 mouse_.event(event.motion);
