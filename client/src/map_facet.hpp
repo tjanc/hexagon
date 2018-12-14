@@ -10,7 +10,7 @@
 namespace hexagon::model
 {
     class unit_moving;
-    class unit_moved;
+    class units_moved;
 }
 
 namespace hexagon::client
@@ -39,7 +39,7 @@ namespace hexagon::client
 
        public:
         void draw(canvas&, const model::unit_moving&) const;
-        void draw(canvas&, const model::unit_moved&) const;
+        void draw(canvas&, const model::units_moved&) const;
     };
 }  // namespace hexagon::client
 

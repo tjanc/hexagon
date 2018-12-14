@@ -10,36 +10,38 @@
 #include <hexagon/model/battle.hpp>
 #include <hexagon/model/team.hpp>
 
-#include "moving_controller.hpp"
-#include "moved_controller.hpp"
+#include <hexagon/model/unit_moving.hpp>
+#include <hexagon/model/units_moved.hpp>
+
+#include "battle_facet.hpp"
 
 namespace hexagon::client
 {
-    class battle_controller;
+    class mouse;
+}
 
-    using battle_state = std::variant<  //
-        moving_controller,              //
-        moved_controller>;
-
+namespace hexagon::client
+{
     class battle_controller
     {
-        battle_state state_;
+       public:
+        using model = std::variant<  //
+            model::unit_moving,      //
+            model::units_moved>;
+
+       private:
+        model state_;
+        battle_facet facet_;
 
        public:
-        battle_controller(battle_facet, model::battle, std::size_t) noexcept;
+        battle_controller(battle_facet, hexagon::model::battle,
+                          std::size_t) noexcept;
 
        public:
         void update(const mouse&) noexcept;
 
        public:
         void draw(canvas&) const;
-
-       public:
-        template <typename T>
-        void state(T&& s)
-        {
-            state_ = std::forward<T>(s);
-        }
     };
 }  // namespace hexagon::client
 

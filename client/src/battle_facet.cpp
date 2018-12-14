@@ -3,10 +3,8 @@
 
 #include "battle_facet.hpp"
 
-#include <hexagon/model/unit_moved.hpp>
 #include <hexagon/model/unit_moving.hpp>
-
-#include "moving_controller.hpp"
+#include <hexagon/model/units_moved.hpp>
 
 using namespace hexagon::client;
 using namespace hexagon::model;
@@ -22,7 +20,7 @@ void battle_facet::draw(canvas& c, const unit_moving& model) const
     map_facet_.draw(c, model);
 }
 
-void battle_facet::draw(canvas& c, const unit_moved& model) const
+void battle_facet::draw(canvas& c, const units_moved& model) const
 {
     map_facet_.draw(c, model);
 }

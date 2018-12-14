@@ -33,8 +33,6 @@ add_executable(client
 
     src/battle_controller.cpp
     src/game_controller.cpp
-    src/moving_controller.cpp
-    src/moved_controller.cpp
     src/connecting_controller.cpp
     )
 

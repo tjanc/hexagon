@@ -7,6 +7,7 @@
 #include <hexagon/model/battle.hpp>
 #include <hexagon/model/map.hpp>
 #include <hexagon/model/team.hpp>
+#include <vector>
 
 namespace hexagon::model
 {
@@ -14,6 +15,7 @@ namespace hexagon::model
     {
        public:
         using reach_map = basic_map<std::uint16_t>;
+        using commands_container = std::vector<move_command>;
 
        private:
         /// battle unit is moving in
@@ -32,7 +34,7 @@ namespace hexagon::model
         reach_map reach_map_;
 
         /// previous move commands
-        // std::vector<hexagon::move_command> commands_;
+        std::vector<move_command> commands_;
 
        public:
         unit_moving(battle b, std::size_t tidx, std::size_t uidx) noexcept;
@@ -46,6 +48,7 @@ namespace hexagon::model
        public:
         void move(basic_map_index);
         void next();
+
        public:
         const battle& battlefield() const noexcept;
         battle& battlefield() noexcept;
@@ -57,6 +60,9 @@ namespace hexagon::model
 
         bool reachable(basic_map_index) const noexcept;
         bool has_next() const noexcept;
+
+        const commands_container& commands() const noexcept;
+        commands_container& commands() noexcept;
 
         friend void move_unit(unit_moving&, basic_map_index) noexcept;
     };

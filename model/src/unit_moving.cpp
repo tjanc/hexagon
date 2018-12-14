@@ -80,7 +80,8 @@ unit_moving::unit_moving(battle b, std::size_t tidx, std::size_t uidx) noexcept
       team_{std::next(model_.teams().begin(), tidx)},
       unit_{std::next(team_->units.begin(), uidx)},
       unit_position_{find_unit(model_.get_map(), *unit_)},
-      reach_map_{generate_reach_map(model_.get_map(), unit_position_)}
+      reach_map_{generate_reach_map(model_.get_map(), unit_position_)},
+      commands_{}
 {
 }
 
@@ -131,7 +132,7 @@ void unit_moving::move(basic_map_index idx)
     using namespace hexagon::protocol::io;
 
     std::cout << "Moving unit from " << unit_position_ << " to " << idx << '\n';
-
+    commands_.emplace_back(unit_position_, idx);
     move_unit(model_.get_map(), unit_position_, idx);
 }
 
@@ -140,4 +141,17 @@ battle::team_container::const_iterator unit_moving::my_team() const noexcept
     return team_;
 }
 
-battle::team_container::iterator unit_moving::my_team() noexcept { return team_; }
+battle::team_container::iterator unit_moving::my_team() noexcept
+{
+    return team_;
+}
+
+unit_moving::commands_container& unit_moving::commands() noexcept
+{
+    return commands_;
+}
+
+const unit_moving::commands_container& unit_moving::commands() const noexcept
+{
+    return commands_;
+}

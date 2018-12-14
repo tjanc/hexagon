@@ -4,12 +4,11 @@
 #include "map_facet.hpp"
 
 #include <hexagon/model/map.hpp>
-#include <hexagon/model/unit_moved.hpp>
 #include <hexagon/model/unit_moving.hpp>
+#include <hexagon/model/units_moved.hpp>
 
 #include "battle_controller.hpp"
 #include "canvas.hpp"
-#include "moving_controller.hpp"
 
 using namespace hexagon::client;
 using namespace hexagon::model;
@@ -50,7 +49,7 @@ basic_map_index map_facet::transpose(int x, int y) const noexcept
                            static_cast<std::uint32_t>(y_t)};
 }
 
-void map_facet::draw(canvas& renderer, const unit_moved& model) const
+void map_facet::draw(canvas& renderer, const units_moved& model) const
 {
     const auto& m = model.battlefield().get_map();
     iterate(m, [&model, &renderer, this](const auto& t, auto idx) {
