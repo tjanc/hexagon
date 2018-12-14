@@ -6,6 +6,7 @@
 
 #include <variant>
 
+#include <hexagon/model/world.hpp>
 #include <hexagon/protocol/message.hpp>
 
 #include "battle_controller.hpp"
@@ -36,11 +37,7 @@ namespace hexagon::client
         explicit game_controller(connecting_facet);
 
        public:  // game controller visiting messages
-        void update(hexagon::protocol::version_response);
-        void update(hexagon::protocol::login_response);
-        void update(hexagon::protocol::map_response);
-        void update(hexagon::protocol::battle_message);
-        void update(hexagon::protocol::unknown_message);
+        void update(protocol::server_message msg);
         void update(const mouse&);
 
        public:
@@ -48,12 +45,8 @@ namespace hexagon::client
         bool updated() const noexcept;
 
        public:
-        template <typename T>
-        void state(T&& s)
-        {
-            state_ = std::forward<T>(s);
-            updated_ = true;
-        }
+        void to_world(model::world);
+        void to_battle(model::battle, std::size_t tid);
     };
 }  // namespace hexagon::client
 

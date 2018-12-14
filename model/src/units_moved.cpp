@@ -3,11 +3,14 @@
 
 #include <hexagon/model/units_moved.hpp>
 
+#include <iostream>
+
 using namespace hexagon::model;
 
 units_moved::units_moved(unit_moving prev) noexcept
     : model_{std::move(prev.battlefield())}, team_{prev.my_team()}
 {
+    for (const auto& cmd : prev.commands()) std::cout << "commit commands\n";
 }
 
 const battle& units_moved::battlefield() const noexcept { return model_; }

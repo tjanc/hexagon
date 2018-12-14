@@ -11,7 +11,7 @@ SCENARIO("Map model is created and tinkered with", "[json-value][null]")
 {
     GIVEN("A list of tiles and a given width")
     {
-        const auto tiles = map::tile_container{
+        const auto tiles = map::tiles_container{
             tile{tile_type::grass0}, tile{tile_type::grass1},  //
             tile{tile_type::dirt0},  tile{tile_type::dirt1},   //
             tile{tile_type::grass2},                           //

@@ -28,12 +28,14 @@ add_executable(client
     src/battle_facet.cpp
     src/unit_facet.cpp
     src/connecting_facet.cpp
+    src/world_facet.cpp
 
     src/connection.cpp
 
     src/battle_controller.cpp
     src/game_controller.cpp
     src/connecting_controller.cpp
+    src/world_controller.cpp
     )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/pre.js DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -65,10 +67,18 @@ install(
     FILES
         "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.js"
         "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.data"
+    DESTINATION
+        bin
+    )
+
+if(CMAKE_BUILD_TYPE EQUAL Release)
+install(
+    FILES
         "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.html.mem"
     DESTINATION
         bin
     )
+endif()
 
 # Packaging support
 set(CPACK_PACKAGE_VENDOR "Thomas Jandecka")

@@ -5,6 +5,8 @@
 #define HEXAGON_CLIENT_CONNECTING_CONTROLLER_H_
 
 #include <hexagon/model/connecting.hpp>
+#include <hexagon/protocol/version_message.hpp>
+#include <hexagon/protocol/login_response.hpp>
 #include "connecting_facet.hpp"
 
 namespace hexagon::client
@@ -33,6 +35,8 @@ namespace hexagon::client
 
        public:
         void update(game_controller&, const mouse&) noexcept;
+        void update(game_controller&, protocol::version_response);
+        void update(game_controller&, protocol::login_response);
 
        public:
         void draw(canvas&) const;

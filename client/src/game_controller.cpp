@@ -5,6 +5,7 @@
 
 #include <hexagon/model/map_loader.hpp>
 #include <hexagon/protocol/io/unit_io.hpp>
+#include <type_traits>
 #include "connection.hpp"
 #include "mouse.hpp"
 
@@ -14,28 +15,12 @@ using namespace hexagon::protocol;
 
 namespace
 {
-    void update_specific(game_controller& out, connecting_controller&,
-                         const map_response& msg)
-    {
-        // auto b = battle{msg.map};
-        // out.state(battle_controller{std::move(b), team{}});
-    }
-
-    void update_specific(game_controller&, battle_controller&,
-                         const map_response& msg)
-    {
-    }
-
-    void update_specific(game_controller&, world_controller&,
-                         const map_response& msg)
-    {
-    }
+    void update_specific(battle_controller& c, const mouse& m) { c.update(m); }
 
     void update_specific(connecting_controller&, const mouse&) {}
 
-    void update_specific(battle_controller& c, const mouse& m) { c.update(m); }
-
     void update_specific(world_controller&, const mouse&) {}
+
 }  // namespace
 
 namespace
@@ -52,49 +37,51 @@ game_controller::game_controller(connecting_facet facet)
 {
 }
 
-void game_controller::update(version_response msg)
+namespace
 {
-    std::cout << "Connected to server running version: " << msg << '\n';
-    // TODO test client/server version comopatibility
+    template <typename Controller, typename Message>
+    constexpr bool handles_message = false;
 
-    std::cout << "Log in as Johnny\n";
-    login_request request{"Johnny"};
-    connection::instance().async_send(request);
-}
+    template <>
+    constexpr bool handles_message<connecting_controller, version_response> =
+        true;
 
-void game_controller::update(login_response msg)
+    template <>
+    constexpr bool handles_message<connecting_controller, login_response> =
+        true;
+
+    template <>
+    constexpr bool handles_message<world_controller, battle_message> = true;
+
+}  // namespace
+
+namespace
 {
-    std::cout << "Logged in with key " << msg.key << '\n';
-    // session_key_ = msg.key;
-}
-
-void game_controller::update(map_response msg)
-{
-    // std::cout << "Updating map\n";
-    // std::visit(
-    //    [&msg, &self = *this](auto& s) {  //
-    //        update_specific(self, s, msg);
-    //    },
-    //    state_);
-    // updated_ = true;
-}
-
-void game_controller::update(unknown_message msg)
-{
-    std::cerr << "Unknown message `" << msg.id << " " << msg.content << "`\n";
-}
-
-void game_controller::update(battle_message msg)
-{
-    std::cout << "Into battle! There are " << msg.battle.teams().size()
-              << " teams, you are number " << msg.team_id << '\n';
-
-    if (msg.team_id >= msg.battle.teams().size()) {
-        std::cerr << "WARN: invalid team id\n";
-        return;
+    template <typename State, typename Controller, typename Message>
+    void respond(Controller& c, Message m, State& s)
+    {
+        using C = typename std::decay<decltype(c)>::type;
+        using M = typename std::decay<decltype(m)>::type;
+        if constexpr (handles_message<C, M>) {
+            c.update(s, std::move(m));
+        } else {
+            std::cout << "WARN: ignoring message " << id<Message> << '\n';
+        }
     }
+}  // namespace
 
-    this->state(battle_controller{battle_facet{0, 0, 0, 0}, std::move(msg.battle), msg.team_id});
+void game_controller::update(server_message msg)
+{
+    std::visit(
+        [self = this, &msg](auto& c) {
+            std::visit(
+                [self, &c](auto m) {  //
+                    respond(c, std::move(m), *self);
+                },
+                std::move(msg));
+        },
+        state_);
+    updated_ = true;
 }
 
 void game_controller::update(const mouse& m)
@@ -118,3 +105,14 @@ void game_controller::draw(canvas& c)
 }
 
 bool game_controller::updated() const noexcept { return updated_; }
+
+void game_controller::to_world(world w)
+{
+    state_ = world_controller{std::move(w), world_facet{0, 0, 0, 0}};
+}
+
+void game_controller::to_battle(battle b, std::size_t tid)
+{
+    //
+    state_ = battle_controller{battle_facet{0, 0, 0, 0}, std::move(b), tid};
+}
