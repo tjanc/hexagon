@@ -29,12 +29,12 @@ namespace hexagon::client
 
     class unit_texture_cache
     {
-        std::array<hexagon::sdl::texture, 1> units_;
+        std::array<hexagon::sdl::texture, 2> units_;
 
        public:
         explicit unit_texture_cache(hexagon::sdl::renderer& renderer);
 
-        sdl::texture& at(model::race r, perspective p);
+        sdl::texture& at(model::unit_job j, perspective p);
 
         auto begin() const { return units_.begin(); }
         auto end() const { return units_.end(); }

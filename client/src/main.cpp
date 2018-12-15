@@ -2,7 +2,6 @@
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
 #include <emscripten.h>
-#include <iostream>
 
 #include "game.hpp"
 #include "connection.hpp"

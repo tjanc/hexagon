@@ -6,12 +6,23 @@ project(HexagonModel VERSION 0.0.2 LANGUAGES CXX)
 add_library(model STATIC
     src/map_loader.cpp
     src/battle.cpp
+    src/battle_io.cpp
     src/map.cpp
+    src/map_io.cpp
     src/tile.cpp
+    src/tile_io.cpp
+    src/team_io.cpp
+    src/unit.cpp
+    src/unit_io.cpp
+    src/unit_moving.cpp
+    src/units_moved.cpp
     src/message.cpp
     src/version_message.cpp
     src/map_request.cpp
     src/map_response.cpp
+    src/battle_message.cpp
+    src/login_request.cpp
+    src/login_response.cpp
     )
 set_target_properties(model PROPERTIES OUTPUT_NAME hexagon-model)
 

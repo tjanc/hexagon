@@ -4,32 +4,42 @@
 #ifndef HEXAGON_CLIENT_BATTLE_FACET_H_
 #define HEXAGON_CLIENT_BATTLE_FACET_H_
 
+#include <SDL.h>
 #include "map_facet.hpp"
+
+namespace hexagon::model
+{
+    class unit_moving;
+    class units_moved;
+}
 
 namespace hexagon::client
 {
     class canvas;
     class moving_controller;
-}
+}  // namespace hexagon::client
 
 namespace hexagon::client
 {
     class battle_facet
     {
-        int width_ = 0;
-        int height_ = 0;
-
+        SDL_Rect dimensions_;
         map_facet map_facet_;
 
        public:
-        battle_facet(int width, int height) noexcept;
+        battle_facet(int x, int y, int width, int height) noexcept;
 
        public:
-        void draw(canvas& r, const moving_controller& model) const;
+        void draw(canvas&, const model::unit_moving&) const;
+        void draw(canvas&, const model::units_moved&) const;
 
        public:
-        const map_facet& map() const noexcept { return map_facet_; }
-        map_facet& map() noexcept { return map_facet_; }
+        const map_facet& map() const noexcept;
+        map_facet& map() noexcept;
+
+       public:
+        int width() const noexcept;
+        int height() const noexcept;
     };
 }  // namespace hexagon::client
 

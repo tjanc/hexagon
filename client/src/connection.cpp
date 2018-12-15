@@ -61,6 +61,7 @@ void connection::_message_buffered()
     // TODO: solve in inline JS before writing to buffer
     input_buffer_.pop_back();
     auto result = read_server_message(input_buffer_);
+
     input_buffer_.clear();
 
     messages_.emplace_back(std::move(result));
