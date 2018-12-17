@@ -25,13 +25,10 @@ using namespace hexagon::sdl;
 using namespace hexagon::model;
 using namespace hexagon::protocol;
 
-game::game(connection& c, int x, int y, int width, int height, bool fullscreen)
-    : server_(c),
-      graphics_(),
-      window_(graphics_, "Hexagon " HEXAGON_CLIENT_VERSION, x, y, width, height,
-              fullscreen),
-      canvas_(window_),
-      game_controller_(connecting_facet{x, y, width, height})
+game::game(graphics& g, connection& c)
+    : graphics_(g),
+      server_(c),
+      game_controller_(connecting_facet{0, 0, g.width(), g.height()})
 {
 }
 
@@ -41,6 +38,7 @@ bool game::handleEvents()
     if (1 == SDL_PollEvent(&event)) {
         switch (event.type) {
             default:
+                std::cout << "Unhandled event" << event.type << '\n';
                 break;
             case SDL_MOUSEMOTION:
                 mouse_.event(event.motion);
@@ -48,8 +46,19 @@ bool game::handleEvents()
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
                 mouse_.event(event.button);
+                break;
+            case SDL_WINDOWEVENT:
+                switch (event.window.event) {
+                    case SDL_WINDOWEVENT_RESIZED:
+                        std::cout << "--- Resized\n";
+                        break;
+                    default:
+                        break;
+                }
+                break;
             case SDL_QUIT:
                 return false;
+                break;
         }
     }
 
@@ -67,15 +76,21 @@ void game::update()
     server_.handle_all([& c = game_controller_](auto msg) {  //
         c.update(std::move(msg));
     });
+
+    const auto w = graphics_.width();
+    const auto h = graphics_.height();
+    graphics_.handle_all([& c = game_controller_, w, h](const auto&) {  //
+        c.resize(w, h);
+    });
 }
 
 void game::render()
 {
     if (game_controller_.updated()) {
-        canvas_->set_draw_color(10, 10, 10, 255);
-        canvas_->clear();
-        game_controller_.draw(canvas_);
-        canvas_->present();
+        graphics_->set_draw_color(10, 10, 10, 255);
+        graphics_->clear();
+        game_controller_.draw(graphics_);
+        graphics_->present();
     }
 }
 

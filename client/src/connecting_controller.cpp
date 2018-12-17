@@ -10,6 +10,7 @@
 #include "connection.hpp"
 #include "game_controller.hpp"
 #include "mouse.hpp"
+#include "world_controller.hpp"
 
 using namespace hexagon::client;
 using namespace hexagon::model;
@@ -24,7 +25,7 @@ void connecting_controller::update(game_controller& c, const mouse& m) noexcept
 {
 }
 
-void connecting_controller::draw(canvas& c) const { facet_.draw(c, model_); }
+void connecting_controller::draw(graphics& c) const { facet_.draw(c, model_); }
 
 void connecting_controller::update(game_controller& c, version_response m)
 {
@@ -40,5 +41,8 @@ void connecting_controller::update(game_controller& c, login_response m)
 {
     std::cout << "Logged in with key " << m.key << '\n';
     // session_key_ = msg.key;
-    c.to_world(world{team{}});
+    c.to_world(world_controller{
+        world{team{}}, world_facet{0, 0, facet_.width(), facet_.height()}});
 }
+
+connecting_facet& connecting_controller::facet() noexcept { return facet_; }

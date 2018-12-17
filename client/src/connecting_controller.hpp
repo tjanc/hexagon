@@ -5,14 +5,14 @@
 #define HEXAGON_CLIENT_CONNECTING_CONTROLLER_H_
 
 #include <hexagon/model/connecting.hpp>
-#include <hexagon/protocol/version_message.hpp>
 #include <hexagon/protocol/login_response.hpp>
+#include <hexagon/protocol/version_message.hpp>
 #include "connecting_facet.hpp"
 
 namespace hexagon::client
 {
     class mouse;
-    class canvas;
+    class graphics;
     class game_controller;
 }  // namespace hexagon::client
 
@@ -37,9 +37,10 @@ namespace hexagon::client
         void update(game_controller&, const mouse&) noexcept;
         void update(game_controller&, protocol::version_response);
         void update(game_controller&, protocol::login_response);
+        connecting_facet& facet() noexcept;
 
        public:
-        void draw(canvas&) const;
+        void draw(graphics&) const;
     };
 }  // namespace hexagon::client
 

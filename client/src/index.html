@@ -1,0 +1,84 @@
+<!-- Copyright 2018 Thomas Jandecka. -->
+<!-- Subject to GNU GENERAL PUBLIC LICENSE Version 3. -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style>
+     * {
+       margin:0;
+       overflow:hidden;
+     }
+
+     canvas.emscripten {
+       border: 0px none;
+       display:block;
+     }
+  
+     p#fullScreenButton {
+       text-align: center;
+       visibility: hidden;
+     }
+  
+     p.startButton {
+       text-align: center;
+     }
+
+     #loadingDiv {
+       text-align: center;
+     }
+  </style>
+ </head>
+
+ <body>
+   <div id="loadingDiv">Loading game...</div>
+   <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+
+   <div style="width:200px; margin-left:auto; margin-right:auto">
+     <p class="startButton" onclick="start_function(this)">Start</p>
+     <p id="fullScreenButton" onclick="Module.requestFullScreen(true, true)">Full screen</p>
+   </div>
+
+   <script type='text/javascript'>
+     var Module = {
+         onRuntimeInitialized: function() {
+             var e = document.getElementById('loadingDiv');
+             e.style.visibility = 'hidden';
+             e.style.display = 'none';
+         }, 
+         canvas: (function() {
+             var canvas = document.getElementById('canvas');
+             return canvas;
+             })()
+     };
+
+     var start_function = function(o) {
+         o.style.visibility = "hidden";
+         document.getElementById("fullScreenButton").style.visibility="visible";
+         Module._hexagon_emrun();
+     };
+   </script>
+
+   <script>
+     (function() {
+       var memoryInitializer = 'hexagon-client.js.mem';
+       if (typeof Module['locateFile'] === 'function') {
+         memoryInitializer = Module['locateFile'](memoryInitializer);
+       } else if (Module['memoryInitializerPrefixURL']) {
+         memoryInitializer = Module['memoryInitializerPrefixURL'] + memoryInitializer;
+       }
+       var xhr = Module['memoryInitializerRequest'] = new XMLHttpRequest();
+       xhr.open('GET', memoryInitializer, true);
+       xhr.responseType = 'arraybuffer';
+       xhr.send(null);
+     })();
+
+     var script = document.createElement('script');
+     script.src = "hexagon-client.js";
+     document.body.appendChild(script);
+   </script>
+
+ </body>
+</html>

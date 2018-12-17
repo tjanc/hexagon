@@ -13,7 +13,7 @@ namespace hexagon::model
 
 namespace hexagon::client
 {
-    class canvas;
+    class graphics;
 }  // namespace hexagon::client
 
 namespace hexagon::client
@@ -26,7 +26,14 @@ namespace hexagon::client
         explicit connecting_facet(int x, int y, int width, int height) noexcept;
 
        public:
-        void draw(canvas&, const model::connecting&) const;
+        void resize(int w, int h) noexcept;
+
+       public:
+        int width() noexcept;
+        int height() noexcept;
+
+       public:
+        void draw(graphics&, const model::connecting&) const;
     };
 }  // namespace hexagon::client
 

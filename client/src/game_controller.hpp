@@ -16,7 +16,7 @@
 namespace hexagon::client
 {
     class mouse;
-    class canvas;
+    class graphics;
 }  // namespace hexagon::client
 
 namespace hexagon::client
@@ -39,14 +39,15 @@ namespace hexagon::client
        public:  // game controller visiting messages
         void update(protocol::server_message msg);
         void update(const mouse&);
+        void resize(int w, int h);
 
        public:
-        void draw(canvas&);
+        void draw(graphics&);
         bool updated() const noexcept;
 
        public:
-        void to_world(model::world);
-        void to_battle(model::battle, std::size_t tid);
+        void to_world(world_controller);
+        void to_battle(battle_controller);
     };
 }  // namespace hexagon::client
 

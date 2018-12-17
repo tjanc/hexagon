@@ -10,7 +10,7 @@
 #include "sdl/sdl.hpp"
 #include "sdl/window.hpp"
 
-#include "canvas.hpp"
+#include "graphics.hpp"
 #include "game_controller.hpp"
 
 namespace hexagon::client
@@ -19,23 +19,16 @@ namespace hexagon::client
 
     class game
     {
+        graphics& graphics_;
         connection& server_;
-        // graphics
-        sdl::sdl graphics_;
+
         mouse mouse_;
 
-        sdl::window window_;
-        canvas canvas_;
-
-        // models
         game_controller game_controller_;
-
-        // running?
         bool running_ = true;
 
        public:
-        game(connection& c, int x, int y, int width, int height,
-             bool fullscreen);
+        game(graphics& g, connection& c);
 
        public:
         bool handleEvents();

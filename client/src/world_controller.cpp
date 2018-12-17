@@ -4,8 +4,8 @@
 #include "world_controller.hpp"
 
 #include <iostream>
-#include "canvas.hpp"
 #include "game_controller.hpp"
+#include "graphics.hpp"
 #include "mouse.hpp"
 
 using namespace hexagon::client;
@@ -19,7 +19,7 @@ world_controller::world_controller(world m, world_facet facet) noexcept
 
 void world_controller::update(game_controller& c, const mouse& m) noexcept {}
 
-void world_controller::draw(canvas& c) const { facet_.draw(c, model_); }
+void world_controller::draw(graphics& c) const { facet_.draw(c, model_); }
 
 void world_controller::update(game_controller& c, battle_message m)
 {
@@ -31,5 +31,9 @@ void world_controller::update(game_controller& c, battle_message m)
         return;
     }
 
-    c.to_battle(std::move(m.battle), m.team_id);
+    c.to_battle(
+        battle_controller{battle_facet{0, 0, facet_.width(), facet_.height()},
+                          std::move(m.battle), m.team_id});
 }
+
+world_facet& world_controller::facet() noexcept { return facet_; }

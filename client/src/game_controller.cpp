@@ -5,8 +5,10 @@
 
 #include <hexagon/model/map_loader.hpp>
 #include <hexagon/protocol/io/unit_io.hpp>
+#include <iostream>
 #include <type_traits>
 #include "connection.hpp"
+#include "graphics.hpp"
 #include "mouse.hpp"
 
 using namespace hexagon::client;
@@ -25,11 +27,11 @@ namespace
 
 namespace
 {
-    void draw_specific(const connecting_controller&, canvas&) {}
+    void draw_specific(const connecting_controller&, graphics&) {}
 
-    void draw_specific(const battle_controller& s, canvas& c) { s.draw(c); }
+    void draw_specific(const battle_controller& s, graphics& c) { s.draw(c); }
 
-    void draw_specific(const world_controller&, canvas&) {}
+    void draw_specific(const world_controller&, graphics&) {}
 }  // namespace
 
 game_controller::game_controller(connecting_facet facet)
@@ -94,25 +96,26 @@ void game_controller::update(const mouse& m)
     updated_ = true;
 }
 
-void game_controller::draw(canvas& c)
+void game_controller::draw(graphics& c)
 {
-    std::visit(
-        [&c](const auto& s) {  //
-            return draw_specific(s, c);
-        },
-        state_);
+    if (updated_) {
+        std::visit(
+            [&c](const auto& s) {  //
+                return draw_specific(s, c);
+            },
+            state_);
+    }
     updated_ = false;
 }
 
 bool game_controller::updated() const noexcept { return updated_; }
 
-void game_controller::to_world(world w)
-{
-    state_ = world_controller{std::move(w), world_facet{0, 0, 0, 0}};
-}
+void game_controller::to_world(world_controller w) { state_ = std::move(w); }
 
-void game_controller::to_battle(battle b, std::size_t tid)
+void game_controller::to_battle(battle_controller b) { state_ = std::move(b); }
+
+void game_controller::resize(int w, int h)
 {
-    //
-    state_ = battle_controller{battle_facet{0, 0, 0, 0}, std::move(b), tid};
+    std::visit([w, h](auto& s) { s.facet().resize(w, h); }, state_);
+    updated_ = true;
 }

@@ -11,7 +11,7 @@
 namespace hexagon::client
 {
     class mouse;
-    class canvas;
+    class graphics;
     class game_controller;
 }  // namespace hexagon::client
 
@@ -33,9 +33,10 @@ namespace hexagon::client
        public:
         void update(game_controller&, const mouse&) noexcept;
         void update(game_controller&, protocol::battle_message);
+        world_facet& facet() noexcept;
 
        public:
-        void draw(canvas&) const;
+        void draw(graphics&) const;
     };
 }  // namespace hexagon::client
 

@@ -11,11 +11,11 @@ namespace hexagon::model
 {
     class unit_moving;
     class units_moved;
-}
+}  // namespace hexagon::model
 
 namespace hexagon::client
 {
-    class canvas;
+    class graphics;
     class moving_controller;
 }  // namespace hexagon::client
 
@@ -38,8 +38,11 @@ namespace hexagon::client
         model::basic_map_index hover() const noexcept;
 
        public:
-        void draw(canvas&, const model::unit_moving&) const;
-        void draw(canvas&, const model::units_moved&) const;
+        void resize(int w, int h) noexcept;
+
+       public:
+        void draw(graphics&, const model::unit_moving&) const;
+        void draw(graphics&, const model::units_moved&) const;
     };
 }  // namespace hexagon::client
 

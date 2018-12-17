@@ -24,7 +24,8 @@ namespace
         map& field = model.battlefield().get_map();
 
         if (m.moved()) {
-            auto idx = facet.map().transpose(m.x, m.y);
+            auto idx = facet.transpose(m.x, m.y);
+
             if (contains(field, idx)) facet.map().hover(idx);
         }
 
@@ -62,7 +63,7 @@ void battle_controller::update(const mouse& m) noexcept
         state_);
 }
 
-void battle_controller::draw(canvas& c) const
+void battle_controller::draw(graphics& c) const
 {
     std::visit(
         [&c, &facet = facet_](const auto& m) {  //
@@ -70,3 +71,5 @@ void battle_controller::draw(canvas& c) const
         },
         state_);
 }
+
+battle_facet& battle_controller::facet() noexcept { return facet_; }

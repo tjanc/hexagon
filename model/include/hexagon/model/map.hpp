@@ -128,7 +128,7 @@ namespace hexagon::model
     template <typename T>
     bool contains(const basic_map<T>& m, basic_map_index i) noexcept
     {
-        return i.x > 0 && i.x < m.width() && i.y > 0 && i.y < m.height();
+        return i.x >= 0 && i.x < m.width() && i.y >= 0 && i.y < m.height();
     }
 
     template <typename T>

@@ -38,10 +38,13 @@ namespace hexagon::client
                           std::size_t) noexcept;
 
        public:
+        battle_facet& facet() noexcept;
+
+       public:
         void update(const mouse&) noexcept;
 
        public:
-        void draw(canvas&) const;
+        void draw(graphics&) const;
     };
 }  // namespace hexagon::client
 

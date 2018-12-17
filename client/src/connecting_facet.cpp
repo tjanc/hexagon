@@ -13,6 +13,14 @@ connecting_facet::connecting_facet(int x, int y, int width, int height) noexcept
 {
 }
 
-void connecting_facet::draw(canvas& c, const connecting& model) const
+void connecting_facet::draw(graphics& c, const connecting& model) const {}
+
+void connecting_facet::resize(int w, int h) noexcept
 {
+    dimensions_.w = w;
+    dimensions_.h = h;
 }
+
+int connecting_facet::width() noexcept { return dimensions_.w; }
+
+int connecting_facet::height() noexcept { return dimensions_.h; }

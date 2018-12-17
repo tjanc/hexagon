@@ -13,4 +13,14 @@ world_facet::world_facet(int x, int y, int width, int height) noexcept
 {
 }
 
-void world_facet::draw(canvas& c, const world& model) const {}
+void world_facet::draw(graphics& c, const world& model) const {}
+
+void world_facet::resize(int w, int h) noexcept
+{
+    dimensions_.w = w;
+    dimensions_.h = h;
+}
+
+int world_facet::width() noexcept { return dimensions_.w; }
+
+int world_facet::height() noexcept { return dimensions_.h; }

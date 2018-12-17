@@ -11,11 +11,11 @@ namespace hexagon::model
 {
     class unit_moving;
     class units_moved;
-}
+}  // namespace hexagon::model
 
 namespace hexagon::client
 {
-    class canvas;
+    class graphics;
     class moving_controller;
 }  // namespace hexagon::client
 
@@ -30,8 +30,11 @@ namespace hexagon::client
         battle_facet(int x, int y, int width, int height) noexcept;
 
        public:
-        void draw(canvas&, const model::unit_moving&) const;
-        void draw(canvas&, const model::units_moved&) const;
+        model::basic_map_index transpose(int x, int y) const noexcept;
+
+       public:
+        void draw(graphics&, const model::unit_moving&) const;
+        void draw(graphics&, const model::units_moved&) const;
 
        public:
         const map_facet& map() const noexcept;
@@ -40,6 +43,8 @@ namespace hexagon::client
        public:
         int width() const noexcept;
         int height() const noexcept;
+
+        void resize(int w, int h) noexcept;
     };
 }  // namespace hexagon::client
 
