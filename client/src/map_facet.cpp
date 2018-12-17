@@ -26,7 +26,7 @@ namespace
 
     constexpr int BY_ROW_X_OFFSET = TOP_VERTEX_X_OFFSET;
 
-    constexpr int ROW_HEIGHT = BOTTOM_LEFT_Y_VERTEX_OFFSET;
+    constexpr int ROW_HEIGHT = BOTTOM_LEFT_Y_VERTEX_OFFSET + 1;
     constexpr int COLUMN_WIDTH = TILE_WIDTH;
 
     constexpr int BOX_HEIGHT = 8;
@@ -139,24 +139,22 @@ void map_facet::draw(graphics& renderer, const unit_moving& model) const
         {
             sdl::texture& tile_texture =
                 renderer.tiles().tile_surface(t.type());
+
             if (hover_tile_ == idx)
                 tile_texture.set_color_mod(255, 255, 255);
             else {
-                if (model.reachable(idx)) {
-                    tile_texture.set_color_mod(200, 200, 255);
-                } else {
-                    const uint8_t c = elev < 3 ? (170 + elev * 20) : 230;
-                    tile_texture.set_color_mod(c, c, c);
-                }
+                const uint8_t c = elev < 3 ? (170 + elev * 20) : 230;
+                tile_texture.set_color_mod(c, c, c);
             }
             renderer->copy(tile_texture, destination);
+            if (model.reachable(idx))
+                renderer->copy(renderer.tiles().tile_hover(), destination);
         }
 
         // object
         if (const unit* u = t.get_if_unit()) {
             auto& unit_texture =
                 renderer.units().at(u->job(), perspective::fright);
-            destination.y -= BOX_HEIGHT + BOX_HEIGHT / 2;
             SDL_Rect unit_dest = {
                 .x = destination.x - (UNIT_WIDTH - TILE_WIDTH) / 2,
                 .y = destination.y - (UNIT_HEIGHT - TILE_HEIGHT) / 2,
