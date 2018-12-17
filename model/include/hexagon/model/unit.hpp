@@ -128,6 +128,8 @@ namespace hexagon::model
 
        public:
         unit() = default;
+        unit(std::size_t, unit_job);
+
         unit(std::size_t,      //
              unit_job,         //
              std::uint16_t,    //
@@ -138,7 +140,7 @@ namespace hexagon::model
              powers_container  //
         );
 
-        unit(std::size_t);
+        explicit unit(std::size_t);
 
        public:
         std::uint16_t level() const noexcept;

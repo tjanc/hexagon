@@ -74,6 +74,22 @@ namespace
             .w = TILE_WIDTH,
             .h = 15};
     }
+
+    void render_objects(graphics& renderer, const tile& t, SDL_Rect destination)
+    {
+        if (const unit* u = t.get_if_unit()) {
+            auto& unit_texture =
+                renderer.units().at(u->job(), perspective::fright);
+            const auto usize = unit_texture.size();
+            SDL_Rect unit_dest = {
+                .x = destination.x,
+                .y = destination.y - usize.second + TILE_HEIGHT,
+                .w = usize.first,
+                .h = usize.second};
+
+            renderer->copy(unit_texture, unit_dest);
+        }
+    }
 }  // namespace
 
 void map_facet::draw(graphics& renderer, const units_moved& model) const
@@ -102,19 +118,7 @@ void map_facet::draw(graphics& renderer, const units_moved& model) const
             renderer->copy(tile_texture, destination);
         }
 
-        // object
-        if (const unit* u = t.get_if_unit()) {
-            auto& unit_texture =
-                renderer.units().at(u->job(), perspective::fright);
-            destination.y -= BOX_HEIGHT + BOX_HEIGHT / 2;
-            SDL_Rect unit_dest = {
-                .x = destination.x - (UNIT_WIDTH - TILE_WIDTH) / 2,
-                .y = destination.y - (UNIT_HEIGHT - TILE_HEIGHT) / 2,
-                .w = UNIT_WIDTH,
-                .h = UNIT_HEIGHT};
-
-            renderer->copy(unit_texture, unit_dest);
-        }
+        render_objects(renderer, t, destination);
     });
 
     renderer->set_draw_color(30, 30, 30, 255);
@@ -151,18 +155,7 @@ void map_facet::draw(graphics& renderer, const unit_moving& model) const
                 renderer->copy(renderer.tiles().tile_hover(), destination);
         }
 
-        // object
-        if (const unit* u = t.get_if_unit()) {
-            auto& unit_texture =
-                renderer.units().at(u->job(), perspective::fright);
-            SDL_Rect unit_dest = {
-                .x = destination.x - (UNIT_WIDTH - TILE_WIDTH) / 2,
-                .y = destination.y - (UNIT_HEIGHT - TILE_HEIGHT) / 2,
-                .w = UNIT_WIDTH,
-                .h = UNIT_HEIGHT};
-
-            renderer->copy(unit_texture, unit_dest);
-        }
+        render_objects(renderer, t, destination);
     });
 }
 

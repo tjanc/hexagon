@@ -63,8 +63,8 @@ namespace
             battle b{*m};
 
             b.join(team{1, team::unit_container{
-                               unit{1},  //
-                               unit{2}   //
+                               unit{0, unit_job::warrior},  //
+                               unit{1, unit_job::mage}      //
                            }});
             battle_message message{std::move(b), 0};
 
