@@ -5,6 +5,7 @@
 #define HEXAGON_SERVER_WEBSOCKET_SESSION_H_
 
 #include <memory>
+#include "local_state.hpp"
 #include "net.hpp"
 
 namespace hexagon::server
@@ -17,6 +18,7 @@ namespace hexagon::server
         beast::flat_buffer buffer_;
         websocket::stream<tcp::socket> ws_;
         std::shared_ptr<shared_state> state_;
+        local_state local_;
         std::vector<std::shared_ptr<std::string const>> queue_;
 
         void fail(boost::system::error_code ec, char const* what);
@@ -29,6 +31,11 @@ namespace hexagon::server
         websocket_session(tcp::socket socket,
                           const std::shared_ptr<shared_state>& state);
 
+       public:
+        local_state& local() noexcept;
+        const local_state& local() const noexcept;
+
+       public:
         template <class Body, class Allocator>
         void run(http::request<Body, http::basic_fields<Allocator>> req);
 

@@ -41,8 +41,11 @@ namespace hexagon::client
         void resize(int w, int h) noexcept;
 
        public:
-        void draw(graphics&, const model::unit_moving&) const;
-        void draw(graphics&, const model::units_moved&) const;
+        void draw(graphics&, const model::map&,
+                  const model::unit_moving&) const;
+
+        void draw(graphics&, const model::map&,
+                  const model::units_moved&) const;
     };
 }  // namespace hexagon::client
 

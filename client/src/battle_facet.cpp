@@ -44,14 +44,16 @@ battle_facet::battle_facet(int x, int y, int width, int height) noexcept
 {
 }
 
-void battle_facet::draw(graphics& c, const unit_moving& model) const
+void battle_facet::draw(graphics& c, const model::map& m,
+                        const unit_moving& model) const
 {
-    map_facet_.draw(c, model);
+    map_facet_.draw(c, m, model);
 }
 
-void battle_facet::draw(graphics& c, const units_moved& model) const
+void battle_facet::draw(graphics& c, const model::map& m,
+                        const units_moved& model) const
 {
-    map_facet_.draw(c, model);
+    map_facet_.draw(c, m, model);
 }
 
 const map_facet& battle_facet::map() const noexcept { return map_facet_; }

@@ -13,7 +13,6 @@ namespace hexagon::model
     class units_moved
     {
        private:
-        battle model_;
         battle::team_container::iterator team_;
 
        public:
@@ -25,9 +24,6 @@ namespace hexagon::model
         units_moved& operator=(units_moved&&) noexcept = default;
 
        public:
-        const battle& battlefield() const noexcept;
-        battle& battlefield() noexcept;
-
         const team& my_team() const noexcept;
         team& my_team() noexcept;
     };

@@ -3,12 +3,15 @@
 
 #include "shared_state.hpp"
 
+#include "local_state.hpp"
+
 #include <cassert>
 #include <iostream>
 #include <sstream>
 
 #include <hexagon/model/battle.hpp>
 #include <hexagon/model/map_loader.hpp>
+#include <hexagon/model/unit_moving.hpp>
 #include <hexagon/protocol/io/battle_io.hpp>
 #include <hexagon/protocol/message.hpp>
 #include "websocket_session.hpp"
@@ -21,11 +24,6 @@ namespace
     using namespace hexagon::protocol;
     using namespace hexagon::model;
 
-    void handle_client_message(const map_request& request,
-                               websocket_session& source, battle& b)
-    {
-    }
-
     void handle_client_message(const login_request& request,
                                websocket_session& source, battle& b)
     {
@@ -33,9 +31,13 @@ namespace
 
         std::cout << "Someone is logging in as " << request.name << "\n";
 
-        // TODO login logic, returning dummy session key
+        {
+            // TODO login logic, returning dummy session key
+        }
 
         {
+            source.local().to_world(world{team{}});
+
             std::string msg;
             write_message<login_response>(msg, "42");
             source.send(std::make_shared<std::string>(std::move(msg)));
@@ -46,6 +48,8 @@ namespace
                                unit{0, unit_job::warrior},  //
                                unit{1, unit_job::mage}      //
                            }});
+
+            source.local().to_battle(b, 0);
 
             std::string msg;
             write_message<battle_message>(msg, 0, b);
@@ -59,10 +63,74 @@ namespace
         std::cerr << "Received unknown_message\n";
     }
 
+    void handle_move_request(const move_request&, units_moved&,
+                             websocket_session&, battle&)
+    {
+        std::cerr << "WARN: unexpected move request in units_moved state\n";
+    }
+
+    void handle_move_request(const move_request& request, unit_moving& cstate,
+                             websocket_session& source, battle& b)
+    {
+        std::cout << "Correct state, handling movement message\n";
+        int i = 1;
+        for (const auto& cmd : request.moves) {
+            if (cstate.reachable(b.get_map(), cmd.second)) {
+                cstate.move(b.get_map(), cmd.second);
+
+                if (cstate.has_next()) {
+                    cstate.next(b);
+                } else {
+                    if (i == request.moves.size()) {
+                        std::cout << "INFO: moves accepted\n";
+                        break;
+                    } else {
+                        std::cerr << "WARN: dropping trailing move commands\n";
+                        break;
+                    }
+                }
+            } else {
+                std::cerr << "WARN: dropping move command not in range\n";
+            }
+            ++i;
+        }
+
+        // TODO check if last player to commit, notify others
+    }
+
+    void handle_move_request(const move_request&, connecting&,
+                             websocket_session&, battle&)
+    {
+        std::cerr << "WARN: unexpected move request in connecting state\n";
+    }
+
+    void handle_move_request(const move_request&, world&, websocket_session&,
+                             battle&)
+    {
+        std::cerr << "WARN: unexpected move request in world state\n";
+    }
+
+    void handle_move_request(const move_request& request,
+                             local_state::battling& cstate,
+                             websocket_session& source, battle& b)
+    {
+        std::visit(
+            [&request, &source, &b](auto& cstate) {
+                handle_move_request(request, cstate, source, b);
+            },
+            cstate);
+    }
+
     void handle_client_message(const move_request& request,
                                websocket_session& source, battle& b)
     {
         std::cout << "Received movement message\n";
+
+        std::visit(
+            [&request, &source, &b](auto& cstate) {
+                handle_move_request(request, cstate, source, b);
+            },
+            source.local().raw());
     }
 }  // namespace
 

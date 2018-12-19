@@ -5,6 +5,7 @@
 #define HEXAGON_CLIENT_BATTLE_FACET_H_
 
 #include <SDL.h>
+#include <hexagon/model/map.hpp>
 #include "map_facet.hpp"
 
 namespace hexagon::model
@@ -33,8 +34,11 @@ namespace hexagon::client
         model::basic_map_index transpose(int x, int y) const noexcept;
 
        public:
-        void draw(graphics&, const model::unit_moving&) const;
-        void draw(graphics&, const model::units_moved&) const;
+        void draw(graphics&, const model::map&,
+                  const model::unit_moving&) const;
+
+        void draw(graphics&, const model::map&,
+                  const model::units_moved&) const;
 
        public:
         const map_facet& map() const noexcept;

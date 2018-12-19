@@ -18,8 +18,6 @@ add_library(model STATIC
     src/units_moved.cpp
     src/message.cpp
     src/version_message.cpp
-    src/map_request.cpp
-    src/map_response.cpp
     src/battle_message.cpp
     src/login_request.cpp
     src/login_response.cpp

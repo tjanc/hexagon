@@ -11,8 +11,6 @@
 #include "battle_message.hpp"
 #include "login_request.hpp"
 #include "login_response.hpp"
-#include "map_request.hpp"
-#include "map_response.hpp"
 #include "move_request.hpp"
 #include "unknown_message.hpp"
 #include "version_message.hpp"
@@ -30,12 +28,6 @@ namespace hexagon::protocol
     constexpr const char* id<version_response> = VERSION_RESPONSE_ID;
 
     template <>
-    constexpr const char* id<map_request> = MAP_REQUEST_ID;
-
-    template <>
-    constexpr const char* id<map_response> = MAP_RESPONSE_ID;
-
-    template <>
     constexpr const char* id<battle_message> = BATTLE_MESSAGE_ID;
 
     template <>
@@ -50,13 +42,11 @@ namespace hexagon::protocol
     using server_message = std::variant<  //
         unknown_message,                  //
         version_response,                 //
-        map_response,                     //
         battle_message,                   //
         login_response>;
 
     using client_message = std::variant<  //
         unknown_message,                  //
-        map_request,                      //
         login_request,                    //
         move_request>;
 

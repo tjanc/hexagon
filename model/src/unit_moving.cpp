@@ -75,37 +75,33 @@ namespace
     }
 }  // namespace
 
-unit_moving::unit_moving(battle b, std::size_t tidx, std::size_t uidx, unit_moving::commands_container cmds) noexcept
-    : model_{std::move(b)},
-      team_{std::next(model_.teams().begin(), tidx)},
+unit_moving::unit_moving(battle& b, std::size_t tidx, std::size_t uidx,
+                         unit_moving::commands_container cmds) noexcept
+    : team_{std::next(b.teams().begin(), tidx)},
       unit_{std::next(team_->units.begin(), uidx)},
-      unit_position_{find_unit(model_.get_map(), *unit_)},
-      reach_map_{generate_reach_map(model_.get_map(), unit_position_)},
+      unit_position_{find_unit(b.get_map(), *unit_)},
+      reach_map_{generate_reach_map(b.get_map(), unit_position_)},
       commands_{std::move(cmds)}
 {
 }
 
-unit_moving::unit_moving(battle b, std::size_t tidx) noexcept
-    : unit_moving(std::move(b), tidx, 0)
+unit_moving::unit_moving(battle& b, std::size_t tidx) noexcept
+    : unit_moving(b, tidx, 0)
 {
 }
-
-const battle& unit_moving::battlefield() const noexcept { return model_; }
-
-battle& unit_moving::battlefield() noexcept { return model_; }
 
 basic_map_index unit_moving::position() const noexcept
 {
     return unit_position_;
 }
 
-bool unit_moving::reachable(basic_map_index idx) const noexcept
+bool unit_moving::reachable(const map& m, basic_map_index idx) const noexcept
 {
     if (!contains(reach_map_, idx)) return false;
 
     if (idx == unit_position_) return true;
 
-    return model_.get_map().at(idx).empty() && reach_map_.at(idx) > 0;
+    return m.at(idx).empty() && reach_map_.at(idx) > 0;
 }
 
 bool unit_moving::has_next() const noexcept
@@ -113,28 +109,24 @@ bool unit_moving::has_next() const noexcept
     return std::next(unit_) != team_->units.end();
 }
 
-void unit_moving::next()
+void unit_moving::next(battle& b)
 {
+    assert(unit_ != team_->units.end());
     ++unit_;
-    if (team_->units.end() == unit_) {
-        auto ntidx = team_ - model_.teams().begin();
-        *this = unit_moving(std::move(model_), ntidx);
-
-    } else {
-        auto ntidx = team_ - model_.teams().begin();
+    if (team_->units.end() != unit_) {
+        auto ntidx = team_ - b.teams().begin();
         auto nuidx = unit_ - team_->units.begin();
-        *this =
-            unit_moving(std::move(model_), ntidx, nuidx, std::move(commands_));
+        *this = unit_moving(b, ntidx, nuidx, std::move(commands_));
     }
 }
 
-void unit_moving::move(basic_map_index idx)
+void unit_moving::move(map& m, basic_map_index idx)
 {
     using namespace hexagon::protocol::io;
 
     std::cout << "Moving unit from " << unit_position_ << " to " << idx << '\n';
     commands_.emplace_back(unit_position_, idx);
-    move_unit(model_.get_map(), unit_position_, idx);
+    move_unit(m, unit_position_, idx);
 }
 
 battle::team_container::const_iterator unit_moving::my_team() const noexcept

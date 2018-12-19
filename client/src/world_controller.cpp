@@ -33,9 +33,10 @@ void world_controller::update(game_controller& c, battle_message m)
         return;
     }
 
-    c.to_battle(
-        battle_controller{battle_facet{0, 0, facet_.width(), facet_.height()},
-                          std::move(m.battle), m.team_id});
+    c.to_battle(battle_controller{
+        std::move(m.battle),                                  //
+        battle_facet{0, 0, facet_.width(), facet_.height()},  //
+        m.team_id});
 }
 
 world_facet& world_controller::facet() noexcept { return facet_; }

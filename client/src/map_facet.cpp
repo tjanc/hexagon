@@ -103,9 +103,9 @@ namespace
     }
 }  // namespace
 
-void map_facet::draw(graphics& renderer, const units_moved& model) const
+void map_facet::draw(graphics& renderer, const map& m,
+                     const units_moved& model) const
 {
-    const auto& m = model.battlefield().get_map();
     iterate(m, [&renderer, this](const auto& t, auto idx) {
         auto tile_x = tile_base_x(dimensions_, idx.x, idx.y);
         auto tile_y = tile_base_y(dimensions_, idx.y);
@@ -138,12 +138,12 @@ void map_facet::draw(graphics& renderer, const units_moved& model) const
     renderer->fill_rect(dimensions_);
 }
 
-void map_facet::draw(graphics& renderer, const unit_moving& model) const
+void map_facet::draw(graphics& renderer, const map& m,
+                     const unit_moving& model) const
 {
     renderer->set_draw_blend_mode(SDL_BLENDMODE_ADD);
 
-    const auto& m = model.battlefield().get_map();
-    iterate(m, [&model, &renderer, this](const auto& t, auto idx) {
+    iterate(m, [&m, &model, &renderer, this](const auto& t, auto idx) {
         auto tile_x = tile_base_x(dimensions_, idx.x, idx.y);
         auto tile_y = tile_base_y(dimensions_, idx.y);
 
@@ -169,7 +169,7 @@ void map_facet::draw(graphics& renderer, const unit_moving& model) const
             renderer->copy(tile_texture, destination);
         }
 
-        if (model.reachable(idx))
+        if (model.reachable(m, idx))
             renderer->copy(renderer.tiles().tile_hover(), destination);
 
         render_objects(renderer, t, destination);

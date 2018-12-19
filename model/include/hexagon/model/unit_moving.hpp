@@ -18,9 +18,6 @@ namespace hexagon::model
         using commands_container = std::vector<move_command>;
 
        private:
-        /// battle unit is moving in
-        battle model_;
-
         /// team in control
         battle::team_container::iterator team_;
 
@@ -37,9 +34,9 @@ namespace hexagon::model
         std::vector<move_command> commands_;
 
        public:
-        unit_moving(battle b, std::size_t tidx, std::size_t uidx,
+        unit_moving(battle& b, std::size_t tidx, std::size_t uidx,
                     commands_container cmds = {}) noexcept;
-        unit_moving(battle b, std::size_t tidx) noexcept;
+        unit_moving(battle& b, std::size_t tidx) noexcept;
 
         unit_moving(const unit_moving&) noexcept = delete;
         unit_moving(unit_moving&&) noexcept = default;
@@ -47,19 +44,16 @@ namespace hexagon::model
         unit_moving& operator=(unit_moving&&) noexcept = default;
 
        public:
-        void move(basic_map_index);
-        void next();
+        void move(map& m, basic_map_index idx);
+        void next(battle& b);
 
        public:
-        const battle& battlefield() const noexcept;
-        battle& battlefield() noexcept;
-
         battle::team_container::const_iterator my_team() const noexcept;
         battle::team_container::iterator my_team() noexcept;
 
         basic_map_index position() const noexcept;
+        bool reachable(const map& m, basic_map_index idx) const noexcept;
 
-        bool reachable(basic_map_index) const noexcept;
         bool has_next() const noexcept;
 
         const commands_container& commands() const noexcept;

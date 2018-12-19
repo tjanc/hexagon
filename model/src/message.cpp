@@ -23,12 +23,6 @@ namespace
             return visit(std::move(arg));
         }
 
-        if (name == id<map_response>) {
-            map_response arg{};
-            iss >> arg;
-            return visit(std::move(arg));
-        }
-
         if (name == id<battle_message>) {
             battle_message arg{};
             iss >> arg;
@@ -55,12 +49,6 @@ namespace
 
         std::string name;
         iss >> name >> std::ws;
-
-        if (name == id<map_request>) {
-            map_request arg{};
-            iss >> arg;
-            return visit(std::move(arg));
-        }
 
         if (name == id<login_request>) {
             login_request arg{};

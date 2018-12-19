@@ -25,17 +25,17 @@ namespace hexagon::client
     class battle_controller
     {
        public:
-        using model = std::variant<  //
+        using state = std::variant<  //
             model::unit_moving,      //
             model::units_moved>;
 
        private:
-        model state_;
+        model::battle battle_;
+        state state_;
         battle_facet facet_;
 
        public:
-        battle_controller(battle_facet, hexagon::model::battle,
-                          std::size_t) noexcept;
+        battle_controller(model::battle, battle_facet, std::size_t) noexcept;
 
        public:
         battle_facet& facet() noexcept;
