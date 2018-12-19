@@ -8,6 +8,8 @@
 #include "graphics.hpp"
 #include "mouse.hpp"
 
+#include <hexagon/protocol/battle_message.hpp>
+
 using namespace hexagon::client;
 using namespace hexagon::model;
 using namespace hexagon::protocol;

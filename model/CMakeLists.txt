@@ -23,6 +23,7 @@ add_library(model STATIC
     src/battle_message.cpp
     src/login_request.cpp
     src/login_response.cpp
+    src/move_request.cpp
     )
 set_target_properties(model PROPERTIES OUTPUT_NAME hexagon-model)
 

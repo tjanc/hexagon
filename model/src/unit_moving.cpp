@@ -75,13 +75,13 @@ namespace
     }
 }  // namespace
 
-unit_moving::unit_moving(battle b, std::size_t tidx, std::size_t uidx) noexcept
+unit_moving::unit_moving(battle b, std::size_t tidx, std::size_t uidx, unit_moving::commands_container cmds) noexcept
     : model_{std::move(b)},
       team_{std::next(model_.teams().begin(), tidx)},
       unit_{std::next(team_->units.begin(), uidx)},
       unit_position_{find_unit(model_.get_map(), *unit_)},
       reach_map_{generate_reach_map(model_.get_map(), unit_position_)},
-      commands_{}
+      commands_{std::move(cmds)}
 {
 }
 
@@ -123,7 +123,8 @@ void unit_moving::next()
     } else {
         auto ntidx = team_ - model_.teams().begin();
         auto nuidx = unit_ - team_->units.begin();
-        *this = unit_moving(std::move(model_), ntidx, nuidx);
+        *this =
+            unit_moving(std::move(model_), ntidx, nuidx, std::move(commands_));
     }
 }
 

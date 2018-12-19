@@ -48,9 +48,10 @@ namespace hexagon::protocol::io
     {
         using namespace hexagon::protocol::io;
 
-        out << obj.size() << ' ' << obj.width() << ' ';
+        out << obj.size() <<  //
+            ' ' << obj.width();
 
-        for (const auto& tile : obj) out << tile;
+        for (const auto& t : obj) out << ' ' << t;
 
         return out;
     }

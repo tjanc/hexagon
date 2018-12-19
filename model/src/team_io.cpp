@@ -3,11 +3,13 @@
 
 #include <hexagon/protocol/io/team_io.hpp>
 
+#include <hexagon/model/team.hpp>
+
 #include <cassert>
 #include <ios>
 #include <iostream>
 
-#include <hexagon/protocol/io/unit_io.hpp>
+#include <hexagon/protocol/io/message_io.hpp>
 
 using namespace hexagon::model;
 using namespace hexagon::protocol;
@@ -36,9 +38,7 @@ std::istream& io::operator>>(std::istream& in, team& obj)
 
 std::ostream& io::operator<<(std::ostream& out, const team& obj)
 {
-    out << obj.id << ' '  //
-        << obj.units.size() << ' ';
-    for (const auto& u : obj.units) out << u;
+    out << obj.id << ' ' << obj.units;
 
     return out;
 }

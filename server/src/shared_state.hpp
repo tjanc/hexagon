@@ -8,6 +8,7 @@
 
 #include "net.hpp"
 #include "preload_assets.hpp"
+#include <hexagon/model/battle.hpp>
 
 namespace hexagon::server
 {
@@ -16,15 +17,15 @@ namespace hexagon::server
     class shared_state
     {
         preload_assets assets_;
+        model::battle test_battle_;
+
         std::string document_root_;
         std::unordered_set<websocket_session*> sessions_;
 
        public:
-        shared_state(preload_assets assets, std::string root)
-            : assets_(std::move(assets)), document_root_(std::move(root))
-        {
-        }
-        std::string version() const { return "0.0.1"; }
+        shared_state(preload_assets assets, std::string root);
+
+        std::string version() const { return "0.0.2"; }
 
        public:
         void join(websocket_session&);

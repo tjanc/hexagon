@@ -6,7 +6,10 @@
 
 #include <iostream>
 
-#include <hexagon/model/battle.hpp>
+namespace hexagon::model
+{
+    class battle;
+}
 
 namespace hexagon::protocol::io
 {

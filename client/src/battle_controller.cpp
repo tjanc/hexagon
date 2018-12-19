@@ -3,11 +3,19 @@
 
 #include "battle_controller.hpp"
 
+#include <hexagon/protocol/io/map_io.hpp>
+#include <hexagon/protocol/move_request.hpp>
+
+#include <hexagon/protocol/io/std_io.hpp>
+
 #include <iostream>
+#include "connection.hpp"
 #include "mouse.hpp"
+
 
 using namespace hexagon::client;
 using namespace hexagon::model;
+using namespace hexagon::protocol;
 
 namespace
 {
@@ -38,7 +46,9 @@ namespace
                 model.move(target);
 
                 if (!model.has_next()) {
+                    auto cmds = model.commands();
                     state = units_moved{std::move(model)};
+                    connection::instance().async_send<move_request>(cmds);
                 } else {
                     model.next();
                 }

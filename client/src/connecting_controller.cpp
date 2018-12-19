@@ -33,8 +33,7 @@ void connecting_controller::update(game_controller& c, version_response m)
     // TODO test client/server version comopatibility
 
     std::cout << "Log in as Johnny\n";
-    login_request request{"Johnny"};
-    connection::instance().async_send(request);
+    connection::instance().async_send<login_request>("Johnny");
 }
 
 void connecting_controller::update(game_controller& c, login_response m)

@@ -71,9 +71,9 @@ std::istream& io::operator>>(std::istream& in, tile_type& t)
 
 std::ostream& io::operator<<(std::ostream& out, const tile& t)
 {
-    out << t.type() << ' '       //
-        << t.elevation() << ' '  //
-        << (t.is_spawn() ? '1' : '0');
+    out << t.type() <<           //
+        ' ' << t.elevation() <<  //
+        ' ' << (t.is_spawn() ? '1' : '0');
     return out;
 }
 

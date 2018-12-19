@@ -19,8 +19,8 @@ std::istream& io::operator>>(std::istream& in, basic_map_index& obj)
 
 std::ostream& io::operator<<(std::ostream& out, const basic_map_index& obj)
 {
-    out << obj.x << ' '  //
-        << obj.y;        //
+    out << obj.x <<    //
+        ' ' << obj.y;  //
 
     return out;
 }

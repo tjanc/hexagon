@@ -52,12 +52,14 @@ basic_map_index map_facet::transpose(int x, int y) const noexcept
 
 namespace
 {
-    void render_elevation(graphics& renderer, const tile& t,
-                          SDL_Rect destination)
+    void render_elevation(graphics& renderer, const tile& t, int x, int y)
     {
-        const int elev = t.elevation();
         auto& filler = renderer.tiles().tile_filler(t.type());
-        for (int e = 0; e <= elev; ++e) {
+        const auto fsize = filler.size();
+        SDL_Rect destination = {
+            .x = x, .y = y, .w = fsize.first, .h = fsize.second};
+
+        for (int e = 0; e < t.elevation(); ++e) {
             const uint8_t c = e < 3 ? (170 + e * 20) : 230;
             filler.set_color_mod(c, c, c);
 
@@ -66,13 +68,22 @@ namespace
         }
     }
 
+    constexpr int tile_base_x(const SDL_Rect& dim, int x, int y)
+    {
+        return dim.x + x * COLUMN_WIDTH + (y % 2) * BY_ROW_X_OFFSET;
+    }
+
+    constexpr int tile_base_y(const SDL_Rect& dim, int y)
+    {
+        return ROW_HEIGHT + dim.y + y * ROW_HEIGHT + TILE_HEIGHT - 15;
+    }
+
     SDL_Rect tile_base_destination(const SDL_Rect& dim, int x, int y)
     {
-        return SDL_Rect{
-            .x = dim.x + x * COLUMN_WIDTH + (y % 2) * BY_ROW_X_OFFSET,
-            .y = ROW_HEIGHT + dim.y + y * ROW_HEIGHT + TILE_HEIGHT - 15,
-            .w = TILE_WIDTH,
-            .h = 15};
+        return SDL_Rect{.x = tile_base_x(dim, x, y),
+                        .y = tile_base_y(dim, y),
+                        .w = TILE_WIDTH,
+                        .h = 15};
     }
 
     void render_objects(graphics& renderer, const tile& t, SDL_Rect destination)
@@ -96,14 +107,16 @@ void map_facet::draw(graphics& renderer, const units_moved& model) const
 {
     const auto& m = model.battlefield().get_map();
     iterate(m, [&renderer, this](const auto& t, auto idx) {
+        auto tile_x = tile_base_x(dimensions_, idx.x, idx.y);
+        auto tile_y = tile_base_y(dimensions_, idx.y);
+
+        render_elevation(renderer, t, tile_x, tile_y);
+
         const int elev = t.elevation();
-
-        auto destination = tile_base_destination(dimensions_, idx.x, idx.y);
-
-        render_elevation(renderer, t, destination);
-
-        destination.h = TILE_HEIGHT;
-        destination.y -= TILE_HEIGHT - 15 + ((elev + 1) * BOX_HEIGHT);
+        SDL_Rect destination = {.x = tile_x,
+                                .y = tile_y - ROW_HEIGHT - elev * BOX_HEIGHT,
+                                .w = TILE_WIDTH,
+                                .h = TILE_HEIGHT};
 
         // tile surface
         {
@@ -131,13 +144,16 @@ void map_facet::draw(graphics& renderer, const unit_moving& model) const
 
     const auto& m = model.battlefield().get_map();
     iterate(m, [&model, &renderer, this](const auto& t, auto idx) {
-        auto destination = tile_base_destination(dimensions_, idx.x, idx.y);
+        auto tile_x = tile_base_x(dimensions_, idx.x, idx.y);
+        auto tile_y = tile_base_y(dimensions_, idx.y);
 
-        render_elevation(renderer, t, destination);
+        render_elevation(renderer, t, tile_x, tile_y);
 
         const int elev = t.elevation();
-        destination.h = TILE_HEIGHT;
-        destination.y -= TILE_HEIGHT - 15 + ((elev + 1) * BOX_HEIGHT);
+        SDL_Rect destination = {.x = tile_x,
+                                .y = tile_y - ROW_HEIGHT - elev * BOX_HEIGHT,
+                                .w = TILE_WIDTH,
+                                .h = TILE_HEIGHT};
 
         // tile surface
         {
@@ -151,9 +167,10 @@ void map_facet::draw(graphics& renderer, const unit_moving& model) const
                 tile_texture.set_color_mod(c, c, c);
             }
             renderer->copy(tile_texture, destination);
-            if (model.reachable(idx))
-                renderer->copy(renderer.tiles().tile_hover(), destination);
         }
+
+        if (model.reachable(idx))
+            renderer->copy(renderer.tiles().tile_hover(), destination);
 
         render_objects(renderer, t, destination);
     });

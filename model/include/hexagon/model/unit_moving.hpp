@@ -37,7 +37,8 @@ namespace hexagon::model
         std::vector<move_command> commands_;
 
        public:
-        unit_moving(battle b, std::size_t tidx, std::size_t uidx) noexcept;
+        unit_moving(battle b, std::size_t tidx, std::size_t uidx,
+                    commands_container cmds = {}) noexcept;
         unit_moving(battle b, std::size_t tidx) noexcept;
 
         unit_moving(const unit_moving&) noexcept = delete;

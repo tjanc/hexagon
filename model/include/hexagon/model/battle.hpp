@@ -4,6 +4,7 @@
 #ifndef HEXAGON_MODEL_BATTLE_H_
 #define HEXAGON_MODEL_BATTLE_H_
 
+#include <utility>
 #include <vector>
 
 #include "map.hpp"
@@ -27,10 +28,10 @@ namespace hexagon::model
         explicit battle(map);
         battle(map, team_container);
 
-        battle(const battle&) = delete;
+        battle(const battle&) = default;
         battle(battle&&) noexcept = default;
 
-        battle& operator=(const battle&) = delete;
+        battle& operator=(const battle&) = default;
         battle& operator=(battle&&) noexcept = default;
 
         ~battle() = default;
@@ -47,27 +48,8 @@ namespace hexagon::model
         const map& get_map() const noexcept;
     };
 
-    struct move_command {
-        basic_map_index source;
-        basic_map_index target;
-
-        move_command(basic_map_index s, basic_map_index t)
-            : source(s), target(t)
-        {
-        }
-
-        move_command() = default;
-        move_command(const move_command&) = default;
-        move_command(move_command&&) = default;
-        move_command& operator=(const move_command&) = default;
-        move_command& operator=(move_command&&) = default;
-        ~move_command() = default;
-    };
-
-    struct attack_command {
-        basic_map_index source;
-        basic_map_index target;
-    };
+    using move_command = std::pair<basic_map_index, basic_map_index>;
+    using attack_command = std::pair<basic_map_index, basic_map_index>;
 
 }  // namespace hexagon::model
 

@@ -18,6 +18,11 @@ EMSCRIPTEN_KEEPALIVE void ws_message();
 bool ws_send_js(const char*);
 }
 
+namespace
+{
+    using namespace hexagon::protocol::io;
+}
+
 namespace hexagon::client
 {
     class connection
@@ -49,10 +54,11 @@ namespace hexagon::client
         }
 
        public:
-        template <typename Message>
-        bool async_send(const Message& msg)
+        template <typename Message, typename... Args>
+        bool async_send(const Args&... args)
         {
-            write_message(output_buffer_, msg);
+            using namespace hexagon::protocol::io;
+            hexagon::protocol::write_message<Message>(output_buffer_, args...);
             return ws_send_js(output_buffer_.c_str());
         }
 

@@ -6,7 +6,10 @@
 
 #include <iostream>
 
-#include <hexagon/model/team.hpp>
+namespace hexagon::model
+{
+    class team;
+}
 
 namespace hexagon::protocol::io
 {
