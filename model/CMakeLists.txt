@@ -22,6 +22,8 @@ add_library(model STATIC
     src/login_request.cpp
     src/login_response.cpp
     src/move_request.cpp
+    src/moving_state.cpp
+    src/local_state.cpp
     )
 set_target_properties(model PROPERTIES OUTPUT_NAME hexagon-model)
 

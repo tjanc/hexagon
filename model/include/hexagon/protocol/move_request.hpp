@@ -15,12 +15,15 @@ namespace hexagon::protocol
     static constexpr const char* MOVE_REQUEST_ID = "MOVEQ";
 
     struct move_request {
-        using moves_container = std::vector<
-            std::pair<model::basic_map_index, model::basic_map_index>>;
-        moves_container moves;
+        model::basic_map_index source;
+        model::basic_map_index target;
 
         move_request() = default;
-        explicit move_request(moves_container c) : moves{std::move(c)} {}
+        explicit move_request(model::basic_map_index source,
+                              model::basic_map_index target)
+            : source{source}, target{target}
+        {
+        }
     };
 
     std::istream& operator>>(std::istream& in, move_request& msg);

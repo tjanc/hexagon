@@ -14,7 +14,6 @@ add_executable(server
     src/http_session.cpp
     src/listener.cpp
     src/shared_state.cpp
-    src/local_state.cpp
     src/websocket_session.cpp
     src/preload_assets.cpp
     src/main.cpp

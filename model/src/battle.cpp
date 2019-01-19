@@ -10,18 +10,25 @@ using namespace hexagon::model;
 battle::battle(map m) : battle(std::move(m), battle::team_container{}) {}
 
 battle::battle(map m, battle::team_container teams)
-    : map_{std::move(m)}, teams_{std::move(teams)}
+    : map_{std::move(m)}, teams_{std::move(teams)}, max_units_{2}
 {
 }
 
-battle::team_container::iterator battle::join(team t)
+std::size_t battle::join(const team& t)
 {
-    teams_.emplace_back(std::move(t));
+    if (t.units.size() > max_units_) {
+        team::unit_container used_units;
+        std::copy(t.units.begin(), std::next(t.units.begin(), max_units_),
+                  std::back_inserter(used_units));
+        teams_.emplace_back(t.id, std::move(used_units));
+    } else {
+        teams_.emplace_back(t);
+    }
 
     for (auto& u : teams_.back().units)
         if (map_.end() == spawn(map_, u)) break;
 
-    return --teams_.end();
+    return teams_.size() - 1;
 }
 
 team battle::leave(battle::team_container::iterator it)

@@ -67,7 +67,6 @@ namespace hexagon::model
         basic_map(basic_map&&) noexcept = default;
         basic_map& operator=(const basic_map&) = default;
         basic_map& operator=(basic_map&&) noexcept = default;
-        ~basic_map() = default;
 
        public:
         auto begin() const noexcept { return tiles_.begin(); }

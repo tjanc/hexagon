@@ -6,9 +6,9 @@
 
 #include <unordered_set>
 
+#include <hexagon/model/battle.hpp>
 #include "net.hpp"
 #include "preload_assets.hpp"
-#include <hexagon/model/battle.hpp>
 
 namespace hexagon::server
 {

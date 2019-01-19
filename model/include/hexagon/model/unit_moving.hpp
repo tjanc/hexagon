@@ -15,7 +15,6 @@ namespace hexagon::model
     {
        public:
         using reach_map = basic_map<std::uint16_t>;
-        using commands_container = std::vector<move_command>;
 
        private:
         /// team in control
@@ -30,12 +29,8 @@ namespace hexagon::model
         /// reach of unit in control
         reach_map reach_map_;
 
-        /// previous move commands
-        std::vector<move_command> commands_;
-
        public:
-        unit_moving(battle& b, std::size_t tidx, std::size_t uidx,
-                    commands_container cmds = {}) noexcept;
+        unit_moving(battle& b, std::size_t tidx, std::size_t uidx) noexcept;
         unit_moving(battle& b, std::size_t tidx) noexcept;
 
         unit_moving(const unit_moving&) noexcept = delete;
@@ -55,9 +50,6 @@ namespace hexagon::model
         bool reachable(const map& m, basic_map_index idx) const noexcept;
 
         bool has_next() const noexcept;
-
-        const commands_container& commands() const noexcept;
-        commands_container& commands() noexcept;
 
         friend void move_unit(unit_moving&, basic_map_index) noexcept;
     };

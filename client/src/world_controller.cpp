@@ -29,7 +29,7 @@ void world_controller::update(game_controller& c, battle_message m)
               << " teams, you are number " << m.team_id << '\n';
 
     if (m.team_id >= m.battle.teams().size()) {
-        std::cerr << "WARN: invalid team id\n";
+        std::cerr << "WARN: invalid team id `" << m.team_id << "`\n";
         return;
     }
 

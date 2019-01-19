@@ -6,6 +6,7 @@
 #include "shared_state.hpp"
 
 using namespace hexagon::server;
+using namespace hexagon::state;
 using boost::system::error_code;
 
 websocket_session::websocket_session(tcp::socket socket,

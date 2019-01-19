@@ -11,7 +11,8 @@ namespace hexagon::protocol
     std::istream& operator>>(std::istream& in, move_request& msg)
     {
         using namespace hexagon::protocol::io;
-        in >> msg.moves;
+        in >> msg.source;
+        in >> msg.target;
 
         return in;
     }
@@ -19,7 +20,7 @@ namespace hexagon::protocol
     std::ostream& operator<<(std::ostream& out, const move_request& msg)
     {
         using namespace hexagon::protocol::io;
-        out << msg.moves;
+        out << msg.source << ' ' << msg.target;
 
         return out;
     }

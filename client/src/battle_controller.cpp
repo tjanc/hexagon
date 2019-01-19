@@ -16,6 +16,15 @@ using namespace hexagon::client;
 using namespace hexagon::model;
 using namespace hexagon::protocol;
 
+namespace {
+    template <typename Message, typename... Args>
+    decltype(auto) emit(Args&&... args)
+    {
+        return connection::instance().async_send<Message>(
+            std::forward<Args>(args)...);
+    }
+}
+
 namespace
 {
     void update_specific(battle_controller::state& s, battle& b,
@@ -40,14 +49,12 @@ namespace
 
         if (model.reachable(b.get_map(), target)) {
             model.move(b.get_map(), target);
+            emit<move_request>(source, target);
 
-            if (!model.has_next()) {
-                auto cmds = model.commands();
-                s = units_moved{std::move(model)};
-                connection::instance().async_send<move_request>(cmds);
-            } else {
+            if (model.has_next())
                 model.next(b);
-            }
+            else
+                s = units_moved{std::move(model)};
         }
     }
 }  // namespace

@@ -22,6 +22,7 @@ namespace hexagon::model
        private:
         map map_ = {};
         team_container teams_ = {};
+        int max_units_ = 1;
 
        public:
         battle() = default;
@@ -37,7 +38,7 @@ namespace hexagon::model
         ~battle() = default;
 
        public:
-        team_container::iterator join(team);
+        std::size_t join(const team&);
         team leave(team_container::iterator);
 
         team_container& teams() noexcept;
@@ -47,9 +48,6 @@ namespace hexagon::model
         map& get_map() noexcept;
         const map& get_map() const noexcept;
     };
-
-    using move_command = std::pair<basic_map_index, basic_map_index>;
-    using attack_command = std::pair<basic_map_index, basic_map_index>;
 
 }  // namespace hexagon::model
 

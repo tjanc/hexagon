@@ -1,8 +1,8 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#ifndef HEXAGON_MODEL_UNIT_H_
-#define HEXAGON_MODEL_UNIT_H_
+#ifndef HEXAGON_MODEL_TEAM_H_
+#define HEXAGON_MODEL_TEAM_H_
 
 #include <vector>
 
