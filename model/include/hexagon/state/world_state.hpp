@@ -11,16 +11,16 @@ namespace hexagon::state
     class world_state
     {
        public:
-        using type = model::world;
+        using model_type = model::world;
 
        private:
-        type model_;
+        model_type model_;
 
        public:
-        explicit world_state(type m) : model_(std::move(m)) {}
+        explicit world_state(model_type m) : model_(std::move(m)) {}
 
-        const type& raw() const noexcept { return model_; }
-        type& raw() noexcept { return model_; }
+        const model_type& raw() const noexcept { return model_; }
+        model_type& raw() noexcept { return model_; }
     };
 
 }  // namespace hexagon::state

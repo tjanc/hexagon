@@ -8,16 +8,14 @@
 #include <hexagon/model/map.hpp>
 #include "map_facet.hpp"
 
-namespace hexagon::model
+namespace hexagon::state
 {
-    class unit_moving;
-    class units_moved;
-}  // namespace hexagon::model
+    class battling_state;
+}
 
 namespace hexagon::client
 {
     class graphics;
-    class moving_controller;
 }  // namespace hexagon::client
 
 namespace hexagon::client
@@ -34,13 +32,6 @@ namespace hexagon::client
         model::basic_map_index transpose(int x, int y) const noexcept;
 
        public:
-        void draw(graphics&, const model::map&,
-                  const model::unit_moving&) const;
-
-        void draw(graphics&, const model::map&,
-                  const model::units_moved&) const;
-
-       public:
         const map_facet& map() const noexcept;
         map_facet& map() noexcept;
 
@@ -50,6 +41,8 @@ namespace hexagon::client
 
         void resize(int w, int h) noexcept;
     };
+
+    void draw(graphics&, const battle_facet&, const state::battling_state&);
 }  // namespace hexagon::client
 
 #endif

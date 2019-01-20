@@ -29,8 +29,8 @@ namespace
             return visit(std::move(arg));
         }
 
-        if (name == id<login_response>) {
-            login_response arg{};
+        if (name == id<world_message>) {
+            world_message arg{};
             iss >> arg;
             return visit(std::move(arg));
         }
@@ -52,6 +52,12 @@ namespace
 
         if (name == id<login_request>) {
             login_request arg{};
+            iss >> arg;
+            return visit(std::move(arg));
+        }
+
+        if (name == id<battle_request>) {
+            battle_request arg{};
             iss >> arg;
             return visit(std::move(arg));
         }

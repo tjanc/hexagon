@@ -4,14 +4,15 @@
 #ifndef HEXAGON_CLIENT_GAME_H_
 #define HEXAGON_CLIENT_GAME_H_
 
-#include "battle_facet.hpp"
+#include <hexagon/state/local_state.hpp>
+
+#include "game_facet.hpp"
 #include "mouse.hpp"
 
 #include "sdl/sdl.hpp"
 #include "sdl/window.hpp"
 
 #include "graphics.hpp"
-#include "game_controller.hpp"
 
 namespace hexagon::client
 {
@@ -24,7 +25,9 @@ namespace hexagon::client
 
         mouse mouse_;
 
-        game_controller game_controller_;
+        state::local_state state_;
+        game_facet facet_;
+
         bool running_ = true;
 
        public:

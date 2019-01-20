@@ -20,9 +20,9 @@ add_library(model STATIC
     src/version_message.cpp
     src/battle_message.cpp
     src/login_request.cpp
-    src/login_response.cpp
+    src/battle_request.cpp
+    src/world_message.cpp
     src/move_request.cpp
-    src/moving_state.cpp
     src/local_state.cpp
     )
 set_target_properties(model PROPERTIES OUTPUT_NAME hexagon-model)

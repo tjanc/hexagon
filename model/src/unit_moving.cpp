@@ -48,6 +48,7 @@ namespace
         unit_moving::reach_map result{
             unit_moving::reach_map::tiles_container(m.size(), 0), m.width()};
 
+        std::cout << "DEBUG: center `" << center << "`\n";
         assert(contains(m, center));
         const tile& center_tile = m.at(center);
 
@@ -78,7 +79,7 @@ namespace
 unit_moving::unit_moving(battle& b, std::size_t tidx, std::size_t uidx) noexcept
     : team_{std::next(b.teams().begin(), tidx)},
       unit_{std::next(team_->units.begin(), uidx)},
-      unit_position_{find_unit(b.get_map(), *unit_)},
+      unit_position_{find_unit(b.get_map(), unit_->id())},
       reach_map_{generate_reach_map(b.get_map(), unit_position_)}
 {
 }

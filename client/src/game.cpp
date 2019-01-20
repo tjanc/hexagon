@@ -17,6 +17,7 @@
 
 #include "battle_facet.hpp"
 #include "connection.hpp"
+#include "game_adapter.hpp"
 #include "version.hpp"
 
 using namespace hexagon::client;
@@ -26,9 +27,7 @@ using namespace hexagon::model;
 using namespace hexagon::protocol;
 
 game::game(graphics& g, connection& c)
-    : graphics_(g),
-      server_(c),
-      game_controller_(connecting_facet{0, 0, g.width(), g.height()})
+    : graphics_(g), server_(c), state_{}, facet_(0, 0, g.width(), g.height())
 {
 }
 
@@ -68,29 +67,31 @@ bool game::handleEvents()
 void game::update()
 {
     // process UI input
-    mouse_.handle_all([& c = game_controller_](const auto& m) {  //
-        c.update(m);
+    mouse_.handle_all([& s = state_, &facet = facet_](const auto& m) {  //
+        hexagon::client::update(s, facet, m);
     });
 
     // process network input
-    server_.handle_all([& c = game_controller_](auto msg) {  //
-        c.update(std::move(msg));
+    server_.handle_all([& s = state_, &facet = facet_](auto msg) {  //
+        std::cout << "INFO: dispatching message\n";
+        hexagon::client::update(s, facet, std::move(msg));
     });
 
     const auto w = graphics_.width();
     const auto h = graphics_.height();
-    graphics_.handle_all([& c = game_controller_, w, h](const auto&) {  //
-        c.resize(w, h);
+    graphics_.handle_all([& facet = facet_, w, h](const auto&) {  //
+        facet.resize(w, h);
     });
 }
 
 void game::render()
 {
-    if (game_controller_.updated()) {
+    if (state_.updated()) {
         graphics_->set_draw_color(10, 10, 10, 255);
         graphics_->clear();
-        game_controller_.draw(graphics_);
+        hexagon::client::draw(graphics_, facet_, state_);
         graphics_->present();
+        state_.toggle_updated();
     }
 }
 

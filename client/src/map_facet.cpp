@@ -6,11 +6,12 @@
 #include <hexagon/model/map.hpp>
 #include <hexagon/model/unit_moving.hpp>
 #include <hexagon/model/units_moved.hpp>
+#include <hexagon/state/battling_state.hpp>
 #include <iostream>
 
-#include "battle_controller.hpp"
 #include "graphics.hpp"
 
+using namespace hexagon;
 using namespace hexagon::client;
 using namespace hexagon::model;
 
@@ -103,78 +104,83 @@ namespace
     }
 }  // namespace
 
-void map_facet::draw(graphics& renderer, const map& m,
-                     const units_moved& model) const
+namespace
 {
-    iterate(m, [&renderer, this](const auto& t, auto idx) {
-        auto tile_x = tile_base_x(dimensions_, idx.x, idx.y);
-        auto tile_y = tile_base_y(dimensions_, idx.y);
+    void draw_specific(graphics& renderer, const map_facet& facet, const map& m,
+                       const units_moved& model)
+    {
+        iterate(m, [&renderer, &facet](const auto& t, auto idx) {
+            auto tile_x = tile_base_x(facet.dimensions(), idx.x, idx.y);
+            auto tile_y = tile_base_y(facet.dimensions(), idx.y);
 
-        render_elevation(renderer, t, tile_x, tile_y);
+            render_elevation(renderer, t, tile_x, tile_y);
 
-        const int elev = t.elevation();
-        SDL_Rect destination = {.x = tile_x,
-                                .y = tile_y - ROW_HEIGHT - elev * BOX_HEIGHT,
-                                .w = TILE_WIDTH,
-                                .h = TILE_HEIGHT};
+            const int elev = t.elevation();
+            SDL_Rect destination = {
+                .x = tile_x,
+                .y = tile_y - ROW_HEIGHT - elev * BOX_HEIGHT,
+                .w = TILE_WIDTH,
+                .h = TILE_HEIGHT};
 
-        // tile surface
-        {
-            sdl::texture& tile_texture =
-                renderer.tiles().tile_surface(t.type());
-            if (hover_tile_ == idx)
-                tile_texture.set_color_mod(255, 255, 255);
-            else {
-                const uint8_t c = elev < 3 ? (170 + elev * 20) : 230;
-                tile_texture.set_color_mod(c, c, c);
+            // tile surface
+            {
+                sdl::texture& tile_texture =
+                    renderer.tiles().tile_surface(t.type());
+                if (facet.hover() == idx)
+                    tile_texture.set_color_mod(255, 255, 255);
+                else {
+                    const uint8_t c = elev < 3 ? (170 + elev * 20) : 230;
+                    tile_texture.set_color_mod(c, c, c);
+                }
+                renderer->copy(tile_texture, destination);
             }
-            renderer->copy(tile_texture, destination);
-        }
 
-        render_objects(renderer, t, destination);
-    });
+            render_objects(renderer, t, destination);
+        });
 
-    renderer->set_draw_color(30, 30, 30, 255);
-    renderer->fill_rect(dimensions_);
-}
+        renderer->set_draw_color(30, 30, 30, 255);
+        renderer->fill_rect(facet.dimensions());
+    }
 
-void map_facet::draw(graphics& renderer, const map& m,
-                     const unit_moving& model) const
-{
-    renderer->set_draw_blend_mode(SDL_BLENDMODE_ADD);
+    void draw_specific(graphics& renderer, const map_facet& facet, const map& m,
+                       const unit_moving& model)
+    {
+        renderer->set_draw_blend_mode(SDL_BLENDMODE_ADD);
 
-    iterate(m, [&m, &model, &renderer, this](const auto& t, auto idx) {
-        auto tile_x = tile_base_x(dimensions_, idx.x, idx.y);
-        auto tile_y = tile_base_y(dimensions_, idx.y);
+        iterate(m, [&m, &model, &renderer, &facet](const auto& t, auto idx) {
+            auto tile_x = tile_base_x(facet.dimensions(), idx.x, idx.y);
+            auto tile_y = tile_base_y(facet.dimensions(), idx.y);
 
-        render_elevation(renderer, t, tile_x, tile_y);
+            render_elevation(renderer, t, tile_x, tile_y);
 
-        const int elev = t.elevation();
-        SDL_Rect destination = {.x = tile_x,
-                                .y = tile_y - ROW_HEIGHT - elev * BOX_HEIGHT,
-                                .w = TILE_WIDTH,
-                                .h = TILE_HEIGHT};
+            const int elev = t.elevation();
+            SDL_Rect destination = {
+                .x = tile_x,
+                .y = tile_y - ROW_HEIGHT - elev * BOX_HEIGHT,
+                .w = TILE_WIDTH,
+                .h = TILE_HEIGHT};
 
-        // tile surface
-        {
-            sdl::texture& tile_texture =
-                renderer.tiles().tile_surface(t.type());
+            // tile surface
+            {
+                sdl::texture& tile_texture =
+                    renderer.tiles().tile_surface(t.type());
 
-            if (hover_tile_ == idx)
-                tile_texture.set_color_mod(255, 255, 255);
-            else {
-                const uint8_t c = elev < 3 ? (170 + elev * 20) : 230;
-                tile_texture.set_color_mod(c, c, c);
+                if (facet.hover() == idx)
+                    tile_texture.set_color_mod(255, 255, 255);
+                else {
+                    const uint8_t c = elev < 3 ? (170 + elev * 20) : 230;
+                    tile_texture.set_color_mod(c, c, c);
+                }
+                renderer->copy(tile_texture, destination);
             }
-            renderer->copy(tile_texture, destination);
-        }
 
-        if (model.reachable(m, idx))
-            renderer->copy(renderer.tiles().tile_hover(), destination);
+            if (model.reachable(m, idx))
+                renderer->copy(renderer.tiles().tile_hover(), destination);
 
-        render_objects(renderer, t, destination);
-    });
-}
+            render_objects(renderer, t, destination);
+        });
+    }
+}  // namespace
 
 void map_facet::hover(basic_map_index t) noexcept { hover_tile_ = t; }
 
@@ -184,4 +190,16 @@ void map_facet::resize(int w, int h) noexcept
 {
     dimensions_.w = w;
     dimensions_.h = h;
+}
+
+const SDL_Rect& map_facet::dimensions() const noexcept { return dimensions_; }
+
+void hexagon::client::draw(graphics& g, const map_facet& facet,
+                           const state::battling_state& s)
+{
+    std::visit(
+        [&g, &facet, &m = s.get_battle().get_map()](const auto& cstate) {  //
+            draw_specific(g, facet, m, cstate);
+        },
+        s.raw());
 }

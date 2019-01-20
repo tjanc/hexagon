@@ -9,15 +9,15 @@
 #include <variant>
 
 #include "battle_message.hpp"
+#include "battle_request.hpp"
 #include "login_request.hpp"
-#include "login_response.hpp"
+#include "world_message.hpp"
+//#include "login_response.hpp"
 #include "move_request.hpp"
 #include "unknown_message.hpp"
 #include "version_message.hpp"
 
-namespace hexagon::protocol::io
-{
-}
+#include "io/message_io.hpp"
 
 namespace hexagon::protocol
 {
@@ -34,7 +34,10 @@ namespace hexagon::protocol
     constexpr const char* id<login_request> = LOGIN_REQUEST_ID;
 
     template <>
-    constexpr const char* id<login_response> = LOGIN_RESPONSE_ID;
+    constexpr const char* id<battle_request> = BATTLE_REQUEST_ID;
+
+    template <>
+    constexpr const char* id<world_message> = WORLD_MESSAGE_ID;
 
     template <>
     constexpr const char* id<move_request> = MOVE_REQUEST_ID;
@@ -43,11 +46,12 @@ namespace hexagon::protocol
         unknown_message,                  //
         version_response,                 //
         battle_message,                   //
-        login_response>;
+        world_message>;
 
     using client_message = std::variant<  //
         unknown_message,                  //
         login_request,                    //
+        battle_request,                   //
         move_request>;
 
     server_message read_server_message(const std::string& msg);

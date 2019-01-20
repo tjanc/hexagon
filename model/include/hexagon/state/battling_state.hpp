@@ -4,16 +4,12 @@
 #ifndef HEXAGON_STATE_BATTLING_STATE_H_
 #define HEXAGON_STATE_BATTLING_STATE_H_
 
-#include <iostream> // XXX debug
 #include <cstdint>
 #include <variant>
 
 #include <hexagon/model/battle.hpp>
 #include <hexagon/model/unit_moving.hpp>
 #include <hexagon/model/units_moved.hpp>
-
-//#include "moved_state.hpp"
-//#include "moving_state.hpp"
 
 namespace hexagon::state
 {
@@ -30,16 +26,9 @@ namespace hexagon::state
         type model_;
 
        public:
-        battling_state(model::battle b, const model::team& t)
-            : battle_{std::move(b)},
-              model_{model::unit_moving{battle_, battle_.join(t)}}
+        battling_state(model::battle b, std::size_t tidx)
+            : battle_{std::move(b)}, model_{model::unit_moving{battle_, tidx}}
         {
-            std::cout << "=== ENTERED BATTLING STATE ===\n";
-            std::cout << "=== units on battlefield: "
-                      << std::count_if(
-                             battle_.get_map().begin(), battle_.get_map().end(),
-                             [](const auto& el) { return el.has_unit(); })
-                      << '\n';
         }
 
        public:

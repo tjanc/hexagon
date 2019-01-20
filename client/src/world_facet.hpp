@@ -6,9 +6,9 @@
 
 #include <SDL.h>
 
-namespace hexagon::model
+namespace hexagon::state
 {
-    struct world;
+    class world_state;
 }
 
 namespace hexagon::client
@@ -29,12 +29,11 @@ namespace hexagon::client
         void resize(int w, int h) noexcept;
 
        public:
-        int width() noexcept;
-        int height() noexcept;
-
-       public:
-        void draw(graphics&, const model::world&) const;
+        int width() const noexcept;
+        int height() const noexcept;
     };
+
+    void draw(graphics&, const world_facet&, const state::world_state&);
 }  // namespace hexagon::client
 
 #endif

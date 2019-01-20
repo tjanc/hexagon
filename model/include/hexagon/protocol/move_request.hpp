@@ -19,7 +19,7 @@ namespace hexagon::protocol
         model::basic_map_index target;
 
         move_request() = default;
-        explicit move_request(model::basic_map_index source,
+        move_request(model::basic_map_index source,
                               model::basic_map_index target)
             : source{source}, target{target}
         {

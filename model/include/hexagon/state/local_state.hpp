@@ -30,17 +30,28 @@ namespace hexagon::state
 
        private:
         type state_;
+        bool updated_;
 
        public:
-        local_state();
+        local_state() noexcept;
 
        public:
-        world_state& to_world(model::world w);
-        battling_state& to_battle(model::battle b, const model::team& t);
+        world_state& to_world(world_state);
+        battling_state& to_battle(battling_state);
 
        public:
-        type& raw() noexcept;
+        template <typename Visitor>
+        void update(Visitor&& v)
+        {
+            std::visit(std::forward<Visitor>(v), state_);
+            updated_ = true;
+        }
+
         const type& raw() const noexcept;
+
+       public:
+        bool updated() const noexcept;
+        void toggle_updated() noexcept;
     };
 }  // namespace hexagon::state
 

@@ -46,28 +46,16 @@ namespace
                               const preload_assets& assets)
     {
         std::cout << "Someone is logging in as " << request.name << "\n";
-        {
-            // TODO login logic, returning dummy session key
 
-            source.local().to_world(world{team{}});
+        const world_state& in_world = source.local().to_world(
+            world_state{world{team{0, team::unit_container{
+                                          unit{0, unit_job::warrior},  //
+                                          unit{1, unit_job::mage}      //
+                                      }}}});
 
-            std::string msg;
-            write_message<login_response>(msg, "42");
-            source.send(std::make_shared<std::string>(std::move(msg)));
-        }
-
-        {
-            const battling_state& in_battle = source.local().to_battle(
-                battle{*assets.get_map(0)},
-                team{0, team::unit_container{
-                            unit{0, unit_job::warrior},  //
-                            unit{1, unit_job::mage}      //
-                        }});
-
-            std::string msg;
-            write_message<battle_message>(msg, 0, in_battle.get_battle());
-            source.send(std::make_shared<std::string>(std::move(msg)));
-        }
+        std::string msg;
+        write_message<world_message>(msg, in_world.raw().team_);
+        source.send(std::make_shared<std::string>(std::move(msg)));
     }
 
     void handle_client_message(const login_request& request,
@@ -75,11 +63,49 @@ namespace
                                const preload_assets& assets)
     {
         std::cerr << "Received login request\n";
-        std::visit(
-            [&request, &source, &assets](auto& local) {
-                handle_login_request(request, local, source, assets);
-            },
-            source.local().raw());
+        source.local().update([&request, &source, &assets](auto& local) {
+            handle_login_request(request, local, source, assets);
+        });
+    }
+
+    void handle_battle_request(const battle_request&, connecting_state&,
+                               websocket_session&, const preload_assets&)
+    {
+        std::cerr << "WARN: unexpected battle request in connecting state\n";
+    }
+
+    void handle_battle_request(const battle_request&, battling_state&,
+                               websocket_session&, const preload_assets&)
+    {
+        std::cerr << "WARN: unexpected battle request in battling state\n";
+    }
+
+    void handle_battle_request(const battle_request& request, world_state& s,
+                               websocket_session& source,
+                               const preload_assets& assets)
+    {
+        const auto& t = s.raw().team_;
+        auto b = battle{*assets.get_map(0)};
+
+        auto idx = b.join(t);
+        std::cout << "DEBUG: idx `" << idx << "`\n";
+
+        const battling_state& in_battle =
+            source.local().to_battle(battling_state{std::move(b), idx});
+
+        std::string msg;
+        write_message<battle_message>(msg, 0, in_battle.get_battle());
+        source.send(std::make_shared<std::string>(std::move(msg)));
+    }
+
+    void handle_client_message(const battle_request& request,
+                               websocket_session& source,
+                               const preload_assets& assets)
+    {
+        std::cerr << "Received battle request\n";
+        source.local().update([&request, &source, &assets](auto& local) {
+            handle_battle_request(request, local, source, assets);
+        });
     }
 
     void handle_client_message(const unknown_message&, websocket_session&,
@@ -144,11 +170,9 @@ namespace
     {
         std::cout << "Received movement message\n";
 
-        std::visit(
-            [&request, &source](auto& cstate) {
-                handle_move_request(request, cstate, source);
-            },
-            source.local().raw());
+        source.local().update([&request, &source](auto& cstate) {
+            handle_move_request(request, cstate, source);
+        });
     }
 }  // namespace
 

@@ -49,6 +49,7 @@ namespace hexagon::model
         bool has_unit() const noexcept;
 
         bool has_unit(const unit& u) const noexcept;
+        bool has_unit(std::size_t uid) const noexcept;
 
         bool empty() const noexcept;
         void attach(unit& u);

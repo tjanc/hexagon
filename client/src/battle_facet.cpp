@@ -5,6 +5,7 @@
 
 #include <hexagon/model/unit_moving.hpp>
 #include <hexagon/model/units_moved.hpp>
+#include <hexagon/state/battling_state.hpp>
 
 using namespace hexagon::client;
 using namespace hexagon::model;
@@ -44,18 +45,6 @@ battle_facet::battle_facet(int x, int y, int width, int height) noexcept
 {
 }
 
-void battle_facet::draw(graphics& c, const model::map& m,
-                        const unit_moving& model) const
-{
-    map_facet_.draw(c, m, model);
-}
-
-void battle_facet::draw(graphics& c, const model::map& m,
-                        const units_moved& model) const
-{
-    map_facet_.draw(c, m, model);
-}
-
 const map_facet& battle_facet::map() const noexcept { return map_facet_; }
 map_facet& battle_facet::map() noexcept { return map_facet_; }
 
@@ -73,4 +62,10 @@ basic_map_index battle_facet::transpose(int x, int y) const noexcept
 {
     return map_facet_.transpose(x - MAP_MARGIN, y - MAP_MARGIN);
     // return map_facet_.transpose(x, y);
+}
+
+void hexagon::client::draw(graphics& g, const battle_facet& facet,
+                           const state::battling_state& s)
+{
+    draw(g, facet.map(), s);
 }

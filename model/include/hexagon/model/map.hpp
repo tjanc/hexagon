@@ -167,6 +167,7 @@ namespace hexagon::model
 
     map::iterator spawn(map&, unit&);
     basic_map_index find_unit(const map&, const unit&) noexcept;
+    basic_map_index find_unit(const map&, std::size_t uid) noexcept;
     void move_unit(map&, basic_map_index, basic_map_index);
 
     // template <std::size_t Radius, typename Visitor>

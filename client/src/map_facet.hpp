@@ -7,10 +7,9 @@
 #include <SDL.h>
 #include <hexagon/model/map.hpp>
 
-namespace hexagon::model
+namespace hexagon::state
 {
-    class unit_moving;
-    class units_moved;
+    class battling_state;
 }  // namespace hexagon::model
 
 namespace hexagon::client
@@ -24,7 +23,6 @@ namespace hexagon::client
     class map_facet
     {
         SDL_Rect dimensions_;
-
         model::basic_map_index hover_tile_;
 
        public:
@@ -39,14 +37,10 @@ namespace hexagon::client
 
        public:
         void resize(int w, int h) noexcept;
-
-       public:
-        void draw(graphics&, const model::map&,
-                  const model::unit_moving&) const;
-
-        void draw(graphics&, const model::map&,
-                  const model::units_moved&) const;
+        const SDL_Rect& dimensions() const noexcept;
     };
+
+    void draw(graphics&, const map_facet&, const state::battling_state&);
 }  // namespace hexagon::client
 
 #endif
