@@ -11,11 +11,11 @@
 #include "battle_message.hpp"
 #include "battle_request.hpp"
 #include "login_request.hpp"
-#include "world_message.hpp"
-//#include "login_response.hpp"
+#include "move_message.hpp"
 #include "move_request.hpp"
 #include "unknown_message.hpp"
 #include "version_message.hpp"
+#include "world_message.hpp"
 
 #include "io/message_io.hpp"
 
@@ -42,11 +42,14 @@ namespace hexagon::protocol
     template <>
     constexpr const char* id<move_request> = MOVE_REQUEST_ID;
 
+    template <>
+    constexpr const char* id<move_message> = MOVE_MESSAGE_ID;
+
     using server_message = std::variant<  //
         unknown_message,                  //
         version_response,                 //
         battle_message,                   //
-        world_message>;
+        world_message, move_message>;
 
     using client_message = std::variant<  //
         unknown_message,                  //

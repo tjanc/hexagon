@@ -25,6 +25,16 @@ using namespace hexagon::protocol;
 
 namespace
 {
+    template <typename Message>
+    constexpr bool handles_message = false;
+
+    template <>
+    constexpr bool handles_message<move_message> = true;
+
+}  // namespace
+
+namespace
+{
     void update_specific(battling_state& s, units_moved& model,
                          battle_facet& facet, const mouse& m)
     {
@@ -44,7 +54,6 @@ namespace
         auto target = facet.map().hover();
 
         if (model.reachable(s.get_battle().get_map(), target)) {
-            model.move(s.get_battle().get_map(), target);
             connection::instance().async_send<move_request>(source, target);
 
             if (model.has_next())
@@ -55,9 +64,29 @@ namespace
     }
 }  // namespace
 
-void hexagon::client::update(local_state&, battling_state&, game_facet&,
-                             protocol::server_message)
+namespace
 {
+    void update_specific(local_state& s, battling_state& cstate,
+                         game_facet& facet, move_message m)
+    {
+        move_unit(cstate.get_battle().get_map(), m.source, m.target);
+    }
+}  // namespace
+
+void hexagon::client::update(local_state& s, battling_state& cstate,
+                             game_facet& facet, protocol::server_message msg)
+{
+    std::visit(
+        [&s, &cstate, &facet](auto m) {
+            using M = typename std::decay<decltype(m)>::type;
+            if constexpr (handles_message<M>) {
+                update_specific(s, cstate, facet, std::move(m));
+            } else {
+                std::cout << "WARN: ignoring unexpected message "
+                          << id<M> << '\n';
+            }
+        },
+        std::move(msg));
 }
 
 void hexagon::client::update(local_state&, battling_state& cstate,

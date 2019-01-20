@@ -125,13 +125,14 @@ namespace
     {
         std::cout << "Correct state, handling movement message\n";
 
+        std::cout << "TODO: validate source of movement and detect static "
+                     "collisions\n";
         if (cstate.reachable(b.get_map(), request.target)) {
-            std::cout << "=== units on battlefield: "
-                      << std::count_if(
-                             b.get_map().begin(), b.get_map().end(),
-                             [](const auto& el) { return el.has_unit(); });
             cstate.move(b.get_map(), request.target);
-            // emit<move_request>(source, request.target);
+
+            std::string msg;
+            write_message<move_message>(msg, request.source, request.target);
+            source.send(std::make_shared<std::string>(std::move(msg)));
 
             if (cstate.has_next()) cstate.next(b);
             // else

@@ -35,6 +35,12 @@ namespace
             return visit(std::move(arg));
         }
 
+        if (name == id<move_message>) {
+            move_message arg{};
+            iss >> arg;
+            return visit(std::move(arg));
+        }
+
         {
             unknown_message arg{std::move(name)};
             iss >> arg.content;
