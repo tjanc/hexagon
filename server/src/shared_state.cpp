@@ -88,7 +88,6 @@ namespace
         auto b = battle{*assets.get_map(0)};
 
         auto idx = b.join(t);
-        std::cout << "DEBUG: idx `" << idx << "`\n";
 
         const battling_state& in_battle =
             source.local().to_battle(battling_state{std::move(b), idx});

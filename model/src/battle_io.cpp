@@ -56,8 +56,6 @@ std::istream& io::operator>>(std::istream& in, battle& obj)
     std::size_t n_pos;
     in >> n_pos;
 
-    std::cout << "DEBUG: n_pos `" << n_pos << "`\n";
-
     assert(n_pos < 30);
 
     for (std::size_t i = 0; i < n_pos; ++i) {

@@ -49,7 +49,6 @@ namespace
         s.to_world(world_state{world{std::move(m.team)}});
         facet = world_facet{0, 0, facet.width(), facet.height()};
 
-        std::cout << "DEBUG: explicitly asking for battle\n";
         connection::instance().async_send<battle_request>(0);
     }
 }  // namespace

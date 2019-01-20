@@ -37,8 +37,6 @@ namespace
 
         s.to_battle(battling_state{std::move(m.battle), m.team_id});
 
-        std::cout << "DEBUG: still alive 1\n";
-
         facet = battle_facet{0, 0, facet.width(), facet.height()};
     }
 }  // namespace

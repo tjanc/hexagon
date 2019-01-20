@@ -60,7 +60,6 @@ namespace hexagon::client
         {
             using namespace hexagon::protocol::io;
             hexagon::protocol::write_message<Message>(output_buffer_, args...);
-            std::cout << "send (native): " << output_buffer_ << '\n';
             bool result = ws_send_js(output_buffer_.c_str());
             output_buffer_.clear();
             return result;

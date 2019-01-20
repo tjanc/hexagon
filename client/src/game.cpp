@@ -73,7 +73,6 @@ void game::update()
 
     // process network input
     server_.handle_all([& s = state_, &facet = facet_](auto msg) {  //
-        std::cout << "INFO: dispatching message\n";
         hexagon::client::update(s, facet, std::move(msg));
     });
 

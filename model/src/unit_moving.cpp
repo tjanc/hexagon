@@ -48,7 +48,6 @@ namespace
         unit_moving::reach_map result{
             unit_moving::reach_map::tiles_container(m.size(), 0), m.width()};
 
-        std::cout << "DEBUG: center `" << center << "`\n";
         assert(contains(m, center));
         const tile& center_tile = m.at(center);
 
