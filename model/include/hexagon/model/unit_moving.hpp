@@ -4,6 +4,7 @@
 #ifndef HEXAGON_MODEL_UNIT_MOVING_H_
 #define HEXAGON_MODEL_UNIT_MOVING_H_
 
+#include <chrono>
 #include <hexagon/model/battle.hpp>
 #include <hexagon/model/map.hpp>
 #include <hexagon/model/team.hpp>
@@ -15,8 +16,18 @@ namespace hexagon::model
     {
        public:
         using reach_map = basic_map<std::uint16_t>;
+        using movement_container = std::vector<std::tuple<  //
+            std::chrono::steady_clock::duration,       //
+            basic_map_index,                                //
+            basic_map_index                                 //
+            >>;
 
        private:
+        std::chrono::steady_clock::time_point start_;
+
+        /// previous movements
+        movement_container movements_;
+
         /// team in control
         battle::team_container::iterator team_;
 

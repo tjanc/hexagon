@@ -39,6 +39,10 @@ namespace hexagon::server
         {
             return document_root_;
         }
+
+       public:
+        preload_assets& assets() noexcept { return assets_; }
+        const preload_assets& assets() const noexcept { return assets_; }
     };
 
 }  // namespace hexagon::server

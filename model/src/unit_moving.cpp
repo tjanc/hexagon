@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <deque>
 #include <iostream>
 
@@ -76,7 +77,9 @@ namespace
 }  // namespace
 
 unit_moving::unit_moving(battle& b, std::size_t tidx, std::size_t uidx) noexcept
-    : team_{std::next(b.teams().begin(), tidx)},
+    : start_{std::chrono::steady_clock::now()},
+      movements_{},
+      team_{std::next(b.teams().begin(), tidx)},
       unit_{std::next(team_->units.begin(), uidx)},
       unit_position_{find_unit(b.get_map(), unit_->id())},
       reach_map_{generate_reach_map(b.get_map(), unit_position_)}
@@ -111,18 +114,25 @@ void unit_moving::next(battle& b)
 {
     assert(has_next());
     ++unit_;
-    if (team_->units.end() != unit_) {
-        auto ntidx = team_ - b.teams().begin();
-        auto nuidx = unit_ - team_->units.begin();
-        *this = unit_moving(b, ntidx, nuidx);
-    }
+
+    start_ = std::chrono::steady_clock::now();
+    unit_position_ = find_unit(b.get_map(), unit_->id());
+    reach_map_ = generate_reach_map(b.get_map(), unit_position_);
 }
 
 void unit_moving::move(map& m, basic_map_index idx)
 {
     using namespace hexagon::protocol::io;
 
-    std::cout << "Moving unit from " << unit_position_ << " to " << idx << '\n';
+    std::cout << "Moving unit from " << unit_position_ << " to " << idx
+              << " after "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(
+                     std::chrono::steady_clock::now() - start_)
+                     .count()
+              << "ms\n";
+
+    movements_.emplace_back(std::chrono::steady_clock::now() - start_,
+                            unit_position_, idx);
     move_unit(m, unit_position_, idx);
 }
 
