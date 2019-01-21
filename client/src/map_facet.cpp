@@ -17,11 +17,14 @@ using namespace hexagon::model;
 
 namespace
 {
-    constexpr int TILE_WIDTH = 37;
-    constexpr int TILE_HEIGHT = 26;
+    constexpr int TILE_WIDTH = 37 * 2;
+    constexpr int TILE_HEIGHT = 26 * 2;
+    constexpr int TOP_LEFT_Y_VERTEX_OFFSET = 8 * 2;
+    constexpr int BOX_HEIGHT = 8 * 2;
+    constexpr int UNIT_HEIGHT = 62 * 2;
+    constexpr int UNIT_WIDTH = 72 * 2;
 
     constexpr int TOP_VERTEX_X_OFFSET = TILE_WIDTH / 2;
-    constexpr int TOP_LEFT_Y_VERTEX_OFFSET = 8;
     constexpr int BOTTOM_LEFT_Y_VERTEX_OFFSET =
         TILE_HEIGHT - TOP_LEFT_Y_VERTEX_OFFSET;
 
@@ -29,11 +32,6 @@ namespace
 
     constexpr int ROW_HEIGHT = BOTTOM_LEFT_Y_VERTEX_OFFSET + 1;
     constexpr int COLUMN_WIDTH = TILE_WIDTH;
-
-    constexpr int BOX_HEIGHT = 8;
-
-    constexpr int UNIT_HEIGHT = 62;
-    constexpr int UNIT_WIDTH = 72;
 
 }  // namespace
 
@@ -58,7 +56,7 @@ namespace
         auto& filler = renderer.tiles().tile_filler(t.type());
         const auto fsize = filler.size();
         SDL_Rect destination = {
-            .x = x, .y = y, .w = fsize.first, .h = fsize.second};
+            .x = x, .y = y, .w = fsize.first * 2, .h = fsize.second * 2};
 
         for (int e = 0; e < t.elevation(); ++e) {
             const uint8_t c = e < 3 ? (170 + e * 20) : 230;
@@ -95,9 +93,9 @@ namespace
             const auto usize = unit_texture.size();
             SDL_Rect unit_dest = {
                 .x = destination.x,
-                .y = destination.y - usize.second + TILE_HEIGHT,
-                .w = usize.first,
-                .h = usize.second};
+                .y = destination.y - usize.second * 2 + TILE_HEIGHT,
+                .w = usize.first * 2,
+                .h = usize.second * 2};
 
             renderer->copy(unit_texture, unit_dest);
         }
