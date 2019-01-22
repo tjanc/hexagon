@@ -29,9 +29,6 @@ namespace hexagon::client
         battle_facet(int x, int y, int width, int height) noexcept;
 
        public:
-        model::basic_map_index transpose(int x, int y) const noexcept;
-
-       public:
         const map_facet& map() const noexcept;
         map_facet& map() noexcept;
 
@@ -43,6 +40,9 @@ namespace hexagon::client
     };
 
     void draw(graphics&, const battle_facet&, const state::battling_state&);
+    model::basic_map_index transpose(const battle_facet&,
+                                     const state::battling_state&, int x,
+                                     int y) noexcept;
 }  // namespace hexagon::client
 
 #endif

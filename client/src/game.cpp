@@ -29,6 +29,7 @@ using namespace hexagon::protocol;
 game::game(graphics& g, connection& c)
     : graphics_(g), server_(c), state_{}, facet_(0, 0, g.width(), g.height())
 {
+    facet_.resize(800, 600);
 }
 
 bool game::handleEvents()
@@ -79,6 +80,7 @@ void game::update()
     const auto w = graphics_.width();
     const auto h = graphics_.height();
     graphics_.handle_all([& facet = facet_, w, h](const auto&) {  //
+        std::cout << "Resized to " << w << 'x' << h << '\n';
         facet.resize(w, h);
     });
 }

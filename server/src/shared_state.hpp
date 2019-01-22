@@ -43,6 +43,9 @@ namespace hexagon::server
        public:
         preload_assets& assets() noexcept { return assets_; }
         const preload_assets& assets() const noexcept { return assets_; }
+
+        model::battle& test_battle() noexcept { return test_battle_; }
+        const model::battle& test_battle() const noexcept { return test_battle_; }
     };
 
 }  // namespace hexagon::server

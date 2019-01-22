@@ -20,7 +20,7 @@ EMSCRIPTEN_KEEPALIVE void window_resized(int w, int h)
 EM_JS(void, adapt_canvas, (), {
     window.onresize = function() {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.height = canvas.width * 2/3;
       _window_resized(canvas.width, canvas.height);
     };
     window.onresize();

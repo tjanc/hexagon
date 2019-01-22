@@ -3,6 +3,7 @@
 
 #include "map_facet.hpp"
 
+#include <algorithm>
 #include <hexagon/model/map.hpp>
 #include <hexagon/model/unit_moving.hpp>
 #include <hexagon/model/units_moved.hpp>
@@ -38,15 +39,6 @@ namespace
 map_facet::map_facet(int x, int y, int width, int height) noexcept
     : dimensions_{.x = x, .y = y, .w = width, .h = height}, hover_tile_{}
 {
-}
-
-basic_map_index map_facet::transpose(int x, int y) const noexcept
-{
-    const int y_t = y / ROW_HEIGHT;
-    const int x_t = (x - (y_t % 2) * (COLUMN_WIDTH / 2)) / COLUMN_WIDTH;
-
-    return basic_map_index{static_cast<std::uint32_t>(x_t),
-                           static_cast<std::uint32_t>(y_t)};
 }
 
 namespace
@@ -140,14 +132,30 @@ namespace
         renderer->fill_rect(facet.dimensions());
     }
 
+    std::pair<int, int> tile_base(const map_facet& facet,
+                                  const unit_moving& model, basic_map_index idx)
+    {
+        const auto unit_pos = model.position();
+        const auto facet_size = facet.dimensions();
+
+        const auto x_delta = idx.x - unit_pos.x;
+        const auto y_delta = idx.y - unit_pos.y;
+
+        const auto tile_x =
+            facet_size.w / 2 - (COLUMN_WIDTH / 2) + x_delta * COLUMN_WIDTH +
+            (idx.y % 2) * BY_ROW_X_OFFSET - (unit_pos.y % 2) * BY_ROW_X_OFFSET;
+        const auto tile_y = facet_size.h / 2 + y_delta * ROW_HEIGHT;
+
+        return std::pair{tile_x, tile_y};
+    }
+
     void draw_specific(graphics& renderer, const map_facet& facet, const map& m,
                        const unit_moving& model)
     {
         renderer->set_draw_blend_mode(SDL_BLENDMODE_ADD);
 
         iterate(m, [&m, &model, &renderer, &facet](const auto& t, auto idx) {
-            auto tile_x = tile_base_x(facet.dimensions(), idx.x, idx.y);
-            auto tile_y = tile_base_y(facet.dimensions(), idx.y);
+            auto [tile_x, tile_y] = tile_base(facet, model, idx);
 
             render_elevation(renderer, t, tile_x, tile_y);
 
@@ -198,6 +206,56 @@ void hexagon::client::draw(graphics& g, const map_facet& facet,
     std::visit(
         [&g, &facet, &m = s.get_battle().get_map()](const auto& cstate) {  //
             draw_specific(g, facet, m, cstate);
+        },
+        s.raw());
+}
+
+namespace
+{
+    basic_map_index transpose_specific(const map_facet& facet,
+                                       const unit_moving& model, int x,
+                                       int y) noexcept
+    {
+        const auto& unit_pos = model.position();
+        const auto& facet_size = facet.dimensions();
+
+        const int mid_y = facet_size.h / 2 - ROW_HEIGHT / 2;
+        const int mid_x = facet_size.w / 2 - COLUMN_WIDTH / 2;
+
+        const int delta_y = y - mid_y;
+        const int y_idx =
+            unit_pos.y + delta_y / ROW_HEIGHT + (delta_y < 0 ? -1 : 0);
+
+        const int delta_x =
+            x - mid_x +
+            ((std::llabs(y_idx - static_cast<int>(unit_pos.y)) % 2) *
+             (-BY_ROW_X_OFFSET + (unit_pos.y % 2) * COLUMN_WIDTH));
+        const int x_idx =
+            unit_pos.x + delta_x / COLUMN_WIDTH + (delta_x < 0 ? -1 : 0);
+
+        return basic_map_index{static_cast<std::uint32_t>(x_idx),
+                               static_cast<std::uint32_t>(y_idx)};
+    }
+
+    basic_map_index transpose_specific(const map_facet& facet,
+                                       const units_moved& model, int x,
+                                       int y) noexcept
+    {
+        const int y_t = y / ROW_HEIGHT;
+        const int x_t = (x - (y_t % 2) * (COLUMN_WIDTH / 2)) / COLUMN_WIDTH;
+
+        return basic_map_index{static_cast<std::uint32_t>(x_t),
+                               static_cast<std::uint32_t>(y_t)};
+    }
+}  // namespace
+
+basic_map_index hexagon::client::transpose(const map_facet& facet,
+                                           const state::battling_state& s,
+                                           int x, int y) noexcept
+{
+    return std::visit(
+        [&facet, x, y](const auto& model) {
+            return transpose_specific(facet, model, x, y);
         },
         s.raw());
 }

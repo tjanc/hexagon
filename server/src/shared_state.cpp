@@ -109,30 +109,37 @@ namespace
         std::cerr << "Received unknown_message\n";
     }
 
-    void handle_move_request_specific(const move_request&, units_moved&,
-                                      websocket_session&, battle&)
+    void handle_move_request_specific(const move_request&, battling_state&,
+                                      units_moved&, websocket_session&)
     {
         std::cerr << "WARN: unexpected move request in units_moved state\n";
     }
 
     void handle_move_request_specific(const move_request& request,
+                                      battling_state& bstate,
                                       unit_moving& cstate,
-                                      websocket_session& source, battle& b)
+                                      websocket_session& source)
     {
         std::cout << "Correct state, handling movement message\n";
 
         std::cout << "TODO: validate source of movement and detect static "
                      "collisions\n";
-        if (cstate.reachable(b.get_map(), request.target)) {
-            cstate.move(b.get_map(), request.target);
+
+        auto& b = bstate.get_battle();
+        auto& m = b.get_map();
+
+        if (cstate.reachable(m, request.target)) {
+            cstate.move(m, request.target);
 
             std::string msg;
             write_message<move_message>(msg, request.source, request.target);
             source.send(std::make_shared<std::string>(std::move(msg)));
 
-            if (cstate.has_next()) cstate.next(b);
-            // else
-            //    s = units_moved{std::move(cstate)};
+            if (cstate.has_next())
+                cstate.next(b);
+            else {
+                bstate.raw() = units_moved{std::move(cstate)};
+            }
         }
 
         std::cout << "TODO: check if last player to commit, notify others\n";
@@ -151,13 +158,13 @@ namespace
     }
 
     void handle_move_request(const move_request& request,
-                             battling_state& cstate, websocket_session& source)
+                             battling_state& bstate, websocket_session& source)
     {
         std::visit(
-            [&request, &source, &b = cstate.get_battle()](auto& cstate) {
-                handle_move_request_specific(request, cstate, source, b);
+            [&request, &source, &bstate](auto& cstate) {
+                handle_move_request_specific(request, bstate, cstate, source);
             },
-            cstate.raw());
+            bstate.raw());
     }
 
     void handle_client_message(const move_request& request,

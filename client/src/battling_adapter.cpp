@@ -35,20 +35,14 @@ namespace
 
 namespace
 {
-    void update_specific(battling_state& s, units_moved& model,
-                         battle_facet& facet, const mouse& m)
+    void mouse_released(battling_state& s, units_moved& model,
+                        battle_facet& facet, const mouse& m)
     {
         //
     }
 
-    void mouse_moved(const mouse& m, battle_facet& facet, battle& b)
-    {
-        auto idx = facet.transpose(m.x, m.y);
-        if (contains(b.get_map(), idx)) facet.map().hover(idx);
-    }
-
-    void update_specific(battling_state& s, unit_moving& model,
-                         battle_facet& facet, const mouse& m)
+    void mouse_released(battling_state& s, unit_moving& model,
+                        battle_facet& facet, const mouse& m)
     {
         auto source = model.position();
         auto target = facet.map().hover();
@@ -95,13 +89,15 @@ void hexagon::client::update(local_state&, battling_state& cstate,
     auto& facet = gfacet.get(cstate);
 
     if (m.moved()) {
-        mouse_moved(m, facet, cstate.get_battle());
+        const auto idx = transpose(facet, cstate, m.x, m.y);
+        if (contains(cstate.get_battle().get_map(), idx))
+            facet.map().hover(idx);
     }
 
     if (m.released()) {
         std::visit(
-            [&m, &state = cstate, &facet](auto& s) {  //
-                update_specific(state, s, facet, m);
+            [&m, &cstate, &facet](auto& s) {  //
+                mouse_released(cstate, s, facet, m);
             },
             cstate.raw());
     }
