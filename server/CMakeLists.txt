@@ -11,6 +11,10 @@ find_package(Boost 1.65 REQUIRED COMPONENTS system program_options)
 find_package(Threads REQUIRED)
 
 add_executable(server
+    src/battle_responder.cpp
+    src/move_responder.cpp
+    src/login_responder.cpp
+    src/responder.cpp
     src/http_session.cpp
     src/listener.cpp
     src/shared_state.cpp
