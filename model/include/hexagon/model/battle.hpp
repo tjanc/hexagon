@@ -39,7 +39,7 @@ namespace hexagon::model
 
        public:
         std::size_t join(const team&);
-        team leave(team_container::iterator);
+        team leave(int tid);
 
         team_container& teams() noexcept;
         const team_container& teams() const noexcept;

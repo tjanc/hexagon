@@ -24,10 +24,13 @@ namespace hexagon::state
        private:
         model::battle battle_;
         type model_;
+        std::size_t team_id_;
 
        public:
         battling_state(model::battle b, std::size_t tidx)
-            : battle_{std::move(b)}, model_{model::unit_moving{battle_, tidx}}
+            : battle_{std::move(b)},
+              model_{model::unit_moving{battle_, tidx}},
+              team_id_{tidx}
         {
         }
 
@@ -38,6 +41,9 @@ namespace hexagon::state
        public:
         model::battle& get_battle() noexcept { return battle_; }
         const model::battle& get_battle() const noexcept { return battle_; }
+
+       public:
+        std::size_t team_id() const noexcept { return team_id_; }
     };
 }  // namespace hexagon::state
 

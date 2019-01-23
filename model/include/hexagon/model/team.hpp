@@ -25,6 +25,11 @@ namespace hexagon::model
         team& operator=(const team&) = default;
         team& operator=(team&&) noexcept = default;
 
+        auto begin() const noexcept { return units.begin(); }
+        auto begin() noexcept { return units.begin(); }
+        auto end() const noexcept { return units.end(); }
+        auto end() noexcept { return units.end(); }
+
         ~team() = default;
     };
 }  // namespace hexagon::model

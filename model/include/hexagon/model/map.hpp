@@ -124,6 +124,16 @@ namespace hexagon::model
             }
     }
 
+    template <typename T, typename Visitor>
+    void iterate(basic_map<T>& m, Visitor v)
+    {
+        basic_map_index idx;
+        for (idx.y = 0; idx.y < m.height(); ++idx.y)
+            for (idx.x = 0; idx.x < m.width(); ++idx.x) {
+                v(m.at(idx), idx);
+            }
+    }
+
     template <typename T>
     bool contains(const basic_map<T>& m, basic_map_index i) noexcept
     {
