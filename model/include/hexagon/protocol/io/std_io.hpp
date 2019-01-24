@@ -8,6 +8,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <list>
 
 namespace hexagon::protocol::io
 {
@@ -33,11 +34,27 @@ namespace hexagon::protocol::io
         std::size_t n;
         in >> n;
 
-        std::vector<T> ts;
-        ts.reserve(n);
+        obj.clear();
+        obj.reserve(n);
         for (std::size_t i = 0; i < n; ++i) {
             T t;
-            if (in >> t) ts.emplace_back(std::move(t));
+            if (in >> t) obj.emplace_back(std::move(t));
+        }
+
+        return in;
+    }
+
+    template <typename T>
+    std::istream& operator>>(std::istream& in, std::list<T>& obj)
+    {
+        std::size_t n;
+        in >> n;
+
+        obj.clear();
+        obj.reserve(n);
+        for (std::size_t i = 0; i < n; ++i) {
+            T t;
+            if (in >> t) obj.emplace_back(std::move(t));
         }
 
         return in;
@@ -45,6 +62,16 @@ namespace hexagon::protocol::io
 
     template <typename T>
     std::ostream& operator<<(std::ostream& out, const std::vector<T>& obj)
+    {
+        out << obj.size();
+        for (const auto& t : obj) {
+            out << ' ' << t;
+        }
+        return out;
+    }
+
+    template <typename T>
+    std::ostream& operator<<(std::ostream& out, const std::list<T>& obj)
     {
         out << obj.size();
         for (const auto& t : obj) {

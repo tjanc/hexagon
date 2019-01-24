@@ -5,7 +5,7 @@
 #define HEXAGON_MODEL_BATTLE_H_
 
 #include <utility>
-#include <vector>
+#include <list>
 
 #include "map.hpp"
 #include "team.hpp"
@@ -17,7 +17,7 @@ namespace hexagon::model
     class battle
     {
        public:
-        using team_container = std::vector<team>;
+        using team_container = std::list<team>;
 
        private:
         map map_ = {};
@@ -29,16 +29,16 @@ namespace hexagon::model
         explicit battle(map);
         battle(map, team_container);
 
-        battle(const battle&) = default;
+        battle(const battle&) = delete;
         battle(battle&&) noexcept = default;
 
-        battle& operator=(const battle&) = default;
+        battle& operator=(const battle&) = delete;
         battle& operator=(battle&&) noexcept = default;
 
         ~battle() = default;
 
        public:
-        std::size_t join(const team&);
+        team& join(const team&);
         team leave(int tid);
 
         team_container& teams() noexcept;

@@ -61,15 +61,14 @@ namespace hexagon::protocol
     client_message read_client_message(const std::string& msg);
 
     template <typename Message, typename... Args>
-    std::string& write_message(std::string& buffer, const Args&... args)
+    std::string& write_message(std::string& buffer, Args&&... args)
     {
-        using message_from_args_check = decltype(Message(args...));
         using namespace protocol::io;
 
         std::ostringstream ss(buffer);
         ss << id<Message>;
 
-        auto list = {(!!(ss << ' ' << args))...};
+        auto list = {(!!(ss << ' ' << std::forward<Args>(args)))...};
 
         buffer = ss.str();
         return buffer;

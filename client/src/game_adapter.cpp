@@ -17,8 +17,8 @@ using namespace hexagon::state;
 void hexagon::client::update(local_state& s, game_facet& facet,
                              server_message msg)
 {
-    s.update([&s, &facet, m = std::move(msg)](auto& cstate) {
-        hexagon::client::update(s, cstate, facet, std::move(m));
+    s.update([&s, &facet, &msg](auto& cstate) {
+        hexagon::client::update(s, cstate, facet, std::move(msg));
     });
 }
 

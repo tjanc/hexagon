@@ -21,7 +21,7 @@ namespace hexagon::state
 namespace hexagon::client
 {
     void update(state::local_state&, state::connecting_state&, game_facet&,
-                protocol::server_message);
+                protocol::server_message&&);
 
     void update(state::local_state&, state::connecting_state&, game_facet&,
                 const mouse&);

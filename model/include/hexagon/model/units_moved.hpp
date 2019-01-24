@@ -12,8 +12,12 @@ namespace hexagon::model
 {
     class units_moved
     {
+       public:
+        using movement_container = std::vector<movement>;
+
        private:
-        battle::team_container::iterator team_;
+        model::team* team_;
+        movement_container movements_;
 
        public:
         explicit units_moved(unit_moving) noexcept;
@@ -22,6 +26,9 @@ namespace hexagon::model
         units_moved(units_moved&&) noexcept = default;
         units_moved& operator=(const units_moved&) noexcept = delete;
         units_moved& operator=(units_moved&&) noexcept = default;
+
+        const movement_container& movements() const noexcept;
+        movement_container& movements() noexcept;
 
        public:
         const team& my_team() const noexcept;

@@ -9,6 +9,7 @@
 #include <hexagon/model/team.hpp>
 
 #include <hexagon/model/unit_moving.hpp>
+#include <hexagon/model/units_joining.hpp>
 #include <hexagon/model/units_moved.hpp>
 
 #include <hexagon/state/battling_state.hpp>
@@ -35,6 +36,12 @@ namespace
 
 namespace
 {
+    void mouse_released(battling_state& s, units_joining& model,
+                        battle_facet& facet, const mouse& m)
+    {
+        //
+    }
+
     void mouse_released(battling_state& s, units_moved& model,
                         battle_facet& facet, const mouse& m)
     {
@@ -63,12 +70,24 @@ namespace
     void update_specific(local_state& s, battling_state& cstate,
                          game_facet& facet, move_message m)
     {
-        move_unit(cstate.get_battle().get_map(), m.source, m.target);
+        auto& field = cstate.get_battle().get_map();
+
+        auto* src = field.at(m.source).get_if_unit();
+        if (!src) {
+            std::cerr << "ERROR: invalid move message; no unit at source\n";
+            return;
+        }
+
+        std::cout << "INFO: moving unit " << src->id() << " from "  //
+                  << m.source.x << 'x' << m.source.y << " to "      //
+                  << m.target.x << 'x' << m.target.y << '\n';
+
+        move_unit(field, m.source, m.target);
     }
 }  // namespace
 
 void hexagon::client::update(local_state& s, battling_state& cstate,
-                             game_facet& facet, protocol::server_message msg)
+                             game_facet& facet, protocol::server_message&& msg)
 {
     std::visit(
         [&s, &cstate, &facet](auto m) {

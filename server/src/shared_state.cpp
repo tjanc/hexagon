@@ -43,7 +43,7 @@ using namespace hexagon::state;
 
 battle_lobby::battle_lobby(model::battle b) : battle_{std::move(b)} {}
 
-std::size_t battle_lobby::join(websocket_session& ws, const world_state& s)
+hexagon::model::team& battle_lobby::join(websocket_session& ws, const world_state& s)
 {
     std::cout << "INFO: player joining battle lobby\n";
     players_.insert(&ws);

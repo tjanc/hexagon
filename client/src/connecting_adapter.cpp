@@ -54,7 +54,7 @@ namespace
 }  // namespace
 
 void hexagon::client::update(local_state& s, connecting_state& cstate,
-                             game_facet& facet, protocol::server_message msg)
+                             game_facet& facet, protocol::server_message&& msg)
 {
     std::visit(
         [&s, &cstate, &facet](auto m) {

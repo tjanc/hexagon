@@ -15,6 +15,7 @@
 #include <hexagon/protocol/io/unit_io.hpp>
 
 using namespace hexagon::model;
+using namespace hexagon::protocol;
 
 namespace
 {
@@ -76,18 +77,27 @@ namespace
     }
 }  // namespace
 
-unit_moving::unit_moving(battle& b, std::size_t tidx, std::size_t uidx) noexcept
+unit_moving::unit_moving(battle& b, team& t,
+                         team::unit_container::iterator uidx) noexcept
     : start_{std::chrono::steady_clock::now()},
       movements_{},
-      team_{std::next(b.teams().begin(), tidx)},
-      unit_{std::next(team_->units.begin(), uidx)},
+      team_{&t},
+      unit_{uidx},
       unit_position_{find_unit(b.get_map(), unit_->id())},
       reach_map_{generate_reach_map(b.get_map(), unit_position_)}
 {
+    std::cout << "INFO: moving unit " << unit_->id() << " in [";
+    for (const auto& u : team_->units) std::cout << u.id() << ',';
+    std::cout << "]\n";
 }
 
-unit_moving::unit_moving(battle& b, std::size_t tidx) noexcept
-    : unit_moving(b, tidx, 0)
+unit_moving::unit_moving(battle& b, team& t) noexcept
+    : unit_moving(b, t, t.units.begin())
+{
+}
+
+unit_moving::unit_moving(battle& b, units_joining& prev) noexcept
+    : unit_moving(b, prev.my_team(), prev.my_team().units.begin())
 {
 }
 
@@ -115,9 +125,7 @@ void unit_moving::next(battle& b)
     assert(has_next());
     ++unit_;
 
-    start_ = std::chrono::steady_clock::now();
-    unit_position_ = find_unit(b.get_map(), unit_->id());
-    reach_map_ = generate_reach_map(b.get_map(), unit_position_);
+    *this = unit_moving{b, *team_, unit_};
 }
 
 void unit_moving::move(map& m, basic_map_index idx)
@@ -136,12 +144,6 @@ void unit_moving::move(map& m, basic_map_index idx)
     move_unit(m, unit_position_, idx);
 }
 
-battle::team_container::const_iterator unit_moving::my_team() const noexcept
-{
-    return team_;
-}
+const team& unit_moving::my_team() const noexcept { return *team_; }
 
-battle::team_container::iterator unit_moving::my_team() noexcept
-{
-    return team_;
-}
+team& unit_moving::my_team() noexcept { return *team_; }

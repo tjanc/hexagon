@@ -34,10 +34,10 @@ namespace
         const auto& t = s.raw().team_;
         auto b = battle{*ss.assets().get_map(0)};
 
-        auto idx = b.join(t);
+        const auto team_id = b.join(t).id;
 
-        const battling_state& in_battle =
-            source.local().to_battle(battling_state{std::move(b), idx});
+        const battling_state& in_battle = source.local().to_battle(
+            battling_state{std::move(b), team_id});
 
         std::string msg;
         write_message<battle_message>(msg, 0, in_battle.get_battle());

@@ -4,12 +4,11 @@
 #ifndef HEXAGON_STATE_BATTLING_STATE_H_
 #define HEXAGON_STATE_BATTLING_STATE_H_
 
-#include <cstdint>
-#include <variant>
-
 #include <hexagon/model/battle.hpp>
 #include <hexagon/model/unit_moving.hpp>
+#include <hexagon/model/units_joining.hpp>
 #include <hexagon/model/units_moved.hpp>
+#include <variant>
 
 namespace hexagon::state
 {
@@ -17,33 +16,34 @@ namespace hexagon::state
     {
        public:
         using type = std::variant<  //
+            model::units_joining,   //
             model::unit_moving,     //
             model::units_moved      //
             >;
 
        private:
+        /// common state
         model::battle battle_;
+
+        /// more specific state
         type model_;
-        std::size_t team_id_;
 
        public:
-        battling_state(model::battle b, std::size_t tidx)
-            : battle_{std::move(b)},
-              model_{model::unit_moving{battle_, tidx}},
-              team_id_{tidx}
-        {
-        }
+        battling_state(model::battle b, std::size_t tid);
 
        public:
-        type& raw() noexcept { return model_; }
-        const type& raw() const noexcept { return model_; }
+        type& raw() noexcept;
+        const type& raw() const noexcept;
 
        public:
-        model::battle& get_battle() noexcept { return battle_; }
-        const model::battle& get_battle() const noexcept { return battle_; }
+        model::battle& get_battle() noexcept;
+        const model::battle& get_battle() const noexcept;
 
        public:
-        std::size_t team_id() const noexcept { return team_id_; }
+        std::size_t team_id() const noexcept;
+
+       public:
+        void start();
     };
 }  // namespace hexagon::state
 

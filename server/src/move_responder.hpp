@@ -1,8 +1,8 @@
 //  Copyright 2019 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#ifndef HEXAGON_SERVER_RESPONDER_MOVE_RESPONDER_H_
-#define HEXAGON_SERVER_RESPONDER_MOVE_RESPONDER_H_
+#ifndef HEXAGON_SERVER_MOVE_RESPONDER_H_
+#define HEXAGON_SERVER_MOVE_RESPONDER_H_
 
 namespace hexagon::protocol
 {

@@ -96,8 +96,7 @@ namespace
 
 namespace
 {
-    void draw_specific(graphics& renderer, const map_facet& facet, const map& m,
-                       const units_moved& model)
+    void draw_plain(graphics& renderer, const map_facet& facet, const map& m)
     {
         iterate(m, [&renderer, &facet](const auto& t, auto idx) {
             auto tile_x = tile_base_x(facet.dimensions(), idx.x, idx.y);
@@ -129,6 +128,19 @@ namespace
         });
 
         renderer->set_draw_color(30, 30, 30, 255);
+    }
+
+    void draw_specific(graphics& renderer, const map_facet& facet, const map& m,
+                       const units_joining&)
+    {
+        draw_plain(renderer, facet, m);
+        renderer->fill_rect(facet.dimensions());
+    }
+
+    void draw_specific(graphics& renderer, const map_facet& facet, const map& m,
+                       const units_moved&)
+    {
+        draw_plain(renderer, facet, m);
         renderer->fill_rect(facet.dimensions());
     }
 
@@ -237,15 +249,28 @@ namespace
                                static_cast<std::uint32_t>(y_idx)};
     }
 
-    basic_map_index transpose_specific(const map_facet& facet,
-                                       const units_moved& model, int x,
-                                       int y) noexcept
+    basic_map_index transpose_plain(const map_facet& facet, int x,
+                                    int y) noexcept
     {
         const int y_t = y / ROW_HEIGHT;
         const int x_t = (x - (y_t % 2) * (COLUMN_WIDTH / 2)) / COLUMN_WIDTH;
 
         return basic_map_index{static_cast<std::uint32_t>(x_t),
                                static_cast<std::uint32_t>(y_t)};
+    }
+
+    basic_map_index transpose_specific(const map_facet& facet,
+                                       const units_moved&, int x,
+                                       int y) noexcept
+    {
+        return transpose_plain(facet, x, y);
+    }
+
+    basic_map_index transpose_specific(const map_facet& facet,
+                                       const units_joining&, int x,
+                                       int y) noexcept
+    {
+        return transpose_plain(facet, x, y);
     }
 }  // namespace
 

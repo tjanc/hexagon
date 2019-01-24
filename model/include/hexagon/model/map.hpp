@@ -24,6 +24,11 @@ namespace hexagon::model
         basic_map_index(std::size_t x_, std::size_t y_) noexcept : x{x_}, y{y_}
         {
         }
+
+        operator bool() const noexcept
+        {
+            return x != std::numeric_limits<std::size_t>::max();
+        }
     };
 
     bool operator==(const basic_map_index& lhs,
@@ -179,23 +184,6 @@ namespace hexagon::model
     basic_map_index find_unit(const map&, const unit&) noexcept;
     basic_map_index find_unit(const map&, std::size_t uid) noexcept;
     void move_unit(map&, basic_map_index, basic_map_index);
-
-    // template <std::size_t Radius, typename Visitor>
-    // void tiles_around(const map& m, map::const_iterator c, Visitor v)
-    //{
-    //    const auto width = m.width();
-    //    const auto b = m.begin();
-    //    const auto e = m.end();
-    //    const auto c_offset = c - b;
-    //    const auto c_x_offset = c_offset / width - Radius;
-    //    const auto c_y_offset = c_offset % width - Radius;
-
-    //    for (int y = 0; y < Radius * 2 + 1; ++y)
-    //        for (int x = 0; x < Radius * 2 + 1; ++x) {
-    //            auto it = m.find(x + c_x_offset, y + c_y_offset);
-    //            if (it != m.end()) v(it, x, y);
-    //        }
-    //}
 }  // namespace hexagon::model
 
 #endif

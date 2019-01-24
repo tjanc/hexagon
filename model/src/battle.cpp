@@ -15,7 +15,7 @@ battle::battle(map m, battle::team_container teams)
 {
 }
 
-std::size_t battle::join(const team& t)
+team& battle::join(const team& t)
 {
     if (t.units.size() > max_units_) {
         team::unit_container used_units;
@@ -29,7 +29,7 @@ std::size_t battle::join(const team& t)
     for (auto& u : teams_.back().units)
         if (map_.end() == spawn(map_, u)) break;
 
-    return teams_.size() - 1;
+    return teams_.back();
 }
 
 team battle::leave(int tid)

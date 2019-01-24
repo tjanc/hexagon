@@ -14,6 +14,7 @@ add_library(model STATIC
     src/team_io.cpp
     src/unit.cpp
     src/unit_io.cpp
+    src/units_joining.cpp
     src/unit_moving.cpp
     src/units_moved.cpp
     src/message.cpp
@@ -25,6 +26,7 @@ add_library(model STATIC
     src/move_request.cpp
     src/move_message.cpp
     src/local_state.cpp
+    src/battling_state.cpp
     )
 set_target_properties(model PROPERTIES OUTPUT_NAME hexagon-model)
 

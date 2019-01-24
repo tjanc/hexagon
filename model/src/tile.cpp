@@ -37,7 +37,7 @@ void tile::attach(unit& u) { object_ = &u; }
 
 unit* tile::detach_unit() noexcept
 {
-    auto result = object_;
+    unit* result = object_;
     object_ = nullptr;
     return result;
 }

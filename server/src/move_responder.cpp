@@ -10,6 +10,7 @@
 #include "websocket_session.hpp"
 
 #include <iostream>
+#include <set>
 
 using namespace hexagon::model;
 using namespace hexagon::protocol;
@@ -32,8 +33,6 @@ namespace
                           battling_state& bstate, unit_moving& cstate,
                           const move_request& request)
     {
-        std::cout << "Correct state, handling movement message\n";
-
         std::cout << "TODO: validate source of movement and detect static "
                      "collisions\n";
 
@@ -50,11 +49,57 @@ namespace
             if (cstate.has_next())
                 cstate.next(b);
             else {
+                std::cout
+                    << "TODO: check if last player to commit, notify others\n";
+
                 bstate.raw() = units_moved{std::move(cstate)};
+
+                const auto& ps = ss.lobby().players();
+                if (ps.end() ==
+                    std::find_if(ps.begin(), ps.end(),
+                                 [](const websocket_session* s) {  //
+                                     assert(s);
+                                     const auto* bs =
+                                         std::get_if<battling_state>(
+                                             &s->local().raw());
+                                     if (!bs) return true;
+                                     const auto* m =
+                                         std::get_if<units_moved>(&bs->raw());
+                                     return !m;
+                                 })) {
+                    std::cout << "INFO: replaying all moves\n";
+
+                    std::set<movement> all_moves;
+                    for (const websocket_session* s : ps) {
+                        std::cout << "INFO: === mergin player\n";
+                        assert(s);
+                        const auto& bs =
+                            std::get<battling_state>(s->local().raw());
+                        const auto& m = std::get<units_moved>(bs.raw());
+                        std::copy(m.movements().begin(), m.movements().end(),
+                                  std::inserter(all_moves, all_moves.begin()));
+                    }
+
+                    auto& central_map = ss.lobby().battle().get_map();
+                    for (const movement& mov : all_moves) {
+                        std::cout << "INFO: === delay: "
+                                  << std::chrono::duration_cast<
+                                         std::chrono::milliseconds>(mov.delay)
+                                         .count()
+                                  << "ms;\tsource: " << mov.source.x << 'x'
+                                  << mov.source.y
+                                  << ";\ttarget: " << mov.target.x << 'x'
+                                  << mov.target.y << ";\n";
+
+                        if (central_map.at(mov.target).empty())
+                            move_unit(central_map, mov.source, mov.target);
+                        else {
+                            std::cerr << "TODO: resolve movement collision\n";
+                        }
+                    }
+                }
             }
         }
-
-        std::cout << "TODO: check if last player to commit, notify others\n";
     }
 
     void respond_specific(shared_state& ss, websocket_session& source,

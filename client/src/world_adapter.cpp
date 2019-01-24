@@ -27,22 +27,27 @@ namespace
     void update_specific(local_state& s, world_state& cstate, game_facet& facet,
                          battle_message m)
     {
-        std::cout << "Into battle! There are " << m.battle.teams().size()
+        const auto& teams = m.battle.teams();
+        std::cout << "Into battle! There are " << teams.size()
                   << " teams, you are number " << m.team_id << '\n';
 
-        if (m.team_id >= m.battle.teams().size()) {
+        if (teams.end() == std::find_if(teams.begin(), teams.end(),
+                                        [tid = m.team_id](const auto& t) {
+                                            return t.id == tid;
+                                        })) {
             std::cerr << "WARN: invalid team id `" << m.team_id << "`\n";
             return;
         }
 
-        s.to_battle(battling_state{std::move(m.battle), m.team_id});
+        const auto team_id = m.team_id;
+        s.to_battle(battling_state{std::move(m.battle), team_id});
 
         facet = battle_facet{0, 0, facet.width(), facet.height()};
     }
 }  // namespace
 
 void hexagon::client::update(local_state& s, world_state& cstate,
-                             game_facet& facet, protocol::server_message msg)
+                             game_facet& facet, protocol::server_message&& msg)
 {
     std::visit(
         [&s, &cstate, &facet](auto m) {

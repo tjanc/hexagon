@@ -29,7 +29,7 @@ namespace hexagon::server
         explicit battle_lobby(model::battle b);
 
        public:
-        std::size_t join(websocket_session& ws, const state::world_state& s);
+        model::team& join(websocket_session& ws, const state::world_state& s);
         void leave(websocket_session& ws, const state::battling_state& s);
 
        public:
