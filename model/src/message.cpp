@@ -29,6 +29,12 @@ namespace
             return visit(std::move(arg));
         }
 
+        if (name == id<joined_battle_message>) {
+            joined_battle_message arg{};
+            iss >> arg;
+            return visit(std::move(arg));
+        }
+
         if (name == id<world_message>) {
             world_message arg{};
             iss >> arg;

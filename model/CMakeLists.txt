@@ -20,6 +20,7 @@ add_library(model STATIC
     src/message.cpp
     src/version_message.cpp
     src/battle_message.cpp
+    src/joined_battle_message.cpp
     src/login_request.cpp
     src/battle_request.cpp
     src/world_message.cpp

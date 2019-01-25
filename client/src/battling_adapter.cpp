@@ -32,6 +32,9 @@ namespace
     template <>
     constexpr bool handles_message<move_message> = true;
 
+    template <>
+    constexpr bool handles_message<joined_battle_message> = true;
+
 }  // namespace
 
 namespace
@@ -83,6 +86,39 @@ namespace
                   << m.target.x << 'x' << m.target.y << '\n';
 
         move_unit(field, m.source, m.target);
+    }
+
+    void update_specific(local_state& s, battling_state& cstate,
+                         game_facet& facet, joined_battle_message m)
+    {
+        auto& b = cstate.get_battle();
+        auto& t = b.teams().emplace_back(std::move(m.team));
+
+        auto& field = b.get_map();
+        auto udx = t.units.begin();
+        for (const auto& placement : m.placements) {
+            if (udx == t.units.end()) {
+                std::cerr << "WARN: end of team when placing units\n";
+                return;
+            }
+
+            unit& u = *udx;
+            const auto placement_uid = std::get<0>(placement);
+            if (placement_uid != u.id()) {
+                std::cerr << "WARN: unaligned placement\n";
+                return;
+            }
+
+            const auto placement_target = std::get<1>(placement);
+            if (!contains(field, placement_target)) {
+                std::cerr << "WARN: invalid target\n";
+                return;
+            }
+
+            tile& target = field.at(placement_target);
+            target.attach(u);
+            ++udx;
+        }
     }
 }  // namespace
 

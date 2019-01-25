@@ -10,6 +10,7 @@
 
 #include "battle_message.hpp"
 #include "battle_request.hpp"
+#include "joined_battle_message.hpp"
 #include "login_request.hpp"
 #include "move_message.hpp"
 #include "move_request.hpp"
@@ -31,6 +32,9 @@ namespace hexagon::protocol
     constexpr const char* id<battle_message> = BATTLE_MESSAGE_ID;
 
     template <>
+    constexpr const char* id<joined_battle_message> = JOINED_BATTLE_MESSAGE_ID;
+
+    template <>
     constexpr const char* id<login_request> = LOGIN_REQUEST_ID;
 
     template <>
@@ -49,6 +53,7 @@ namespace hexagon::protocol
         unknown_message,                  //
         version_response,                 //
         battle_message,                   //
+        joined_battle_message,            //
         world_message, move_message>;
 
     using client_message = std::variant<  //
