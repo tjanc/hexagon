@@ -1,9 +1,11 @@
-//  Copyright 2018 Thomas Jandecka.
+//  Copyright 2019 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#include <hexagon/model/map_loader.hpp>
+#include "map_loader.hpp"
 
 #include <cstdio>
+#include <hexagon/model/map.hpp>
+#include <hexagon/model/unit.hpp>
 
 using namespace hexagon::model;
 
@@ -13,12 +15,12 @@ namespace
 
 }  // namespace
 
-map hexagon::model::load_map(const char* file_name)
+map hexagon::server::load_map(std::string file_name)
 {
     map::tiles_container tiles;
     int width = -1;
 
-    FILE* file = fopen(file_name, "r");
+    FILE* file = fopen(file_name.c_str(), "r");
     if (!file) throw file_not_found{file_name};
 
     char kind_flag = 'g';
@@ -88,4 +90,4 @@ map hexagon::model::load_map(const char* file_name)
 
     fclose(file);
     return {tiles, static_cast<std::uint32_t>(width)};
-}  // namespace
+}

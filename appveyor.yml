@@ -1,0 +1,31 @@
+version: '{build}'
+clone_folder: c:\projects\hexagon
+image:
+- Visual Studio 2017
+configuration:
+- Release
+- Debug
+platform:
+- x64
+environment:
+  matrix:
+  - arch: Win64
+matrix:
+  fast_finish: false
+
+# skip unsupported combinations
+init:
+- set arch=
+- if "%arch%"=="Win64" ( set arch= Win64)
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
+- echo %generator%
+
+before_build:
+- cmd: |-
+    git submodule update --init --recursive
+
+build_script:
+- mkdir build
+- cd build
+- cmake .. -DBOOST_ROOT=C:\Libraries\boost_1_67_0 -G %generator% -DCMAKE_BUILD_TYPE=%CONFIGURATION%
+- ls -alh

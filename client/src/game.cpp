@@ -10,7 +10,6 @@
 #include <SDL_image.h>
 
 #include <hexagon/model/battle.hpp>
-#include <hexagon/model/map_loader.hpp>
 
 #include <hexagon/protocol/message.hpp>
 #include <hexagon/protocol/version_message.hpp>

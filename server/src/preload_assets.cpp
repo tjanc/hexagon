@@ -2,13 +2,14 @@
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
 #include "preload_assets.hpp"
-#include <hexagon/model/map_loader.hpp>
+
+#include "map_loader.hpp"
 
 using namespace hexagon::server;
 using namespace hexagon::model;
 
-preload_assets::preload_assets(std::filesystem::path assets_dir)
-    : maps_{load_map(assets_dir.append("map2.map").c_str())}
+preload_assets::preload_assets(boost::filesystem::path assets_dir)
+    : maps_{load_map(assets_dir.append("map2.map").string())}
 {
 }
 

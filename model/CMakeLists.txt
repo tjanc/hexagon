@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 project(HexagonModel VERSION 0.0.2 LANGUAGES CXX)
 
 add_library(model STATIC
-    src/map_loader.cpp
     src/battle.cpp
     src/battle_io.cpp
     src/map.cpp

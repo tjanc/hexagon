@@ -6,7 +6,6 @@
 #include <SDL.h>
 
 #include <hexagon/model/map.hpp>
-#include <hexagon/model/map_loader.hpp>
 
 #include "sdl/renderer.hpp"
 

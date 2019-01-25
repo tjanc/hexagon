@@ -1,7 +1,7 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#include <filesystem>
+#include <boost/filesystem.hpp>
 
 #include "listener.hpp"
 #include "net.hpp"
@@ -18,27 +18,26 @@ int main(int argc, const char* argv[])
     using boost::system::error_code;
     namespace po = boost::program_options;
 
-    const auto assets_path = std::filesystem::path(argv[0])
+    const auto assets_path = boost::filesystem::path(argv[0])
                                  .remove_filename()  //
-                                 .parent_path()      //
                                  .parent_path()      //
                                  .append("lib")      //
                                  .append("hexagon")  //
                                  .append("assets");
 
     po::options_description param_desc("Usage");
-    param_desc.add_options()                                    //
-        ("help",                                                //
-         "print this help message")                             //
-        ("port,p",                                              //
-         po::value<unsigned short>()->default_value(8080),      //
-         "port number")                                         //
-        ("documents,d",                                         //
-         po::value<std::string>(),                              //
-         "path to public document directory")                   //
-        ("assets,a",                                            //
-         po::value<std::string>()->default_value(assets_path),  //
-         "path to assets directory")                            //
+    param_desc.add_options()                                             //
+        ("help",                                                         //
+         "print this help message")                                      //
+        ("port,p",                                                       //
+         po::value<unsigned short>()->default_value(8080),               //
+         "port number")                                                  //
+        ("documents,d",                                                  //
+         po::value<std::string>(),                                       //
+         "path to public document directory")                            //
+        ("assets,a",                                                     //
+         po::value<std::string>()->default_value(assets_path.string()),  //
+         "path to assets directory")                                     //
         ;
 
     po::variables_map params;
