@@ -98,6 +98,8 @@ namespace
 {
     void draw_plain(graphics& renderer, const map_facet& facet, const map& m)
     {
+        renderer->set_draw_blend_mode(SDL_BLENDMODE_ADD);
+
         iterate(m, [&renderer, &facet](const auto& t, auto idx) {
             auto tile_x = tile_base_x(facet.dimensions(), idx.x, idx.y);
             auto tile_y = tile_base_y(facet.dimensions(), idx.y);
@@ -126,14 +128,13 @@ namespace
 
             render_objects(renderer, t, destination);
         });
-
-        renderer->set_draw_color(30, 30, 30, 255);
     }
 
     void draw_specific(graphics& renderer, const map_facet& facet, const map& m,
                        const units_joining&)
     {
         draw_plain(renderer, facet, m);
+        renderer->set_draw_color(30, 30, 30, 255);
         renderer->fill_rect(facet.dimensions());
     }
 
@@ -141,6 +142,7 @@ namespace
                        const units_moved&)
     {
         draw_plain(renderer, facet, m);
+        renderer->set_draw_color(30, 30, 30, 255);
         renderer->fill_rect(facet.dimensions());
     }
 
