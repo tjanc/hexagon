@@ -28,16 +28,31 @@ namespace
 
 namespace
 {
+    static std::size_t& next_team_id()
+    {
+        static std::size_t next_id_ = 0;
+        return next_id_;
+    }
+
+    static std::size_t unique_team_id()
+    {
+        std::size_t id = next_team_id();
+        ++next_team_id();
+        return id;
+    }
+
     void respond_specific(shared_state& ss, websocket_session& source,
                           connecting_state& s, const login_request& request)
     {
-        std::cout << "Someone is logging in as " << request.name << "\n";
+        auto id = unique_team_id();
+        std::cout << "Someone is logging in as " << request.name
+                  << ", giving them team " << id << '\n';
 
-        const world_state& in_world = source.local().to_world(
-            world_state{world{team{0, team::unit_container{
-                                          unit{0, unit_job::warrior},  //
-                                          unit{1, unit_job::mage}      //
-                                      }}}});
+        const world_state& in_world = source.local().to_world(world_state{
+            world{team{id, team::unit_container{
+                               unit{0 + id * 10, unit_job::warrior},  //
+                               unit{1 + id * 10, unit_job::mage}      //
+                           }}}});
 
         std::string msg;
         write_message<world_message>(msg, in_world.raw().team_);

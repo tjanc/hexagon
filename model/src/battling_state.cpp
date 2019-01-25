@@ -26,7 +26,7 @@ battling_state::battling_state(battle b, std::size_t tid)
     : battle_{std::move(b)},
       model_{std::in_place_type<units_joining>, find_team(battle_, tid)}
 {
-    start();
+    if (battle_.ready()) start();
 }
 
 battling_state::type& battling_state::raw() noexcept { return model_; }

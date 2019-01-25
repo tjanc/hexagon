@@ -21,7 +21,38 @@ battle::battle(map m, std::size_t full, battle::team_container teams)
 {
 }
 
-team& battle::join(const team& t)
+battle::battle(const battle& rhs)
+    : battle(rhs.map_, rhs.full_teams_, rhs.teams_)
+{
+    *this = rhs;
+}
+
+battle& battle::operator=(const battle& rhs)
+{
+    map_ = rhs.map_;
+    full_teams_ = rhs.full_teams_;
+    teams_ = rhs.teams_;
+    max_units_ = rhs.max_units_;
+
+    for (team& t : teams_)
+        for (auto& spot : map_)
+            if (spot.has_unit()) {
+                unit* o = spot.detach_unit();
+                auto n = std::find_if(t.units.begin(), t.units.end(),
+                                      [uid = o->id()](const unit& u) {  //
+                                          return u.id() == uid;
+                                      });
+                if (n == t.units.end())
+                    // if not in this team, it's in another
+                    spot.attach(*o);
+                else
+                    spot.attach(*n);
+            }
+
+    return *this;
+}
+
+std::pair<team*, battle::placement_container> battle::join(const team& t)
 {
     if (t.units.size() > max_units_) {
         team::unit_container used_units;
@@ -32,10 +63,14 @@ team& battle::join(const team& t)
         teams_.emplace_back(t);
     }
 
-    for (auto& u : teams_.back().units)
-        if (map_.end() == spawn(map_, u)) break;
+    battle::placement_container placements;
+    for (auto& u : teams_.back().units) {
+        auto it = spawn(map_, u);
+        if (map_.end() == it) break;
+        placements.emplace_back(u.id(), to_index(map_, it));
+    }
 
-    return teams_.back();
+    return {&teams_.back(), std::move(placements)};
 }
 
 team battle::leave(int tid)

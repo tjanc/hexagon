@@ -31,17 +31,29 @@ namespace
     void respond_specific(shared_state& ss, websocket_session& source,
                           world_state& s, const battle_request& request)
     {
-        const auto& t = s.raw().team_;
-        auto b = battle{*ss.assets().get_map(0), 2};
+        auto& lobby = ss.lobby();
+        auto joined = lobby.join(source, s);
 
-        const auto team_id = b.join(t).id;
+        team* my_team = joined.first;
+        auto& my_placements = joined.second;
 
         const battling_state& in_battle = source.local().to_battle(
-            battling_state{std::move(b), team_id});
+            battling_state{lobby.battle(), my_team->id});
 
-        std::string msg;
-        write_message<battle_message>(msg, 0, in_battle.get_battle());
-        source.send(std::make_shared<std::string>(std::move(msg)));
+        if (lobby.players().size() > 1) {
+            std::string msg;
+            write_message<joined_battle_message>(msg, *my_team, my_placements);
+            for (websocket_session* player : lobby.players()) {
+                if (player != &source)
+                    player->send(std::make_shared<std::string>(msg));
+            }
+        }
+
+        {
+            std::string msg;
+            write_message<battle_message>(msg, my_team->id, in_battle.get_battle());
+            source.send(std::make_shared<std::string>(std::move(msg)));
+        }
     }
 }  // namespace
 

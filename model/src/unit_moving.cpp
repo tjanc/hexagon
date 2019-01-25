@@ -86,7 +86,8 @@ unit_moving::unit_moving(battle& b, team& t,
       unit_position_{find_unit(b.get_map(), unit_->id())},
       reach_map_{generate_reach_map(b.get_map(), unit_position_)}
 {
-    std::cout << "INFO: moving unit " << unit_->id() << " in [";
+    std::cout << "INFO: moving unit " << team_->id << ':' << unit_->id()
+              << " in [";
     for (const auto& u : team_->units) std::cout << u.id() << ',';
     std::cout << "]\n";
 }

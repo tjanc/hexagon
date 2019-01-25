@@ -18,6 +18,8 @@ namespace hexagon::model
     {
        public:
         using team_container = std::list<team>;
+        using placement_container =
+            std::vector<std::pair<std::size_t, basic_map_index>>;
 
        private:
         map map_ = {};
@@ -30,16 +32,16 @@ namespace hexagon::model
         explicit battle(map, std::size_t full);
         battle(map, std::size_t full, team_container);
 
-        battle(const battle&) = delete;
+        battle(const battle&);
         battle(battle&&) noexcept = default;
 
-        battle& operator=(const battle&) = delete;
+        battle& operator=(const battle&);
         battle& operator=(battle&&) noexcept = default;
 
         ~battle() = default;
 
        public:
-        team& join(const team&);
+        std::pair<team*, placement_container> join(const team&);
         team leave(int tid);
 
         team_container& teams() noexcept;

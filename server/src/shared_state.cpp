@@ -34,16 +34,17 @@ void shared_state::leave(websocket_session& session)
 
 shared_state::shared_state(preload_assets assets, std::string root)
     : assets_(std::move(assets)),
-      lobby_{model::battle{*assets_.get_map(0), 2}},
+      lobby_{hexagon::model::battle{*assets_.get_map(0), 2}},
       document_root_(std::move(root))
 {
 }
 
 using namespace hexagon::state;
 
-battle_lobby::battle_lobby(model::battle b) : battle_{std::move(b)} {}
+battle_lobby::battle_lobby(hexagon::model::battle b) : battle_{std::move(b)} {}
 
-hexagon::model::team& battle_lobby::join(websocket_session& ws, const world_state& s)
+std::pair<hexagon::model::team*, hexagon::model::battle::placement_container>
+battle_lobby::join(websocket_session& ws, const world_state& s)
 {
     std::cout << "INFO: player joining battle lobby\n";
     players_.insert(&ws);
