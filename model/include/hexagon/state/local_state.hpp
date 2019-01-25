@@ -48,6 +48,7 @@ namespace hexagon::state
         }
 
         const type& raw() const noexcept;
+        type& raw() noexcept;
 
        public:
         bool updated() const noexcept;

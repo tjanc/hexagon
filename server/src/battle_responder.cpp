@@ -44,14 +44,22 @@ namespace
             std::string msg;
             write_message<joined_battle_message>(msg, *my_team, my_placements);
             for (websocket_session* player : lobby.players()) {
-                if (player != &source)
+                if (player != &source) {
+                    if (lobby.battle().ready()) {
+                        auto* player_state =
+                            std::get_if<battling_state>(&player->local().raw());
+                        assert(player_state);
+                        player_state->start();
+                    }
                     player->send(std::make_shared<std::string>(msg));
+                }
             }
         }
 
         {
             std::string msg;
-            write_message<battle_message>(msg, my_team->id, in_battle.get_battle());
+            write_message<battle_message>(msg, my_team->id,
+                                          in_battle.get_battle());
             source.send(std::make_shared<std::string>(std::move(msg)));
         }
     }

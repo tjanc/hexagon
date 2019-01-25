@@ -24,6 +24,7 @@ battling_state& local_state::to_battle(battling_state s)
 }
 
 const local_state::type& local_state::raw() const noexcept { return state_; }
+local_state::type& local_state::raw() noexcept { return state_; }
 
 bool local_state::updated() const noexcept { return updated_; }
 
