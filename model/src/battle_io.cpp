@@ -4,8 +4,8 @@
 #include <hexagon/protocol/io/battle_io.hpp>
 
 #include <hexagon/model/battle.hpp>
-#include <hexagon/model/team.hpp>
 #include <hexagon/model/map.hpp>
+#include <hexagon/model/team.hpp>
 #include <hexagon/model/tile.hpp>
 #include <hexagon/model/unit.hpp>
 
@@ -53,6 +53,9 @@ std::istream& io::operator>>(std::istream& in, battle& obj)
     map m;
     in >> m;
 
+    std::size_t full;
+    in >> full;
+
     std::size_t n_pos;
     in >> n_pos;
 
@@ -80,7 +83,7 @@ std::istream& io::operator>>(std::istream& in, battle& obj)
         m.at(position).attach(*u);
     }
 
-    obj = std::move(battle{std::move(m), std::move(teams)});
+    obj = std::move(battle{std::move(m), full, std::move(teams)});
 
     return in;
 }
@@ -94,7 +97,10 @@ std::ostream& io::operator<<(std::ostream& out, const battle& obj)
     const auto& m = obj.get_map();
     out << ' ' << m;
 
-    std::size_t n_pos = count_units(m);
+    const auto full = obj.full();
+    out << ' ' << full;
+
+    const auto n_pos = count_units(m);
     out << ' ' << n_pos;
 
     iterate(m, [&out](const auto& t, const auto& idx) {

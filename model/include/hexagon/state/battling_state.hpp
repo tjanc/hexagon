@@ -44,6 +44,11 @@ namespace hexagon::state
 
        public:
         void start();
+
+       public:
+        bool joining() const noexcept;
+        bool moving() const noexcept;
+        bool moved() const noexcept;
     };
 }  // namespace hexagon::state
 

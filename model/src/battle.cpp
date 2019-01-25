@@ -8,10 +8,16 @@
 
 using namespace hexagon::model;
 
-battle::battle(map m) : battle(std::move(m), battle::team_container{}) {}
+battle::battle(map m, std::size_t full)
+    : battle(std::move(m), full, battle::team_container{})
+{
+}
 
-battle::battle(map m, battle::team_container teams)
-    : map_{std::move(m)}, teams_{std::move(teams)}, max_units_{2}
+battle::battle(map m, std::size_t full, battle::team_container teams)
+    : map_{std::move(m)},
+      full_teams_{full},
+      teams_{std::move(teams)},
+      max_units_{2}
 {
 }
 
@@ -62,3 +68,7 @@ const battle::team_container& battle::teams() const noexcept { return teams_; }
 map& battle::get_map() noexcept { return map_; }
 
 const map& battle::get_map() const noexcept { return map_; }
+
+bool battle::ready() const noexcept { return teams().size() == full(); }
+
+std::size_t battle::full() const noexcept { return full_teams_; }

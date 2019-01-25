@@ -34,7 +34,7 @@ void shared_state::leave(websocket_session& session)
 
 shared_state::shared_state(preload_assets assets, std::string root)
     : assets_(std::move(assets)),
-      lobby_{model::battle{*assets_.get_map(0)}},
+      lobby_{model::battle{*assets_.get_map(0), 2}},
       document_root_(std::move(root))
 {
 }

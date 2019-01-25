@@ -119,6 +119,10 @@ namespace
             target.attach(u);
             ++udx;
         }
+
+        if (cstate.joining() && b.ready()) {
+            cstate.start();
+        }
     }
 }  // namespace
 

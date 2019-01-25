@@ -4,8 +4,8 @@
 #ifndef HEXAGON_MODEL_BATTLE_H_
 #define HEXAGON_MODEL_BATTLE_H_
 
-#include <utility>
 #include <list>
+#include <utility>
 
 #include "map.hpp"
 #include "team.hpp"
@@ -23,11 +23,12 @@ namespace hexagon::model
         map map_ = {};
         team_container teams_ = {};
         int max_units_ = 1;
+        std::size_t full_teams_ = 2;
 
        public:
         battle() = default;
-        explicit battle(map);
-        battle(map, team_container);
+        explicit battle(map, std::size_t full);
+        battle(map, std::size_t full, team_container);
 
         battle(const battle&) = delete;
         battle(battle&&) noexcept = default;
@@ -47,6 +48,10 @@ namespace hexagon::model
        public:
         map& get_map() noexcept;
         const map& get_map() const noexcept;
+
+       public:
+        bool ready() const noexcept;
+        std::size_t full() const noexcept;
     };
 
 }  // namespace hexagon::model

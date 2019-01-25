@@ -32,7 +32,7 @@ namespace
                           world_state& s, const battle_request& request)
     {
         const auto& t = s.raw().team_;
-        auto b = battle{*ss.assets().get_map(0)};
+        auto b = battle{*ss.assets().get_map(0), 2};
 
         const auto team_id = b.join(t).id;
 

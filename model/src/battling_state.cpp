@@ -57,3 +57,18 @@ void battling_state::start()
         std::cerr << "ERROR: battle must start from units_joining state\n";
     }
 }
+
+bool battling_state::joining() const noexcept
+{
+    return std::holds_alternative<units_joining>(model_);
+}
+
+bool battling_state::moving() const noexcept
+{
+    return std::holds_alternative<unit_moving>(model_);
+}
+
+bool battling_state::moved() const noexcept
+{
+    return std::holds_alternative<units_moved>(model_);
+}
