@@ -67,10 +67,33 @@ std::pair<team*, battle::placement_container> battle::join(const team& t)
     for (auto& u : teams_.back().units) {
         auto it = spawn(map_, u);
         if (map_.end() == it) break;
-        placements.emplace_back(u.id(), to_index(map_, it));
+        placements.emplace_back(to_index(map_, it));
     }
 
     return {&teams_.back(), std::move(placements)};
+}
+
+team& battle::join(const team& ot, const battle::placement_container& placements)
+{
+    auto& t = teams().emplace_back(ot);
+
+    auto& field = get_map();
+    auto udx = t.units.begin();
+    for (const auto& placement : placements) {
+        if (udx == t.units.end())
+            return t;
+
+        unit& u = *udx;
+
+        if (!contains(field, placement))
+            return t;
+
+        tile& target = field.at(placement);
+        target.attach(u);
+        ++udx;
+    }
+
+    return t;
 }
 
 team battle::leave(int tid)

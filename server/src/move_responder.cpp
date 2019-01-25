@@ -42,10 +42,6 @@ namespace
         if (cstate.reachable(m, request.target)) {
             cstate.move(m, request.target);
 
-            std::string msg;
-            write_message<move_message>(msg, request.source, request.target);
-            source.send(std::make_shared<std::string>(std::move(msg)));
-
             if (cstate.has_next())
                 cstate.next(b);
             else {
@@ -92,9 +88,21 @@ namespace
                                   << ";\ttarget: " << mov.target.x << 'x'
                                   << mov.target.y << ";\n";
 
-                        if (central_map.at(mov.target).empty())
+                        if (central_map.at(mov.target).empty()) {
                             move_unit(central_map, mov.source, mov.target);
-                        else {
+                            std::string msg;
+                            write_message<move_message>(msg, mov.source,
+                                                        mov.target);
+
+                            for (websocket_session* player : ps) {
+                                auto& pstate = std::get<battling_state>(
+                                    player->local().raw());
+                                move_unit(pstate.get_battle().get_map(), mov.source,
+                                          mov.target);
+                                player->send(
+                                    std::make_shared<std::string>(msg));
+                            }
+                        } else {
                             std::cerr << "TODO: resolve movement collision\n";
                         }
                     }

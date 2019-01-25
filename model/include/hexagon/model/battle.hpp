@@ -18,8 +18,7 @@ namespace hexagon::model
     {
        public:
         using team_container = std::list<team>;
-        using placement_container =
-            std::vector<std::pair<std::size_t, basic_map_index>>;
+        using placement_container = std::vector<basic_map_index>;
 
        private:
         map map_ = {};
@@ -42,6 +41,7 @@ namespace hexagon::model
 
        public:
         std::pair<team*, placement_container> join(const team&);
+        team& join(const team&, const placement_container& placements);
         team leave(int tid);
 
         team_container& teams() noexcept;

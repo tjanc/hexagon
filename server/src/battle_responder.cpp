@@ -45,12 +45,14 @@ namespace
             write_message<joined_battle_message>(msg, *my_team, my_placements);
             for (websocket_session* player : lobby.players()) {
                 if (player != &source) {
-                    if (lobby.battle().ready()) {
-                        auto* player_state =
-                            std::get_if<battling_state>(&player->local().raw());
-                        assert(player_state);
-                        player_state->start();
-                    }
+                    auto& player_state =
+                        std::get<battling_state>(player->local().raw());
+
+                    auto& b = player_state.get_battle();
+                    b.join(*my_team, my_placements);
+                    if (player_state.joining() && b.ready())
+                        player_state.start();
+
                     player->send(std::make_shared<std::string>(msg));
                 }
             }

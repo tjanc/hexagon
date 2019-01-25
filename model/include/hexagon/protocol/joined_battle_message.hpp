@@ -5,7 +5,6 @@
 #define HEXAGON_PROTOCOL_JOINED_BATTLE_MESSAGE_H_
 
 #include <iostream>
-#include <utility>
 
 #include <hexagon/model/map.hpp>
 #include <hexagon/model/team.hpp>
@@ -15,8 +14,7 @@ namespace hexagon::protocol
     static constexpr const char* JOINED_BATTLE_MESSAGE_ID = "JOINED_BATTLE";
 
     struct joined_battle_message {
-        using placement_container =
-            std::vector<std::pair<std::size_t, model::basic_map_index>>;
+        using placement_container = std::vector<model::basic_map_index>;
 
         model::team team;
         placement_container placements;

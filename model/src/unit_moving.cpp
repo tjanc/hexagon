@@ -145,7 +145,6 @@ void unit_moving::move(map& m, basic_map_index idx)
     movements_.emplace_back(std::chrono::steady_clock::now() - start_,
                             unit_position_, idx);
     std::cout << "Now accumulated " << movements_.size() << " moves\n";
-    move_unit(m, unit_position_, idx);
 }
 
 const team& unit_moving::my_team() const noexcept { return *team_; }
