@@ -71,11 +71,12 @@ namespace
 
                     std::set<movement> all_moves;
                     for (const websocket_session* s : ps) {
-                        std::cout << "INFO: === mergin player\n";
                         assert(s);
                         const auto& bs =
                             std::get<battling_state>(s->local().raw());
                         const auto& m = std::get<units_moved>(bs.raw());
+                        std::cout << "INFO: === mergin player with #"
+                                  << m.movements().size() << " moves\n";
                         std::copy(m.movements().begin(), m.movements().end(),
                                   std::inserter(all_moves, all_moves.begin()));
                     }

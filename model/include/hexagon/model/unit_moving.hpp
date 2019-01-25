@@ -58,7 +58,8 @@ namespace hexagon::model
        public:
         unit_moving(battle&, units_joining& prev) noexcept;
 
-        unit_moving(battle&, team&, team::unit_container::iterator) noexcept;
+        unit_moving(battle&, team&, team::unit_container::iterator,
+                    movement_container movements) noexcept;
         unit_moving(battle&, team&) noexcept;
 
         unit_moving(const unit_moving&) noexcept = delete;

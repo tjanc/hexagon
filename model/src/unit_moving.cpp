@@ -78,9 +78,10 @@ namespace
 }  // namespace
 
 unit_moving::unit_moving(battle& b, team& t,
-                         team::unit_container::iterator uidx) noexcept
+                         team::unit_container::iterator uidx,
+                         unit_moving::movement_container movements) noexcept
     : start_{std::chrono::steady_clock::now()},
-      movements_{},
+      movements_{std::move(movements)},
       team_{&t},
       unit_{uidx},
       unit_position_{find_unit(b.get_map(), unit_->id())},
@@ -93,12 +94,13 @@ unit_moving::unit_moving(battle& b, team& t,
 }
 
 unit_moving::unit_moving(battle& b, team& t) noexcept
-    : unit_moving(b, t, t.units.begin())
+    : unit_moving(b, t, t.units.begin(), unit_moving::movement_container{})
 {
 }
 
 unit_moving::unit_moving(battle& b, units_joining& prev) noexcept
-    : unit_moving(b, prev.my_team(), prev.my_team().units.begin())
+    : unit_moving(b, prev.my_team(), prev.my_team().units.begin(),
+                  unit_moving::movement_container{})
 {
 }
 
@@ -126,7 +128,7 @@ void unit_moving::next(battle& b)
     assert(has_next());
     ++unit_;
 
-    *this = unit_moving{b, *team_, unit_};
+    *this = unit_moving{b, *team_, unit_, std::move(movements_)};
 }
 
 void unit_moving::move(map& m, basic_map_index idx)
@@ -142,6 +144,7 @@ void unit_moving::move(map& m, basic_map_index idx)
 
     movements_.emplace_back(std::chrono::steady_clock::now() - start_,
                             unit_position_, idx);
+    std::cout << "Now accumulated " << movements_.size() << " moves\n";
     move_unit(m, unit_position_, idx);
 }
 
