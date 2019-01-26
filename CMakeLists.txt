@@ -19,6 +19,13 @@ macro(find_package)
     endif()
 endmacro()
 
+if(MSVC)
+    include(ext/ucm/cmake/ucm.cmake)
+    ucm_print_flags()
+    ucm_set_runtime(STATIC)
+    ucm_print_flags()
+endif()
+
 # dependencies
 if(NOT EMSCRIPTEN)
     add_subdirectory(ext/boost-beast EXCLUDE_FROM_ALL)

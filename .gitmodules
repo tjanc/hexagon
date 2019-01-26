@@ -4,3 +4,6 @@
 [submodule "ext/boost-beast"]
 	path = ext/boost-beast
 	url = https://github.com/boostorg/beast.git
+[submodule "ext/ucm"]
+	path = ext/ucm
+	url = https://github.com/onqtam/ucm.git

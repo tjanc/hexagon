@@ -51,3 +51,5 @@ deploy:
   draft: false
   prerelease: false
   force_update: true
+  on:
+    branch: master                 # release from master branch only
