@@ -8,6 +8,7 @@ find_package(Catch2 1.0 REQUIRED)
 add_executable(model-test
     runner.cpp
     test-map.cpp
+    test-battle.cpp
     )
 
 target_compile_features(model-test PUBLIC cxx_std_17)

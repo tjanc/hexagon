@@ -28,10 +28,10 @@ before_build:
   - echo $BOOST_LIBRARYDIR
 
 build_script:
-- ctest -VV -j5 -S cmake/appveyor.cmake -DCTEST_CMAKE_GENERATOR=%generator% -C %CONFIGURATION% -DCTEST_BUILD_TYPE=%CONFIGURATION%
+- ctest -VV -j5 -S cmake/appveyor_model_test.cmake -DCTEST_CMAKE_GENERATOR=%generator% -C %CONFIGURATION% -DCTEST_BUILD_TYPE=%CONFIGURATION% -DCTEST_SITE=AppVeyor
+- ctest -VV -j5 -S cmake/appveyor_server.cmake -DCTEST_CMAKE_GENERATOR=%generator% -C %CONFIGURATION% -DCTEST_BUILD_TYPE=%CONFIGURATION% -DCTEST_SITE=AppVeyor
 - cd build
 - cpack -G 7Z
-- ls -alh
 
 after_build:
   - ps: mv *.7z $env:APPVEYOR_BUILD_FOLDER
@@ -51,5 +51,5 @@ deploy:
   draft: false
   prerelease: false
   force_update: true
-  on:
-    branch: master                 # release from master branch only
+#  on:
+#    branch: master                 # release from master branch only

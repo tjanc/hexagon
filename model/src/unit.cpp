@@ -38,15 +38,15 @@ namespace
         return stats.strength + stats.endurance + stats.presence;
     }
 
-    float damage_factor(const power& p, const unit_statistics& stats) noexcept
-    {
-        return 1.0;
-    }
+    // float damage_factor(const power&, const unit_statistics&) noexcept
+    // {
+    //     return 1.0;
+    // }
 }  // namespace
 
 namespace
 {
-    void add_level_bonus(std::uint16_t lvl, unit_statistics& stats)
+    void add_level_bonus(std::uint16_t, unit_statistics& stats)
     {
         stats.agility += 10;
         stats.presence += 10;
@@ -56,7 +56,7 @@ namespace
         stats.endurance += 10;
     }
 
-    void add_job_bonus(std::uint16_t level, unit_job jb, unit_statistics& stats)
+    void add_job_bonus(std::uint16_t, unit_job jb, unit_statistics& stats)
     {
         switch (jb) {
             default:
@@ -133,10 +133,10 @@ namespace
         }
     }
 
-    std::uint16_t needed_experience(std::uint16_t lvl)
-    {
-        return std::pow(lvl, 1.6) + 100;
-    }
+    // std::uint16_t needed_experience(std::uint16_t lvl)
+    // {
+    //     return std::pow(lvl, 1.6) + 100;
+    // }
 
 }  // namespace
 

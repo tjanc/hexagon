@@ -68,7 +68,7 @@ namespace hexagon::model
         unit_moving& operator=(unit_moving&&) noexcept = default;
 
        public:
-        void move(map& m, basic_map_index idx);
+        void move(basic_map_index idx);
         void next(battle& b);
 
        public:

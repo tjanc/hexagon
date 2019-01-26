@@ -23,7 +23,7 @@ namespace hexagon::model
        private:
         map map_ = {};
         team_container teams_ = {};
-        int max_units_ = 1;
+        std::size_t max_units_ = 1;
         std::size_t full_teams_ = 2;
 
        public:
@@ -42,7 +42,7 @@ namespace hexagon::model
        public:
         std::pair<team*, placement_container> join(const team&);
         team& join(const team&, const placement_container& placements);
-        team leave(int tid);
+        team leave(std::size_t tid);
 
         team_container& teams() noexcept;
         const team_container& teams() const noexcept;

@@ -26,6 +26,21 @@ aliases:
       command: 'apt-get -t buster install -y --no-install-recommends cmake libboost-system-dev libboost-program-options-dev libboost-filesystem-dev git openssl'
 
 jobs:
+  test-model-coverage:
+    docker:
+      - image: gcc:latest
+    working_directory: /tmp/hexagon
+    environment:
+    steps:
+      - <<: *server-update
+      - <<: *server-deps
+      - checkout
+      - run:
+          name: Configure, build & test
+          command: |
+            git submodule update --init --recursive
+            ctest -S cmake/coverage.cmake -C Release -DCTEST_SITE=CircleCI
+
   test-model-js:
     docker:
       - image: ubuntu:latest
@@ -61,10 +76,7 @@ jobs:
           name: Configure, build & test
           command: |
             git submodule update --init --recursive
-            mkdir build && cd build
-            cmake ..
-            make -j4 model-test
-            ctest -j4
+            ctest -S cmake/unix_test.cmake -C Release -DCTEST_SITE=CircleCI
 
   build-server:
     docker:
@@ -157,6 +169,7 @@ workflows:
   version: 2
   integration:
     jobs:
+      - test-model-coverage
       - test-model-binary
       - test-model-js
       - build-client

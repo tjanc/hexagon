@@ -40,7 +40,7 @@ namespace
         auto& m = b.get_map();
 
         if (cstate.reachable(m, request.target)) {
-            cstate.move(m, request.target);
+            cstate.move(request.target);
 
             if (cstate.has_next())
                 cstate.next(b);

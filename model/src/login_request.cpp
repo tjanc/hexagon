@@ -12,7 +12,7 @@ namespace hexagon::protocol
     {
     }
 
-    login_request::login_request(std::string n, std::string pw)
+    login_request::login_request(std::string n, std::string)
         : login_request(std::move(n))
     {
         assert(false);  // hashing not implemented

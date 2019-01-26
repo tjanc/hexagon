@@ -40,7 +40,7 @@ include(ext/Catch2/contrib/Catch.cmake)
 enable_testing()
 
 # targets developed in this super project
-add_subdirectory(model EXCLUDE_FROM_ALL)
+add_subdirectory(model)
 if(EMSCRIPTEN)
     add_subdirectory(client)
 else()

@@ -16,7 +16,7 @@ namespace hexagon::model
        public:
         player() = default;
         player(std::string alias, team t)
-            : team_(std::move(t)), alias_(std::move(alias))
+            : alias_(std::move(alias)), team_(std::move(t))
         {
         }
 

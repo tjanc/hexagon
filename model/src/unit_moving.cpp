@@ -131,7 +131,7 @@ void unit_moving::next(battle& b)
     *this = unit_moving{b, *team_, unit_, std::move(movements_)};
 }
 
-void unit_moving::move(map& m, basic_map_index idx)
+void unit_moving::move(basic_map_index idx)
 {
     using namespace hexagon::protocol::io;
 
