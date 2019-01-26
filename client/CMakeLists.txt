@@ -1,10 +1,10 @@
 #  Copyright 2018 Thomas Jandecka.
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
-project(HexagonClient VERSION 0.0.2 LANGUAGES CXX)
+project(HexagonClient VERSION 0.0.3 LANGUAGES CXX)
 
 if(EMSCRIPTEN)
-    find_package(HexagonModel 0.0.2 REQUIRED)
+    find_package(HexagonModel 0.0.3 REQUIRED)
 endif()
 
 set(EMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES TRUE)

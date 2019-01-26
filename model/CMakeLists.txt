@@ -1,7 +1,7 @@
 #  Copyright 2018 Thomas Jandecka.
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
-project(HexagonModel VERSION 0.0.2 LANGUAGES CXX)
+project(HexagonModel VERSION 0.0.3 LANGUAGES CXX)
 
 add_library(model STATIC
     src/battle.cpp

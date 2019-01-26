@@ -2,7 +2,7 @@
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
-project(HexagonServer VERSION 0.0.1 LANGUAGES CXX)
+project(HexagonServer VERSION 0.0.3 LANGUAGES CXX)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
