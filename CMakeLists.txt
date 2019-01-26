@@ -19,7 +19,7 @@ macro(find_package)
     endif()
 endmacro()
 
-if(MSVC)
+if(NOT EMSCRIPTEN)
     include(ext/ucm/cmake/ucm.cmake)
     ucm_print_flags()
     ucm_set_runtime(STATIC)

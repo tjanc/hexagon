@@ -63,11 +63,20 @@ install(TARGETS client EXPORT client-targets
     RUNTIME DESTINATION bin
     )
 
-install(
-    FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/index.html"
-        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.data"
+set(HexagonClient_EMSCRIPTEN_EXTRAS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/index.html"
+    "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.data"
+    )
+
+if(CMAKE_BUILD_TYPE EQUAL "Release")
+    set(HexagonClient_EMSCRIPTEN_EXTRAS
+        ${HexagonClient_EMSCRIPTEN_EXTRAS}
         "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.js.mem"
+        )
+endif()
+
+install(
+    FILES ${HexagonClient_EMSCRIPTEN_EXTRAS}
     DESTINATION
         bin
     )
