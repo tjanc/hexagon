@@ -23,7 +23,7 @@ aliases:
   - &server-deps
     run:
       name: Install cmake from buster
-      command: 'apt-get -t buster install -y --no-install-recommends cmake libboost-system-dev libboost-program-options-dev git openssl'
+      command: 'apt-get -t buster install -y --no-install-recommends cmake libboost-system-dev libboost-program-options-dev libboost-filesystem-dev git openssl'
 
 jobs:
   test-model-js:
