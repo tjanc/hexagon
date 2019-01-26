@@ -59,10 +59,10 @@ namespace hexagon::model
 
        private:
         tiles_container tiles_;
-        std::uint32_t width_ = 0;
+        std::size_t width_ = 0;
 
        public:
-        basic_map(tiles_container tiles, std::uint32_t width)
+        basic_map(tiles_container tiles, std::size_t width)
             : tiles_{tiles}, width_(width)
         {
         }
@@ -99,12 +99,12 @@ namespace hexagon::model
             return tiles_.at(idx.y * width_ + idx.x);
         }
 
-        T& at(std::uint32_t column, std::uint32_t row) noexcept
+        T& at(std::size_t column, std::size_t row) noexcept
         {
             return at(basic_map_index{column, row});
         }
 
-        const T& at(std::uint32_t column, std::uint32_t row) const noexcept
+        const T& at(std::size_t column, std::size_t row) const noexcept
         {
             return at(basic_map_index{column, row});
         }

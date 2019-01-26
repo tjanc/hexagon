@@ -8,7 +8,7 @@
 
 namespace hexagon::model
 {
-    class team;
+    struct team;
 }
 
 namespace hexagon::protocol::io

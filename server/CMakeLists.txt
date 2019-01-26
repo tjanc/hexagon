@@ -5,10 +5,13 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(HexagonServer VERSION 0.0.1 LANGUAGES CXX)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-# set(Boost_USE_STATIC_LIBS ON) 
 
 find_package(BoostBeast 1.65 REQUIRED)
+
+add_definitions(-DBOOST_ALL_NO_LIB)
+set(Boost_USE_STATIC_LIBS ON) 
 find_package(Boost 1.65 REQUIRED COMPONENTS system program_options filesystem)
+
 find_package(Threads REQUIRED)
 
 add_executable(server

@@ -25,7 +25,7 @@ namespace hexagon::protocol::io
         std::size_t n;
         in >> n;
 
-        std::uint32_t width;
+        std::size_t width;
         in >> width;
 
         assert(n < 1000);

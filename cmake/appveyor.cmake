@@ -8,5 +8,5 @@ set(CTEST_BINARY_DIRECTORY "build")
 set(CTEST_USE_LAUNCHERS 1)
 
 ctest_start("Continuous")
-ctest_configure(OPTIONS "-DBOOST_ROOT=C:\\Libraries\\boost_1_67_0")
+ctest_configure(OPTIONS)
 ctest_build(TARGET server)
