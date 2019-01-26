@@ -9,8 +9,8 @@
 
 namespace hexagon::protocol
 {
-    battle_message::battle_message(model::battle b, std::size_t tid) noexcept
-        : battle{std::move(b)}, team_id{tid}
+    battle_message::battle_message(std::size_t tid, model::battle b) noexcept
+        : team_id{tid}, battle{std::move(b)}
     {
     }
 

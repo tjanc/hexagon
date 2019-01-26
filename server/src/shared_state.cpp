@@ -3,106 +3,58 @@
 
 #include "shared_state.hpp"
 
-#include <cassert>
-#include <iostream>
-#include <sstream>
-
-#include <hexagon/model/map_loader.hpp>
 #include <hexagon/protocol/message.hpp>
+#include <hexagon/state/battling_state.hpp>
+#include <hexagon/state/world_state.hpp>
+#include "responder.hpp"
 #include "websocket_session.hpp"
 
 using boost::system::error_code;
 using namespace hexagon::server;
 
-namespace
-{
-    using namespace hexagon::protocol;
-
-    void handle_client_message(const map_request& request,
-                               websocket_session& source,
-                               const preload_assets& assets)
-    {
-        using namespace hexagon::model;
-
-        std::cout << "A user requested map " << request.id << "\n";
-
-        std::string msg;
-        if (const auto* m = assets.get_map(request.id)) {
-            {
-                map_response response{*m};
-                write_message(msg, response);
-            }
-        } else {
-            map_response response{};
-            write_message(msg, response);
-        }
-        source.send(std::make_shared<std::string>(std::move(msg)));
-    }
-
-    void handle_client_message(const login_request& request,
-                               websocket_session& source,
-                               const preload_assets& assets)
-    {
-        using namespace hexagon::model;
-
-        std::cout << "Someone is logging in as " << request.name << "\n";
-
-        // TODO login logic, returning dummy session key
-
-        {
-            login_response response{"42"};
-
-            std::string msg;
-            write_message(msg, response);
-            source.send(std::make_shared<std::string>(std::move(msg)));
-        }
-
-        {
-            const auto* m = assets.get_map(0);
-            assert(m);
-            battle b{*m};
-
-            b.join(team{1, team::unit_container{
-                               unit{1},  //
-                               unit{2}   //
-                           }});
-            battle_message message{std::move(b), 0};
-
-            std::string msg;
-            write_message(msg, message);
-            source.send(std::make_shared<std::string>(std::move(msg)));
-        }
-    }
-
-    void handle_client_message(const unknown_message&, websocket_session&,
-                               const preload_assets& assets)
-    {
-        std::cerr << "Received unknown_message\n";
-    }
-}  // namespace
-
 void shared_state::handle(std::string message, websocket_session& source)
 {
-    auto msg = hexagon::protocol::read_client_message(message);
-
-    std::visit(
-        [&source, &assets = assets_](const auto& m) {  //
-            handle_client_message(m, source, assets);
-        },
-        msg);
+    respond(*this, source, message);
 }
 
 void shared_state::join(websocket_session& session)
 {
     sessions_.insert(&session);
-    hexagon::protocol::version_response response{0, 0, 2};
 
     std::string msg;
-    write_message(msg, response);
+    hexagon::protocol::write_message<hexagon::protocol::version_response>(
+        msg, 0, 0, 2);
     session.send(std::make_shared<std::string>(std::move(msg)));
 }
 
 void shared_state::leave(websocket_session& session)
 {
     sessions_.erase(&session);
+}
+
+shared_state::shared_state(preload_assets assets, std::string root)
+    : assets_(std::move(assets)),
+      lobby_{hexagon::model::battle{*assets_.get_map(0), 2}},
+      document_root_(std::move(root))
+{
+}
+
+using namespace hexagon::state;
+
+battle_lobby::battle_lobby(hexagon::model::battle b) : battle_{std::move(b)} {}
+
+std::pair<hexagon::model::team*, hexagon::model::battle::placement_container>
+battle_lobby::join(websocket_session& ws, const world_state& s)
+{
+    std::cout << "INFO: player joining battle lobby\n";
+    players_.insert(&ws);
+    return battle_.join(s.raw().team_);
+}
+
+void battle_lobby::leave(websocket_session& ws, const battling_state& s)
+{
+    std::cout << "INFO: player leaving battle lobby\n";
+    auto t = battle_.leave(s.team_id());
+    std::cout << "TODO: persist team after leaving battle lobby\n";
+    players_.erase(&ws);
 }

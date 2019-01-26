@@ -6,7 +6,6 @@
 #include <SDL.h>
 
 #include <hexagon/model/map.hpp>
-#include <hexagon/model/map_loader.hpp>
 
 #include "sdl/renderer.hpp"
 
@@ -22,7 +21,9 @@ map_textures::map_textures(renderer& renderer)
              load_texture(renderer, "assets/grass04.png"),
              load_texture(renderer, "assets/dirt00.png"),
              load_texture(renderer, "assets/dirt01.png"),
-             load_texture(renderer, "assets/base00.png")}
+             load_texture(renderer, "assets/base00.png"),
+             load_texture(renderer, "assets/selected.png")
+    }
 {
 }
 
@@ -48,3 +49,4 @@ texture& map_textures::tile_surface(tile_type type)
 }
 
 texture& map_textures::tile_filler(tile_type type) { return tiles_.at(7); }
+texture& map_textures::tile_hover() { return tiles_.at(8); }

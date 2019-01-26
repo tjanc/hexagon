@@ -1,0 +1,55 @@
+version: '{build}'
+clone_folder: c:\projects\hexagon
+image:
+- Visual Studio 2017
+configuration:
+- Release
+# - Debug # TODO currently not supported
+platform:
+- x64
+environment:
+  matrix:
+  - arch: Win64
+  global:
+    BOOST_ROOT: "C:\\Libraries\\boost_1_67_0"
+matrix:
+  fast_finish: false
+
+# skip unsupported combinations
+init:
+- set arch=
+- if "%arch%"=="Win64" ( set arch= Win64)
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
+- echo %generator%
+
+before_build:
+  - git submodule update --init --recursive
+  - ps: $env:BOOST_LIBRARYDIR = "$env:BOOST_ROOT/lib64-msvc-14.1"
+  - echo $BOOST_LIBRARYDIR
+
+build_script:
+- ctest -VV -j5 -S cmake/appveyor.cmake -DCTEST_CMAKE_GENERATOR=%generator% -C %CONFIGURATION% -DCTEST_BUILD_TYPE=%CONFIGURATION%
+- cd build
+- cpack -G 7Z
+- ls -alh
+
+after_build:
+  - ps: mv *.7z $env:APPVEYOR_BUILD_FOLDER
+
+artifacts:
+  - path: '*.7z'
+    name: binary_zip
+    type: 7z
+
+deploy:
+  release: hexagon-server-win-latest
+  description: 'latest build'
+  provider: GitHub
+  auth_token:
+    secure: TaUpI7ypXZZ50TM3OZmcGMqOmZlDM4XPMxwDbyHSEqjytPyySoTmOpTb+miGuoOX
+  artifact: binary_zip
+  draft: false
+  prerelease: false
+  force_update: true
+  on:
+    branch: master                 # release from master branch only

@@ -3,3 +3,14 @@
 
 var web_socket_ = null;
 var web_socket_opened_ = false;
+
+//var Module = {
+//    canvas: (function() {
+//        var canvas = document.getElementById('canvas');
+//        return canvas;
+//    })(),
+//    runHexagon: function() {
+//        _hexagon_emrun();
+//    }
+//};
+

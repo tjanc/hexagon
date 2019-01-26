@@ -6,11 +6,12 @@
 #include "shared_state.hpp"
 
 using namespace hexagon::server;
+using namespace hexagon::state;
 using boost::system::error_code;
 
 websocket_session::websocket_session(tcp::socket socket,
                                      const std::shared_ptr<shared_state>& state)
-    : ws_(std::move(socket)), state_(state)
+    : ws_(std::move(socket)), state_(state), local_{}
 {
 }
 
@@ -76,3 +77,7 @@ void websocket_session::on_accept(error_code ec)
                        sp->on_read(ec, bytes);
                    });
 }
+
+local_state& websocket_session::local() noexcept { return local_; }
+
+const local_state& websocket_session::local() const noexcept { return local_; }

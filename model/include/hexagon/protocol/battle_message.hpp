@@ -13,11 +13,11 @@ namespace hexagon::protocol
     static constexpr const char* BATTLE_MESSAGE_ID = "BATTLE";
 
     struct battle_message {
-        model::battle battle;
         std::size_t team_id;
+        model::battle battle;
 
         battle_message() = default;
-        battle_message(model::battle, std::size_t) noexcept;
+        battle_message(std::size_t, model::battle) noexcept;
     };
 
     std::istream& operator>>(std::istream& in, battle_message& msg);

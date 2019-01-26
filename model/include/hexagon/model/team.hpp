@@ -1,8 +1,8 @@
 //  Copyright 2018 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#ifndef HEXAGON_MODEL_UNIT_H_
-#define HEXAGON_MODEL_UNIT_H_
+#ifndef HEXAGON_MODEL_TEAM_H_
+#define HEXAGON_MODEL_TEAM_H_
 
 #include <vector>
 
@@ -24,6 +24,11 @@ namespace hexagon::model
 
         team& operator=(const team&) = default;
         team& operator=(team&&) noexcept = default;
+
+        auto begin() const noexcept { return units.begin(); }
+        auto begin() noexcept { return units.begin(); }
+        auto end() const noexcept { return units.end(); }
+        auto end() noexcept { return units.end(); }
 
         ~team() = default;
     };

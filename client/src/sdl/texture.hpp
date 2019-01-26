@@ -6,6 +6,7 @@
 
 #include <SDL.h>
 #include <memory>
+#include <utility>
 
 namespace hexagon::sdl
 {
@@ -35,6 +36,9 @@ namespace hexagon::sdl
 
        public:
         void set_color_mod(std::uint8_t r, std::uint8_t g, std::uint8_t b);
+
+       public:
+        std::pair<int, int> size() noexcept;
     };
 
     texture load_texture(renderer& renderer, const char* file);

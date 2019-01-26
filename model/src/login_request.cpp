@@ -4,6 +4,7 @@
 #include <hexagon/protocol/login_request.hpp>
 
 #include <cassert>
+#include <string>
 
 namespace hexagon::protocol
 {

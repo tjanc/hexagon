@@ -24,6 +24,11 @@ namespace hexagon::model
         basic_map_index(std::size_t x_, std::size_t y_) noexcept : x{x_}, y{y_}
         {
         }
+
+        operator bool() const noexcept
+        {
+            return x != std::numeric_limits<std::size_t>::max();
+        }
     };
 
     bool operator==(const basic_map_index& lhs,
@@ -54,10 +59,10 @@ namespace hexagon::model
 
        private:
         tiles_container tiles_;
-        std::uint32_t width_ = 0;
+        std::size_t width_ = 0;
 
        public:
-        basic_map(tiles_container tiles, std::uint32_t width)
+        basic_map(tiles_container tiles, std::size_t width)
             : tiles_{tiles}, width_(width)
         {
         }
@@ -67,7 +72,6 @@ namespace hexagon::model
         basic_map(basic_map&&) noexcept = default;
         basic_map& operator=(const basic_map&) = default;
         basic_map& operator=(basic_map&&) noexcept = default;
-        ~basic_map() = default;
 
        public:
         auto begin() const noexcept { return tiles_.begin(); }
@@ -95,12 +99,12 @@ namespace hexagon::model
             return tiles_.at(idx.y * width_ + idx.x);
         }
 
-        T& at(std::uint32_t column, std::uint32_t row) noexcept
+        T& at(std::size_t column, std::size_t row) noexcept
         {
             return at(basic_map_index{column, row});
         }
 
-        const T& at(std::uint32_t column, std::uint32_t row) const noexcept
+        const T& at(std::size_t column, std::size_t row) const noexcept
         {
             return at(basic_map_index{column, row});
         }
@@ -125,10 +129,20 @@ namespace hexagon::model
             }
     }
 
+    template <typename T, typename Visitor>
+    void iterate(basic_map<T>& m, Visitor v)
+    {
+        basic_map_index idx;
+        for (idx.y = 0; idx.y < m.height(); ++idx.y)
+            for (idx.x = 0; idx.x < m.width(); ++idx.x) {
+                v(m.at(idx), idx);
+            }
+    }
+
     template <typename T>
     bool contains(const basic_map<T>& m, basic_map_index i) noexcept
     {
-        return i.x > 0 && i.x < m.width() && i.y > 0 && i.y < m.height();
+        return i.x >= 0 && i.x < m.width() && i.y >= 0 && i.y < m.height();
     }
 
     template <typename T>
@@ -168,24 +182,8 @@ namespace hexagon::model
 
     map::iterator spawn(map&, unit&);
     basic_map_index find_unit(const map&, const unit&) noexcept;
+    basic_map_index find_unit(const map&, std::size_t uid) noexcept;
     void move_unit(map&, basic_map_index, basic_map_index);
-
-    // template <std::size_t Radius, typename Visitor>
-    // void tiles_around(const map& m, map::const_iterator c, Visitor v)
-    //{
-    //    const auto width = m.width();
-    //    const auto b = m.begin();
-    //    const auto e = m.end();
-    //    const auto c_offset = c - b;
-    //    const auto c_x_offset = c_offset / width - Radius;
-    //    const auto c_y_offset = c_offset % width - Radius;
-
-    //    for (int y = 0; y < Radius * 2 + 1; ++y)
-    //        for (int x = 0; x < Radius * 2 + 1; ++x) {
-    //            auto it = m.find(x + c_x_offset, y + c_y_offset);
-    //            if (it != m.end()) v(it, x, y);
-    //        }
-    //}
 }  // namespace hexagon::model
 
 #endif

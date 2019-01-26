@@ -6,14 +6,14 @@
 
 #include <SDL.h>
 
-namespace hexagon::model
+namespace hexagon::state
 {
-    struct connecting;
+    class connecting_state;
 }
 
 namespace hexagon::client
 {
-    class canvas;
+    class graphics;
 }  // namespace hexagon::client
 
 namespace hexagon::client
@@ -23,11 +23,18 @@ namespace hexagon::client
         SDL_Rect dimensions_;
 
        public:
-        explicit connecting_facet(int x, int y, int width, int height) noexcept;
+        connecting_facet(int x, int y, int width, int height) noexcept;
 
        public:
-        void draw(canvas&, const model::connecting&) const;
+        void resize(int w, int h) noexcept;
+
+       public:
+        int width() const noexcept;
+        int height() const noexcept;
     };
+
+    void draw(graphics&, const connecting_facet&,
+              const state::connecting_state&);
 }  // namespace hexagon::client
 
 #endif

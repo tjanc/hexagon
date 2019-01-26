@@ -28,3 +28,10 @@ texture hexagon::sdl::load_texture(renderer& renderer, const char* file)
     surface surface(file);
     return texture{renderer, surface};
 }
+
+std::pair<int, int> texture::size() noexcept
+{
+    std::pair<int, int> result;
+    SDL_QueryTexture(raw_.get(), NULL, NULL, &result.first, &result.second);
+    return result;
+}

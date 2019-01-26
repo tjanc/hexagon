@@ -3,12 +3,17 @@
 
 #include <hexagon/protocol/io/battle_io.hpp>
 
+#include <hexagon/model/battle.hpp>
+#include <hexagon/model/map.hpp>
+#include <hexagon/model/team.hpp>
+#include <hexagon/model/tile.hpp>
+#include <hexagon/model/unit.hpp>
+
 #include <algorithm>
 #include <cassert>
 #include <iostream>
 
-#include <hexagon/protocol/io/map_io.hpp>
-#include <hexagon/protocol/io/team_io.hpp>
+#include <hexagon/protocol/io/message_io.hpp>
 
 using namespace hexagon::model;
 using namespace hexagon::protocol;
@@ -48,6 +53,9 @@ std::istream& io::operator>>(std::istream& in, battle& obj)
     map m;
     in >> m;
 
+    std::size_t full;
+    in >> full;
+
     std::size_t n_pos;
     in >> n_pos;
 
@@ -75,27 +83,31 @@ std::istream& io::operator>>(std::istream& in, battle& obj)
         m.at(position).attach(*u);
     }
 
-    obj = std::move(battle{std::move(m), std::move(teams)});
+    obj = std::move(battle{std::move(m), full, std::move(teams)});
 
     return in;
 }
 
-std::ostream& io::operator<<(std::ostream& out, const model::battle& obj)
+std::ostream& io::operator<<(std::ostream& out, const battle& obj)
 {
-    out << obj.teams().size() << ' ';
-    for (const auto& t : obj.teams()) out << t;
+    using namespace protocol::io;
+
+    out << obj.teams();
 
     const auto& m = obj.get_map();
-    out << m << ' ';
+    out << ' ' << m;
 
-    std::size_t n_pos = count_units(m);
-    out << n_pos << ' ';
+    const auto full = obj.full();
+    out << ' ' << full;
+
+    const auto n_pos = count_units(m);
+    out << ' ' << n_pos;
 
     iterate(m, [&out](const auto& t, const auto& idx) {
         const unit* u = t.get_if_unit();
         if (u) {
-            out << u->id() << ' '  //
-                << idx << ' ';
+            out << ' ' << u->id()  //
+                << ' ' << idx;
         }
     });
 

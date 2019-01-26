@@ -4,7 +4,8 @@
 #ifndef HEXAGON_MODEL_BATTLE_H_
 #define HEXAGON_MODEL_BATTLE_H_
 
-#include <vector>
+#include <list>
+#include <utility>
 
 #include "map.hpp"
 #include "team.hpp"
@@ -16,28 +17,32 @@ namespace hexagon::model
     class battle
     {
        public:
-        using team_container = std::vector<team>;
+        using team_container = std::list<team>;
+        using placement_container = std::vector<basic_map_index>;
 
        private:
         map map_ = {};
         team_container teams_ = {};
+        int max_units_ = 1;
+        std::size_t full_teams_ = 2;
 
        public:
         battle() = default;
-        explicit battle(map);
-        battle(map, team_container);
+        explicit battle(map, std::size_t full);
+        battle(map, std::size_t full, team_container);
 
-        battle(const battle&) = delete;
+        battle(const battle&);
         battle(battle&&) noexcept = default;
 
-        battle& operator=(const battle&) = delete;
+        battle& operator=(const battle&);
         battle& operator=(battle&&) noexcept = default;
 
         ~battle() = default;
 
        public:
-        team_container::iterator join(team);
-        team leave(team_container::iterator);
+        std::pair<team*, placement_container> join(const team&);
+        team& join(const team&, const placement_container& placements);
+        team leave(int tid);
 
         team_container& teams() noexcept;
         const team_container& teams() const noexcept;
@@ -45,28 +50,10 @@ namespace hexagon::model
        public:
         map& get_map() noexcept;
         const map& get_map() const noexcept;
-    };
 
-    struct move_command {
-        basic_map_index source;
-        basic_map_index target;
-
-        move_command(basic_map_index s, basic_map_index t)
-            : source(s), target(t)
-        {
-        }
-
-        move_command() = default;
-        move_command(const move_command&) = default;
-        move_command(move_command&&) = default;
-        move_command& operator=(const move_command&) = default;
-        move_command& operator=(move_command&&) = default;
-        ~move_command() = default;
-    };
-
-    struct attack_command {
-        basic_map_index source;
-        basic_map_index target;
+       public:
+        bool ready() const noexcept;
+        std::size_t full() const noexcept;
     };
 
 }  // namespace hexagon::model

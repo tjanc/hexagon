@@ -1,10 +1,10 @@
 #  Copyright 2018 Thomas Jandecka.
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
-project(HexagonClient VERSION 0.0.2 LANGUAGES CXX)
+project(HexagonClient VERSION 0.0.3 LANGUAGES CXX)
 
 if(EMSCRIPTEN)
-    find_package(HexagonModel 0.0.2 REQUIRED)
+    find_package(HexagonModel 0.0.3 REQUIRED)
 endif()
 
 set(EMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES TRUE)
@@ -17,11 +17,11 @@ add_executable(client
     src/sdl/window.cpp
     src/sdl/text.cpp
 
-    src/canvas.cpp
+    src/graphics.cpp
     src/mouse.cpp
 
     src/game.cpp
-    src/main.cpp
+    src/emrun.cpp
 
     src/map_facet.cpp
     src/map_textures.cpp
@@ -29,13 +29,14 @@ add_executable(client
     src/unit_facet.cpp
     src/connecting_facet.cpp
     src/world_facet.cpp
+    src/game_facet.cpp
+
+    src/battling_adapter.cpp
+    src/connecting_adapter.cpp
+    src/world_adapter.cpp
+    src/game_adapter.cpp
 
     src/connection.cpp
-
-    src/battle_controller.cpp
-    src/game_controller.cpp
-    src/connecting_controller.cpp
-    src/world_controller.cpp
     )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/pre.js DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -44,7 +45,6 @@ target_compile_definitions(client PRIVATE HEXAGON_CLIENT_VERSION="${PROJECT_VERS
 
 if(EMSCRIPTEN)
     add_compile_options(-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s WASM=0 -flto)
-    set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set_target_properties(client PROPERTIES LINK_FLAGS "-s DEMANGLE_SUPPORT=1 -s DISABLE_EXCEPTION_CATCHING=0 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 --use-preload-plugins --preload-file assets -s WASM=0 -s SDL2_IMAGE_FORMATS=[\"png\"] -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"stringToUTF8\",\"lengthBytesUTF8\",\"writeStringToMemory\"] --pre-js pre.js -flto")
 endif()
 
@@ -63,18 +63,35 @@ install(TARGETS client EXPORT client-targets
     RUNTIME DESTINATION bin
     )
 
+set(HexagonClient_EMSCRIPTEN_EXTRAS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/index.html"
+    "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.data"
+    )
+
+if(CMAKE_BUILD_TYPE EQUAL "Release")
+    set(HexagonClient_EMSCRIPTEN_EXTRAS
+        ${HexagonClient_EMSCRIPTEN_EXTRAS}
+        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.js.mem"
+        )
+endif()
+
 install(
-    FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.js"
-        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.data"
+    FILES ${HexagonClient_EMSCRIPTEN_EXTRAS}
     DESTINATION
         bin
+    )
+
+install(
+    FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets/grass00.png"
+    DESTINATION
+        bin/assets
     )
 
 if(CMAKE_BUILD_TYPE EQUAL Release)
 install(
     FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.html.mem"
+        "${CMAKE_CURRENT_BINARY_DIR}/hexagon-client.js.mem"
     DESTINATION
         bin
     )

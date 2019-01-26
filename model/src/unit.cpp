@@ -220,6 +220,18 @@ unit::unit(std::size_t id, unit_job job, std::uint16_t level, std::uint16_t exp,
 {
 }
 
+unit::unit(std::size_t id, unit_job j)
+    : id_{id},
+      job_{j},
+      level_{},
+      exp_{},
+      statistics_{},
+      status_{},
+      weapon_{make_fists()},
+      powers_{}
+{
+}
+
 std::uint16_t unit::level() const noexcept { return level_; }
 
 unit_job unit::job() const noexcept { return job_; }

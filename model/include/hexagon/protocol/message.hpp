@@ -9,12 +9,16 @@
 #include <variant>
 
 #include "battle_message.hpp"
+#include "battle_request.hpp"
+#include "joined_battle_message.hpp"
 #include "login_request.hpp"
-#include "login_response.hpp"
-#include "map_request.hpp"
-#include "map_response.hpp"
+#include "move_message.hpp"
+#include "move_request.hpp"
 #include "unknown_message.hpp"
 #include "version_message.hpp"
+#include "world_message.hpp"
+
+#include "io/message_io.hpp"
 
 namespace hexagon::protocol
 {
@@ -25,39 +29,52 @@ namespace hexagon::protocol
     constexpr const char* id<version_response> = VERSION_RESPONSE_ID;
 
     template <>
-    constexpr const char* id<map_request> = MAP_REQUEST_ID;
-
-    template <>
-    constexpr const char* id<map_response> = MAP_RESPONSE_ID;
-
-    template <>
     constexpr const char* id<battle_message> = BATTLE_MESSAGE_ID;
+
+    template <>
+    constexpr const char* id<joined_battle_message> = JOINED_BATTLE_MESSAGE_ID;
 
     template <>
     constexpr const char* id<login_request> = LOGIN_REQUEST_ID;
 
     template <>
-    constexpr const char* id<login_response> = LOGIN_RESPONSE_ID;
+    constexpr const char* id<battle_request> = BATTLE_REQUEST_ID;
+
+    template <>
+    constexpr const char* id<world_message> = WORLD_MESSAGE_ID;
+
+    template <>
+    constexpr const char* id<move_request> = MOVE_REQUEST_ID;
+
+    template <>
+    constexpr const char* id<move_message> = MOVE_MESSAGE_ID;
 
     using server_message = std::variant<  //
         unknown_message,                  //
         version_response,                 //
-        map_response,                     //
-        battle_message, login_response>;
+        battle_message,                   //
+        joined_battle_message,            //
+        world_message, move_message>;
 
     using client_message = std::variant<  //
         unknown_message,                  //
-        map_request, login_request>;
+        login_request,                    //
+        battle_request,                   //
+        move_request>;
 
     server_message read_server_message(const std::string& msg);
     client_message read_client_message(const std::string& msg);
 
-    template <typename Message>
-    std::string& write_message(std::string& buffer, const Message& m)
+    template <typename Message, typename... Args>
+    std::string& write_message(std::string& buffer, Args&&... args)
     {
+        using namespace protocol::io;
+
         std::ostringstream ss(buffer);
-        ss << id<Message> << ' ';
-        ss << m;
+        ss << id<Message>;
+
+        auto list = {(!!(ss << ' ' << std::forward<Args>(args)))...};
+
         buffer = ss.str();
         return buffer;
     }

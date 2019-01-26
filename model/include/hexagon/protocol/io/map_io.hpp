@@ -25,7 +25,7 @@ namespace hexagon::protocol::io
         std::size_t n;
         in >> n;
 
-        std::uint32_t width;
+        std::size_t width;
         in >> width;
 
         assert(n < 1000);
@@ -48,9 +48,10 @@ namespace hexagon::protocol::io
     {
         using namespace hexagon::protocol::io;
 
-        out << obj.size() << ' ' << obj.width() << ' ';
+        out << obj.size() <<  //
+            ' ' << obj.width();
 
-        for (const auto& tile : obj) out << tile;
+        for (const auto& t : obj) out << ' ' << t;
 
         return out;
     }

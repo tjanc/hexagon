@@ -6,14 +6,14 @@
 
 #include <SDL.h>
 
-namespace hexagon::model
+namespace hexagon::state
 {
-    struct world;
+    class world_state;
 }
 
 namespace hexagon::client
 {
-    class canvas;
+    class graphics;
 }  // namespace hexagon::client
 
 namespace hexagon::client
@@ -26,8 +26,14 @@ namespace hexagon::client
         explicit world_facet(int x, int y, int width, int height) noexcept;
 
        public:
-        void draw(canvas&, const model::world&) const;
+        void resize(int w, int h) noexcept;
+
+       public:
+        int width() const noexcept;
+        int height() const noexcept;
     };
+
+    void draw(graphics&, const world_facet&, const state::world_state&);
 }  // namespace hexagon::client
 
 #endif

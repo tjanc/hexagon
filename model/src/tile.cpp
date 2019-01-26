@@ -3,6 +3,8 @@
 
 #include <hexagon/model/tile.hpp>
 
+#include <hexagon/model/unit.hpp>
+
 using namespace hexagon::model;
 
 namespace
@@ -35,7 +37,7 @@ void tile::attach(unit& u) { object_ = &u; }
 
 unit* tile::detach_unit() noexcept
 {
-    auto result = object_;
+    unit* result = object_;
     object_ = nullptr;
     return result;
 }
@@ -49,4 +51,10 @@ bool tile::has_unit(const unit& u) const noexcept
 {
     const auto* u2 = get_if_unit();
     return u2 == &u;
+}
+
+bool tile::has_unit(std::size_t uid) const noexcept
+{
+    const auto* u2 = get_if_unit();
+    return u2 && (u2->id() == uid);
 }

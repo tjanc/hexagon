@@ -44,6 +44,17 @@ basic_map_index hexagon::model::find_unit(const map& m, const unit& u) noexcept
     return to_index(m, it);
 }
 
+basic_map_index hexagon::model::find_unit(const map& m,
+                                          std::size_t uid) noexcept
+{
+    auto it = std::find_if(m.begin(), m.end(), [uid](const auto& tile) {
+        return tile.has_unit(uid);
+    });
+
+    if (m.end() == it) return basic_map_index{};
+    return to_index(m, it);
+}
+
 bool hexagon::model::operator==(const basic_map_index& lhs,
                                 const basic_map_index& rhs) noexcept
 {

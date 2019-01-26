@@ -18,13 +18,14 @@ namespace hexagon::client
 {
     class map_textures
     {
-        std::array<sdl::texture, 8> tiles_;
+        std::array<sdl::texture, 9> tiles_;
 
        public:
         explicit map_textures(sdl::renderer& renderer);
 
         sdl::texture& tile_surface(model::tile_type type);
         sdl::texture& tile_filler(model::tile_type type);
+        sdl::texture& tile_hover();
 
         auto begin() const { return tiles_.begin(); }
         auto end() const { return tiles_.end(); }

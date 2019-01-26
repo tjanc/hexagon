@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <deque>
 #include <iostream>
 
@@ -14,6 +15,7 @@
 #include <hexagon/protocol/io/unit_io.hpp>
 
 using namespace hexagon::model;
+using namespace hexagon::protocol;
 
 namespace
 {
@@ -75,37 +77,45 @@ namespace
     }
 }  // namespace
 
-unit_moving::unit_moving(battle b, std::size_t tidx, std::size_t uidx) noexcept
-    : model_{std::move(b)},
-      team_{std::next(model_.teams().begin(), tidx)},
-      unit_{std::next(team_->units.begin(), uidx)},
-      unit_position_{find_unit(model_.get_map(), *unit_)},
-      reach_map_{generate_reach_map(model_.get_map(), unit_position_)},
-      commands_{}
+unit_moving::unit_moving(battle& b, team& t,
+                         team::unit_container::iterator uidx,
+                         unit_moving::movement_container movements) noexcept
+    : start_{std::chrono::steady_clock::now()},
+      movements_{std::move(movements)},
+      team_{&t},
+      unit_{uidx},
+      unit_position_{find_unit(b.get_map(), unit_->id())},
+      reach_map_{generate_reach_map(b.get_map(), unit_position_)}
+{
+    std::cout << "INFO: moving unit " << team_->id << ':' << unit_->id()
+              << " in [";
+    for (const auto& u : team_->units) std::cout << u.id() << ',';
+    std::cout << "]\n";
+}
+
+unit_moving::unit_moving(battle& b, team& t) noexcept
+    : unit_moving(b, t, t.units.begin(), unit_moving::movement_container{})
 {
 }
 
-unit_moving::unit_moving(battle b, std::size_t tidx) noexcept
-    : unit_moving(std::move(b), tidx, 0)
+unit_moving::unit_moving(battle& b, units_joining& prev) noexcept
+    : unit_moving(b, prev.my_team(), prev.my_team().units.begin(),
+                  unit_moving::movement_container{})
 {
 }
-
-const battle& unit_moving::battlefield() const noexcept { return model_; }
-
-battle& unit_moving::battlefield() noexcept { return model_; }
 
 basic_map_index unit_moving::position() const noexcept
 {
     return unit_position_;
 }
 
-bool unit_moving::reachable(basic_map_index idx) const noexcept
+bool unit_moving::reachable(const map& m, basic_map_index idx) const noexcept
 {
     if (!contains(reach_map_, idx)) return false;
 
     if (idx == unit_position_) return true;
 
-    return model_.get_map().at(idx).empty() && reach_map_.at(idx) > 0;
+    return m.at(idx).empty() && reach_map_.at(idx) > 0;
 }
 
 bool unit_moving::has_next() const noexcept
@@ -113,45 +123,30 @@ bool unit_moving::has_next() const noexcept
     return std::next(unit_) != team_->units.end();
 }
 
-void unit_moving::next()
+void unit_moving::next(battle& b)
 {
+    assert(has_next());
     ++unit_;
-    if (team_->units.end() == unit_) {
-        auto ntidx = team_ - model_.teams().begin();
-        *this = unit_moving(std::move(model_), ntidx);
 
-    } else {
-        auto ntidx = team_ - model_.teams().begin();
-        auto nuidx = unit_ - team_->units.begin();
-        *this = unit_moving(std::move(model_), ntidx, nuidx);
-    }
+    *this = unit_moving{b, *team_, unit_, std::move(movements_)};
 }
 
-void unit_moving::move(basic_map_index idx)
+void unit_moving::move(map& m, basic_map_index idx)
 {
     using namespace hexagon::protocol::io;
 
-    std::cout << "Moving unit from " << unit_position_ << " to " << idx << '\n';
-    commands_.emplace_back(unit_position_, idx);
-    move_unit(model_.get_map(), unit_position_, idx);
+    std::cout << "Moving unit from " << unit_position_ << " to " << idx
+              << " after "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(
+                     std::chrono::steady_clock::now() - start_)
+                     .count()
+              << "ms\n";
+
+    movements_.emplace_back(std::chrono::steady_clock::now() - start_,
+                            unit_position_, idx);
+    std::cout << "Now accumulated " << movements_.size() << " moves\n";
 }
 
-battle::team_container::const_iterator unit_moving::my_team() const noexcept
-{
-    return team_;
-}
+const team& unit_moving::my_team() const noexcept { return *team_; }
 
-battle::team_container::iterator unit_moving::my_team() noexcept
-{
-    return team_;
-}
-
-unit_moving::commands_container& unit_moving::commands() noexcept
-{
-    return commands_;
-}
-
-const unit_moving::commands_container& unit_moving::commands() const noexcept
-{
-    return commands_;
-}
+team& unit_moving::my_team() noexcept { return *team_; }

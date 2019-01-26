@@ -4,14 +4,15 @@
 #ifndef HEXAGON_CLIENT_GAME_H_
 #define HEXAGON_CLIENT_GAME_H_
 
-#include "battle_facet.hpp"
+#include <hexagon/state/local_state.hpp>
+
+#include "game_facet.hpp"
 #include "mouse.hpp"
 
 #include "sdl/sdl.hpp"
 #include "sdl/window.hpp"
 
-#include "canvas.hpp"
-#include "game_controller.hpp"
+#include "graphics.hpp"
 
 namespace hexagon::client
 {
@@ -19,23 +20,18 @@ namespace hexagon::client
 
     class game
     {
+        graphics& graphics_;
         connection& server_;
-        // graphics
-        sdl::sdl graphics_;
+
         mouse mouse_;
 
-        sdl::window window_;
-        canvas canvas_;
+        state::local_state state_;
+        game_facet facet_;
 
-        // models
-        game_controller game_controller_;
-
-        // running?
         bool running_ = true;
 
        public:
-        game(connection& c, int x, int y, int width, int height,
-             bool fullscreen);
+        game(graphics& g, connection& c);
 
        public:
         bool handleEvents();

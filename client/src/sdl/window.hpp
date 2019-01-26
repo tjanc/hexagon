@@ -21,6 +21,7 @@ namespace hexagon::sdl
        public:
         window(sdl& graphics, const char* title, int x, int y, int width,
                int height, bool fullscreen = false);
+        window(sdl&, const char* title, int width, int height);
 
        public:
         SDL_Window* get() { return raw_.get(); }
@@ -28,6 +29,9 @@ namespace hexagon::sdl
 
        public:
         SDL_Rect size() const;
+
+       public:
+        void resize(int w, int h) const;
 
        public:
         explicit operator bool() const { return nullptr != raw_.get(); }

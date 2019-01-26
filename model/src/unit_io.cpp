@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <hexagon/protocol/io/map_io.hpp>
+#include <hexagon/protocol/io/std_io.hpp>
 
 using namespace hexagon::model;
 using namespace hexagon::protocol;
@@ -35,10 +36,8 @@ std::istream& io::operator>>(std::istream& in, equipment& obj)
 
 std::ostream& io::operator<<(std::ostream& out, const equipment& obj)
 {
-    out << obj.name << ' ';
-
-    out << obj.powers.size() << ' ';
-    for (const auto& p : obj.powers) out << p;
+    out << obj.name;
+    out << ' ' << obj.powers;
 
     return out;
 }
@@ -121,12 +120,12 @@ std::ostream& io::operator<<(std::ostream& out, const power& obj)
 {
     using namespace hexagon::protocol::io;
 
-    out << obj.name() << ' '    //
-        << obj.klass() << ' '   //
-        << obj.type() << ' '    //
-        << obj.jp_req() << ' '  //
-        << obj.jp() << ' '      //
-        << obj.overlay();       //
+    out << obj.name() <<        //
+        ' ' << obj.klass() <<   //
+        ' ' << obj.type() <<    //
+        ' ' << obj.jp_req() <<  //
+        ' ' << obj.jp() <<      //
+        ' ' << obj.overlay();   //
 
     return out;
 }
@@ -160,9 +159,9 @@ std::istream& io::operator>>(std::istream& in, unit_status& obj)
 
 std::ostream& io::operator<<(std::ostream& out, const unit_status& obj)
 {
-    out << obj.health << ' '   //
-        << obj.stamina << ' '  //
-        << obj.magica;         //
+    out << obj.health <<       //
+        ' ' << obj.stamina <<  //
+        ' ' << obj.magica;     //
 
     return out;
 }
@@ -181,28 +180,26 @@ std::istream& io::operator>>(std::istream& in, unit_statistics& obj)
 
 std::ostream& io::operator<<(std::ostream& out, const unit_statistics& obj)
 {
-    out << obj.agility << ' '       //
-        << obj.presence << ' '      //
-        << obj.strength << ' '      //
-        << obj.intelligence << ' '  //
-        << obj.wisdom << ' '        //
-        << obj.endurance;           //
+    out << obj.agility <<           //
+        ' ' << obj.presence <<      //
+        ' ' << obj.strength <<      //
+        ' ' << obj.intelligence <<  //
+        ' ' << obj.wisdom <<        //
+        ' ' << obj.endurance;       //
 
     return out;
 }
 
 std::ostream& io::operator<<(std::ostream& out, const unit& obj)
 {
-    out << obj.id() << ' '          //
-        << obj.job() << ' '         //
-        << obj.level() << ' '       //
-        << obj.experience() << ' '  //
-        << obj.statistics() << ' '  //
-        << obj.status() << ' '      //
-        << obj.weapon() << ' ';     //
-
-    out << obj.powers().size() << ' ';
-    for (const auto& p : obj.powers()) out << p << ' ';
+    out << obj.id() <<              //
+        ' ' << obj.job() <<         //
+        ' ' << obj.level() <<       //
+        ' ' << obj.experience() <<  //
+        ' ' << obj.statistics() <<  //
+        ' ' << obj.status() <<      //
+        ' ' << obj.weapon() <<      //
+        ' ' << obj.powers();
 
     return out;
 }

@@ -19,6 +19,11 @@ macro(find_package)
     endif()
 endmacro()
 
+if(NOT EMSCRIPTEN)
+    include(ext/ucm/cmake/ucm.cmake)
+    ucm_set_runtime(STATIC)
+endif()
+
 # dependencies
 if(NOT EMSCRIPTEN)
     add_subdirectory(ext/boost-beast EXCLUDE_FROM_ALL)

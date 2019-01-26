@@ -2,20 +2,30 @@
 #  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
-project(HexagonServer VERSION 0.0.1 LANGUAGES CXX)
+project(HexagonServer VERSION 0.0.3 LANGUAGES CXX)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 find_package(BoostBeast 1.65 REQUIRED)
-find_package(Boost 1.65 REQUIRED COMPONENTS system program_options)
+
+add_definitions(-DBOOST_ALL_NO_LIB)
+set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_STATIC_RUNTIME ON) 
+find_package(Boost 1.65 REQUIRED COMPONENTS system program_options filesystem)
+
 find_package(Threads REQUIRED)
 
 add_executable(server
+    src/battle_responder.cpp
+    src/move_responder.cpp
+    src/login_responder.cpp
+    src/responder.cpp
     src/http_session.cpp
     src/listener.cpp
     src/shared_state.cpp
     src/websocket_session.cpp
     src/preload_assets.cpp
+    src/map_loader.cpp
     src/main.cpp
     )
 target_compile_definitions(server PRIVATE HEXAGON_SERVER_VERSION="${PROJECT_VERSION}")
@@ -26,7 +36,7 @@ target_link_libraries(server
         Boost::beast
         Threads::Threads
         ${Boost_LIBRARIES}
-        stdc++fs
+        Boost::program_options
     )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
