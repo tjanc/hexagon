@@ -25,7 +25,6 @@ before_build:
     git submodule update --init --recursive
 
 build_script:
-- mkdir build
-- cd build
-- cmake .. -DBOOST_ROOT=C:\Libraries\boost_1_67_0 -G %generator% -DCMAKE_BUILD_TYPE=%CONFIGURATION%
+- ctest -VV -j5 -S cmake/appveyor.cmake -DCTEST_CMAKE_GENERATOR=%generator% -C %CONFIGURATION% -DCTEST_BUILD_TYPE=%CONFIGURATION%
 - ls -alh
+- ls -alh build
