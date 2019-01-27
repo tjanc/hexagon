@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cmath>
 #include <hexagon/model/unit.hpp>
+#include <iostream>
 
 using namespace hexagon::model;
 namespace
@@ -25,6 +26,8 @@ namespace
 
     std::uint16_t max_stamina(const unit_statistics& stats) noexcept
     {
+        std::cout << "INFO: what stamina?"
+                  << stats.strength + stats.agility + stats.endurance << '\n';
         return stats.strength + stats.agility + stats.endurance;
     }
 
@@ -194,13 +197,15 @@ void unit_status::regenerate(const unit_statistics& stats) noexcept
     magica = magica_candidate > magica_max ? magica_max : magica_candidate;
 }
 
-unit::unit(std::size_t id)
+unit::unit() noexcept : unit(0) {}
+
+unit::unit(std::size_t id) noexcept
     : id_{id},
       job_{},
       level_{},
       exp_{},
       statistics_{},
-      status_{},
+      status_{statistics_},
       weapon_{make_fists()},
       powers_{}
 {
@@ -208,7 +213,7 @@ unit::unit(std::size_t id)
 
 unit::unit(std::size_t id, unit_job job, std::uint16_t level, std::uint16_t exp,
            unit_statistics statistics, unit_status status, equipment weapon,
-           powers_container powers)
+           powers_container powers) noexcept
     : id_{id},
       job_{job},
       level_{level},
@@ -220,13 +225,13 @@ unit::unit(std::size_t id, unit_job job, std::uint16_t level, std::uint16_t exp,
 {
 }
 
-unit::unit(std::size_t id, unit_job j)
+unit::unit(std::size_t id, unit_job j) noexcept
     : id_{id},
       job_{j},
       level_{},
       exp_{},
       statistics_{},
-      status_{},
+      status_{statistics_},
       weapon_{make_fists()},
       powers_{}
 {
@@ -378,18 +383,27 @@ damage_overlay hexagon::model::circular_overlay(std::size_t n,
     return damage_overlay{std::move(m), center};
 }
 
-std::uint16_t unit::hmove_penalty() const noexcept { return 70; }
-
-std::uint16_t unit::vmove_penalty() const noexcept { return 50; }
-
-std::uint16_t unit::vmove_max() const noexcept
+std::uint16_t hexagon::model::move_horizontal_penalty(
+    const unit_statistics& stats) noexcept
 {
-    return 1 + statistics_.agility / 100;
+    return 120;
 }
 
-std::uint16_t unit::range() const noexcept
+std::uint16_t hexagon::model::move_vertical_penalty(
+    const unit_statistics& stats) noexcept
 {
-    return statistics_.agility + statistics_.endurance;
+    return 40;
+}
+
+std::uint16_t hexagon::model::move_vertical_max(
+    const unit_statistics& stats) noexcept
+{
+    return 1 + stats.agility / 100;
+}
+
+std::uint16_t hexagon::model::move_range(const unit_statistics& stats) noexcept
+{
+    return 2 * (stats.agility + stats.endurance);
 }
 
 std::uint16_t unit::experience() const noexcept { return exp_; }
@@ -398,4 +412,18 @@ const unit_statistics& unit::statistics() const noexcept { return statistics_; }
 
 const unit_status& unit::status() const noexcept { return status_; }
 
+unit_status& unit::status() noexcept { return status_; }
+
 std::size_t unit::id() const noexcept { return id_; }
+
+std::uint32_t hexagon::model::move_penalty(const unit_statistics& stats,
+                                           int src_elev, int tgt_elev) noexcept
+{
+    const int elev = tgt_elev - src_elev;
+    if (std::abs(elev) > move_vertical_max(stats))
+        return std::numeric_limits<std::uint32_t>::max();
+
+    const auto above = elev > 0 ? elev : 0;
+    return move_horizontal_penalty(stats) +
+           above * move_vertical_penalty(stats);
+}

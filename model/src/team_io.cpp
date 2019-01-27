@@ -19,17 +19,8 @@ std::istream& io::operator>>(std::istream& in, team& obj)
     std::size_t id;
     in >> id;
 
-    std::size_t n;
-    in >> n;
-
-    assert(n < 20);
     team::unit_container units;
-    units.reserve(n);
-
-    for (std::size_t i = 0; i < n; ++i) {
-        unit u;
-        if (in >> u) units.emplace_back(std::move(u));
-    }
+    in >> units;
 
     obj = team{id, std::move(units)};
 

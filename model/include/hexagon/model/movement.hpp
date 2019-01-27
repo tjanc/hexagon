@@ -1,8 +1,8 @@
 //  Copyright 2019 Thomas Jandecka.
 //  Subject to GNU GENERAL PUBLIC LICENSE Version 3.
 
-#ifndef HEXAGON_MODEL_UNIT_MOVEMENT_H_
-#define HEXAGON_MODEL_UNIT_MOVEMENT_H_
+#ifndef HEXAGON_MODEL_MOVEMENT_H_
+#define HEXAGON_MODEL_MOVEMENT_H_
 
 #include <chrono>
 #include <cstdint>
@@ -12,16 +12,41 @@
 
 namespace hexagon::model
 {
-    class unit_movement
-    {
-        int time_penalty_;
+    enum class path_model { vertices };
 
-        basic_map_index source_;
-        basic_map_index target_;
+    template <path_model>
+    class path;
+
+    template <>
+    class path<path_model::vertices>
+    {
+       public:
+        using value_type = basic_map_index;
+        using container = std::deque<value_type>;
+        using iterator = typename container::iterator;
+        using const_iterator = typename container::const_iterator;
+
+       private:
+        container vertices_;
 
        public:
-        unit_movement() = default;
-        unit_movement(std::chrono::steady_clock::duration response_time,
+        path() noexcept = default;
+
+       public:
+        container& vertices() noexcept { return vertices_; }
+        const container& vertices() const noexcept { return vertices_; }
+    };
+
+    using vertex_path = path<path_model::vertex>;
+
+    class movement
+    {
+        int time_penalty_;
+        vertex_path path_;
+
+       public:
+        movement() = default;
+        movement(std::chrono::steady_clock::duration response_time,
                       basic_map_index source, basic_map_index target)
             : time_penalty_(
                   std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -68,8 +93,9 @@ namespace hexagon::model
         movement_buffer() = default;
 
        public:
-        template<typename... Args>
-        void emplace(Args&&... args) {
+        template <typename... Args>
+        void emplace(Args&&... args)
+        {
             movements_.emplace(std::forward<Args>(args)...);
         }
 

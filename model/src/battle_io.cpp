@@ -11,9 +11,9 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 
 #include <hexagon/protocol/io/message_io.hpp>
+#include <hexagon/protocol/io/std_io.hpp>
 
 using namespace hexagon::model;
 using namespace hexagon::protocol;
@@ -39,16 +39,8 @@ namespace
 
 std::istream& io::operator>>(std::istream& in, battle& obj)
 {
-    std::size_t n;
-    in >> n;
-
-    assert(n < 10);
     battle::team_container teams;
-
-    for (std::size_t i = 0; i < n; ++i) {
-        team t;
-        if (in >> t) teams.emplace_back(std::move(t));
-    }
+    in >> teams;
 
     map m;
     in >> m;

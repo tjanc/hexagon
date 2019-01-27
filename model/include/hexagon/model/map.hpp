@@ -51,6 +51,7 @@ namespace hexagon::model
     class basic_map
     {
        public:
+        using value_type = T;
         using tiles_container = std::vector<T>;
         using iterator = typename tiles_container::iterator;
         using const_iterator = typename tiles_container::const_iterator;
@@ -183,7 +184,6 @@ namespace hexagon::model
     map::iterator spawn(map&, unit&);
     basic_map_index find_unit(const map&, const unit&) noexcept;
     basic_map_index find_unit(const map&, std::size_t uid) noexcept;
-    void move_unit(map&, basic_map_index, basic_map_index);
 }  // namespace hexagon::model
 
 #endif

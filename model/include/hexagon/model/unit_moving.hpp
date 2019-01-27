@@ -5,23 +5,24 @@
 #define HEXAGON_MODEL_UNIT_MOVING_H_
 
 #include <chrono>
+#include <vector>
+
 #include <hexagon/model/battle.hpp>
 #include <hexagon/model/map.hpp>
+#include <hexagon/model/map_algorithm.hpp>
+#include <hexagon/model/path.hpp>
 #include <hexagon/model/team.hpp>
 #include <hexagon/model/units_joining.hpp>
-#include <vector>
 
 namespace hexagon::model
 {
     struct movement {
         std::chrono::steady_clock::duration delay;
-        basic_map_index source;
-        basic_map_index target;
+        vertex_path route;
 
         movement() noexcept = default;
-        movement(std::chrono::steady_clock::duration dt, basic_map_index src,
-                 basic_map_index tgt) noexcept
-            : delay(dt), source(src), target(tgt)
+        movement(std::chrono::steady_clock::duration dt, vertex_path p) noexcept
+            : delay(dt), route(std::move(p))
         {
         }
 
@@ -34,7 +35,6 @@ namespace hexagon::model
     class unit_moving
     {
        public:
-        using reach_map = basic_map<std::uint16_t>;
         using movement_container = std::vector<movement>;
 
        private:
@@ -68,25 +68,24 @@ namespace hexagon::model
         unit_moving& operator=(unit_moving&&) noexcept = default;
 
        public:
-        void move(basic_map_index idx);
-        void next(battle& b);
+        bool follow(map& m, vertex_path route);
+        bool end() const noexcept;
+        void next(map& m) noexcept;
 
        public:
         const team& my_team() const noexcept;
         team& my_team() noexcept;
 
         basic_map_index position() const noexcept;
-        bool reachable(const map& m, basic_map_index idx) const noexcept;
-
-        bool has_next() const noexcept;
+        const reach_map& reaches() const noexcept;
+        [[deprecated]] bool reachable(const map& m, basic_map_index idx) const
+            noexcept;
 
         movement_container& movements() noexcept { return movements_; }
         const movement_container& movements() const noexcept
         {
             return movements_;
         }
-
-        friend void move_unit(unit_moving&, basic_map_index) noexcept;
     };
 
 }  // namespace hexagon::model
