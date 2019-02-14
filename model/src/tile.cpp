@@ -12,6 +12,7 @@ namespace
     using tile_attrs = std::uint32_t;
     constexpr std::uint32_t tile_type_mask = 0xFFFF;
     constexpr std::uint32_t tile_spawn_mask = 0x10000;
+    constexpr std::uint32_t tile_move_pending_mask = 0x100000;
 }  // namespace
 
 tile::tile(tile_type type, int elev, bool spawn) noexcept
@@ -58,3 +59,10 @@ bool tile::has_unit(std::size_t uid) const noexcept
     const auto* u2 = get_if_unit();
     return u2 && (u2->id() == uid);
 }
+
+bool tile::is_move_pending() const noexcept
+{
+    return attrs_ & tile_move_pending_mask;
+}
+
+void tile::set_move_pending() noexcept { attrs_ |= tile_move_pending_mask; }

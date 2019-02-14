@@ -126,6 +126,10 @@ namespace
                 renderer->copy(tile_texture, destination);
             }
 
+            if (t.is_move_pending())
+                renderer->copy(renderer.tiles().tile_hover(), destination);
+
+
             render_objects(renderer, t, destination);
         });
     }
@@ -193,6 +197,9 @@ namespace
                 }
                 renderer->copy(tile_texture, destination);
             }
+
+            if (t.is_move_pending())
+                renderer->copy(renderer.tiles().tile_hover(), destination);
 
             if (model.reachable(m, idx))
                 renderer->copy(renderer.tiles().tile_hover(), destination);

@@ -37,79 +37,69 @@ namespace
                      "collisions\n";
 
         auto& b = bstate.get_battle();
-        auto& m = b.get_map();
+        if (!cstate.follow(b.get_map(), request.route)) {
+            cstate.next(b.get_map());  // explicitly skip moves not making sense
+        }
 
-        if (cstate.reachable(m, request.target)) {
-            cstate.move(m, request.target);
+        if (cstate.end()) {
+            bstate.raw() = units_moved{std::move(cstate)};
 
-            if (cstate.has_next())
-                cstate.next(b);
-            else {
-                std::cout
-                    << "TODO: check if last player to commit, notify others\n";
+            const auto& ps = ss.lobby().players();
+            if (ps.end() ==
+                std::find_if(ps.begin(), ps.end(),
+                             [](const websocket_session* s) {  //
+                                 assert(s);
+                                 const auto* bs = std::get_if<battling_state>(
+                                     &s->local().raw());
+                                 if (!bs) return true;
+                                 const auto* m =
+                                     std::get_if<units_moved>(&bs->raw());
+                                 return !m;
+                             })) {
+                std::cout << "INFO: last to commit moves, replaying\n";
 
-                bstate.raw() = units_moved{std::move(cstate)};
+                std::set<movement> all_moves;
+                for (const websocket_session* s : ps) {
+                    assert(s);
+                    const auto& bs = std::get<battling_state>(s->local().raw());
+                    const auto& m = std::get<units_moved>(bs.raw());
+                    std::copy(m.movements().begin(), m.movements().end(),
+                              std::inserter(all_moves, all_moves.begin()));
+                }
 
-                const auto& ps = ss.lobby().players();
-                if (ps.end() ==
-                    std::find_if(ps.begin(), ps.end(),
-                                 [](const websocket_session* s) {  //
-                                     assert(s);
-                                     const auto* bs =
-                                         std::get_if<battling_state>(
-                                             &s->local().raw());
-                                     if (!bs) return true;
-                                     const auto* m =
-                                         std::get_if<units_moved>(&bs->raw());
-                                     return !m;
-                                 })) {
-                    std::cout << "INFO: replaying all moves\n";
+                auto& central_map = ss.lobby().battle().get_map();
+                for (const movement& mov : all_moves) {
 
-                    std::set<movement> all_moves;
-                    for (const websocket_session* s : ps) {
-                        assert(s);
-                        const auto& bs =
-                            std::get<battling_state>(s->local().raw());
-                        const auto& m = std::get<units_moved>(bs.raw());
-                        std::cout << "INFO: === mergin player with #"
-                                  << m.movements().size() << " moves\n";
-                        std::copy(m.movements().begin(), m.movements().end(),
-                                  std::inserter(all_moves, all_moves.begin()));
-                    }
+                    std::cerr << "YYY: " << mov.route << '\n';
 
-                    auto& central_map = ss.lobby().battle().get_map();
-                    for (const movement& mov : all_moves) {
-                        std::cout << "INFO: === delay: "
-                                  << std::chrono::duration_cast<
-                                         std::chrono::milliseconds>(mov.delay)
-                                         .count()
-                                  << "ms;\tsource: " << mov.source.x << 'x'
-                                  << mov.source.y
-                                  << ";\ttarget: " << mov.target.x << 'x'
-                                  << mov.target.y << ";\n";
+                    const auto source = mov.route.source();
+                    const auto [tgt, stamina] =
+                        traverse_unit(central_map, source, mov.route.end());
+                    if (tgt == mov.route.end()) continue;
 
-                        if (central_map.at(mov.target).empty()) {
-                            move_unit(central_map, mov.source, mov.target);
-                            std::string msg;
-                            write_message<move_message>(msg, mov.source,
-                                                        mov.target);
+                    std::cerr << "ZZZ: " << tgt->x << ' ' << tgt->y << '\n';
 
-                            for (websocket_session* player : ps) {
-                                auto& pstate = std::get<battling_state>(
-                                    player->local().raw());
-                                move_unit(pstate.get_battle().get_map(), mov.source,
-                                          mov.target);
-                                player->send(
-                                    std::make_shared<std::string>(msg));
-                            }
-                        } else {
-                            std::cerr << "TODO: resolve movement collision\n";
-                        }
+                    vertex_path response_path;
+                    std::copy(mov.route.source(), tgt + 1,
+                              std::back_inserter(response_path.vertices()));
+
+                    std::cerr << "XXXDEBUGG: " << response_path << '\n';
+
+                    std::string msg;
+                    write_message<move_message>(msg, response_path, stamina);
+                    std::cerr << "XXXDEBUGG: " << msg << '\n';
+
+                    for (websocket_session* player : ps) {
+                        auto& pstate =
+                            std::get<battling_state>(player->local().raw());
+                        auto& m = pstate.get_battle().get_map();
+                        move_unit(m, *source, *tgt, stamina);
+                        player->send(std::make_shared<std::string>(msg));
                     }
                 }
             }
         }
-    }
+    }  // namespace
 
     void respond_specific(shared_state& ss, websocket_session& source,
                           battling_state& bstate, const move_request& request)

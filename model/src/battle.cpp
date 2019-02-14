@@ -15,9 +15,9 @@ battle::battle(map m, std::size_t full)
 
 battle::battle(map m, std::size_t full, battle::team_container teams)
     : map_{std::move(m)},
-      full_teams_{full},
       teams_{std::move(teams)},
-      max_units_{2}
+      max_units_{2},
+      full_teams_{full}
 {
 }
 
@@ -73,20 +73,19 @@ std::pair<team*, battle::placement_container> battle::join(const team& t)
     return {&teams_.back(), std::move(placements)};
 }
 
-team& battle::join(const team& ot, const battle::placement_container& placements)
+team& battle::join(const team& ot,
+                   const battle::placement_container& placements)
 {
     auto& t = teams().emplace_back(ot);
 
     auto& field = get_map();
     auto udx = t.units.begin();
     for (const auto& placement : placements) {
-        if (udx == t.units.end())
-            return t;
+        if (udx == t.units.end()) return t;
 
         unit& u = *udx;
 
-        if (!contains(field, placement))
-            return t;
+        if (!contains(field, placement)) return t;
 
         tile& target = field.at(placement);
         target.attach(u);
@@ -96,13 +95,13 @@ team& battle::join(const team& ot, const battle::placement_container& placements
     return t;
 }
 
-team battle::leave(int tid)
+team battle::leave(std::size_t tid)
 {
     const auto is_team = [tid](const team& t) { return t.id == tid; };
 
     const auto team_it = std::find_if(teams_.begin(), teams_.end(), is_team);
     assert(team_it != teams_.end());
-    iterate(map_, [t = *team_it](auto& tle, auto idx) {
+    iterate(map_, [t = *team_it](tile& tle, basic_map_index) {
         const unit* u = tle.get_if_unit();
         if (u) {
             if (t.end() != std::find_if(t.begin(), t.end(),

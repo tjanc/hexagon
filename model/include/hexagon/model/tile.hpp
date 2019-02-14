@@ -54,6 +54,9 @@ namespace hexagon::model
         bool empty() const noexcept;
         void attach(unit& u);
         unit* detach_unit() noexcept;
+
+        bool is_move_pending() const noexcept;
+        void set_move_pending() noexcept;
     };
 
 }  // namespace hexagon::model

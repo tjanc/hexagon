@@ -40,14 +40,18 @@ namespace hexagon::model
         sharpshooter   //
     };
 
-    struct unit_statistics {
+    struct unit_statistics
+    {
         std::uint16_t agility = 100;
         std::uint16_t presence = 100;
         std::uint16_t strength = 100;
         std::uint16_t intelligence = 100;
         std::uint16_t wisdom = 100;
         std::uint16_t endurance = 100;
-        unit_statistics() = default;
+
+        unit_statistics() noexcept {
+
+        }
     };
 
     using damage_overlay = basic_map_overlay<std::uint16_t>;
@@ -127,8 +131,8 @@ namespace hexagon::model
         powers_container powers_;
 
        public:
-        unit() = default;
-        unit(std::size_t, unit_job);
+        unit() noexcept;
+        unit(std::size_t, unit_job) noexcept;
 
         unit(std::size_t,      //
              unit_job,         //
@@ -138,25 +142,20 @@ namespace hexagon::model
              unit_status,      //
              equipment,        //
              powers_container  //
-        );
+             ) noexcept;
 
-        explicit unit(std::size_t);
+        explicit unit(std::size_t) noexcept;
 
        public:
         std::uint16_t level() const noexcept;
         unit_job job() const noexcept;
         std::size_t id() const noexcept;
 
-       public:  // move
-        std::uint16_t hmove_penalty() const noexcept;
-        std::uint16_t vmove_penalty() const noexcept;
-        std::uint16_t vmove_max() const noexcept;
-        std::uint16_t range() const noexcept;
-
        public:  // attack
         std::uint16_t experience() const noexcept;
         const unit_statistics& statistics() const noexcept;
         const unit_status& status() const noexcept;
+        unit_status& status() noexcept;
         const powers_container& powers() const noexcept;
         const equipment& weapon() const noexcept;
         float defense() const noexcept;
@@ -173,6 +172,14 @@ namespace hexagon::model
         void regenerate_status() noexcept;
         void reset_status() noexcept;
     };
+
+    std::uint16_t move_horizontal_penalty(const unit_statistics&) noexcept;
+    std::uint16_t move_vertical_penalty(const unit_statistics&) noexcept;
+    std::uint16_t move_vertical_max(const unit_statistics&) noexcept;
+    std::uint16_t move_range(const unit_statistics&) noexcept;
+
+    std::uint32_t move_penalty(const unit_statistics&, int src_elev,
+                               int tgt_elev) noexcept;
 }  // namespace hexagon::model
 
 #endif

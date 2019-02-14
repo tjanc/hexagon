@@ -4,15 +4,14 @@
 #include <hexagon/protocol/move_request.hpp>
 
 #include <hexagon/protocol/io/map_io.hpp>
-#include <hexagon/protocol/io/std_io.hpp>
+#include <hexagon/protocol/io/path_io.hpp>
 
 namespace hexagon::protocol
 {
     std::istream& operator>>(std::istream& in, move_request& msg)
     {
         using namespace hexagon::protocol::io;
-        in >> msg.source;
-        in >> msg.target;
+        in >> msg.route;
 
         return in;
     }
@@ -20,7 +19,7 @@ namespace hexagon::protocol
     std::ostream& operator<<(std::ostream& out, const move_request& msg)
     {
         using namespace hexagon::protocol::io;
-        out << msg.source << ' ' << msg.target;
+        out << msg.route;
 
         return out;
     }

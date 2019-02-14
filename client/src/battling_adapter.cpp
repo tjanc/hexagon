@@ -39,6 +39,60 @@ namespace
 
 namespace
 {
+    bool find_path_step(vertex_path& result, const reach_map& reaches,
+                        basic_map_index src, basic_map_index tgt)
+    {
+        std::cout << "INFO: path step " << src.x << 'x' << src.y << '/' << tgt.x
+                  << 'x' << tgt.y << '\n';
+
+        if (!contains(reaches, tgt) || !contains(reaches, src)) return false;
+
+        const auto tgt_reach = reaches.at(tgt);
+        const auto src_reach = reaches.at(src);
+
+        if (src_reach <= 0 || tgt_reach <= 0 || src_reach < tgt_reach)
+            return false;
+
+        result.vertices().emplace_front(tgt);
+
+        if (src == tgt) return true;
+
+        std::array<basic_map_index, 6> cs = {
+            west(tgt),        //
+            north_west(tgt),  //
+            north_east(tgt),  //
+            east(tgt),        //
+            south_west(tgt),  //
+            south_east(tgt)   //
+        };
+
+        std::sort(cs.begin(), cs.end(),
+                  [&reaches](const auto& lhs, const auto& rhs) {
+                      return reaches.at(lhs) > reaches.at(rhs);
+                  });
+
+        for (const auto& c : cs)
+            if (reaches.at(c) > tgt_reach &&
+                find_path_step(result, reaches, src, c))
+                return true;
+
+        return false;
+    }
+
+    vertex_path find_path(const reach_map& reaches, basic_map_index src,
+                          basic_map_index tgt)
+    {
+        vertex_path result{};
+        if (!find_path_step(result, reaches, src, tgt))
+            std::cerr << "WARN: no path found from "      //
+                      << src.x << 'x' << src.y << " to "  //
+                      << tgt.x << 'x' << tgt.y << '\n';
+        return result;
+    }
+}  // namespace
+
+namespace
+{
     void mouse_released(battling_state& s, units_joining& model,
                         battle_facet& facet, const mouse& m)
     {
@@ -54,17 +108,16 @@ namespace
     void mouse_released(battling_state& s, unit_moving& model,
                         battle_facet& facet, const mouse& m)
     {
-        auto source = model.position();
-        auto target = facet.map().hover();
+        const auto source = model.position();
+        const auto target = facet.map().hover();
 
-        if (model.reachable(s.get_battle().get_map(), target)) {
-            connection::instance().async_send<move_request>(source, target);
-
-            if (model.has_next())
-                model.next(s.get_battle());
-            else
-                s.raw() = units_moved{std::move(model)};
+        auto& field = s.get_battle().get_map();
+        auto path = find_path(model.reaches(), source, target);
+        std::cout << "INFO: found path: " << path << '\n';
+        if (model.follow(field, path)) {
+            connection::instance().async_send<move_request>(std::move(path));
         }
+        if (model.end()) s.raw() = units_moved{std::move(model)};
     }
 }  // namespace
 
@@ -75,17 +128,10 @@ namespace
     {
         auto& field = cstate.get_battle().get_map();
 
-        auto* src = field.at(m.source).get_if_unit();
-        if (!src) {
-            std::cerr << "ERROR: invalid move message; no unit at source\n";
+        if (!move_unit(field, *m.route.source(), *m.route.target(), m.cost)) {
+            std::cerr << "ERROR: invalid move\n";
             return;
         }
-
-        std::cout << "INFO: moving unit " << src->id() << " from "  //
-                  << m.source.x << 'x' << m.source.y << " to "      //
-                  << m.target.x << 'x' << m.target.y << '\n';
-
-        move_unit(field, m.source, m.target);
     }
 
     void update_specific(local_state& s, battling_state& cstate,

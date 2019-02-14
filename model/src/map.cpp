@@ -112,15 +112,3 @@ basic_map_index hexagon::model::south_west(basic_map_index i) noexcept
     --result.x;
     return result;
 }
-
-void hexagon::model::move_unit(map& m, basic_map_index src, basic_map_index tgt)
-{
-    auto& source = m.at(src);
-    auto& target = m.at(tgt);
-
-    auto* u = source.detach_unit();
-    assert(u);
-
-    assert(target.empty());
-    target.attach(*u);
-}

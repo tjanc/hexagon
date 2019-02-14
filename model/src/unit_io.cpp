@@ -16,18 +16,8 @@ std::istream& io::operator>>(std::istream& in, equipment& obj)
 {
     in >> obj.name;
 
-    std::size_t n;
-    in >> n;
-
-    assert(n < 10);
     equipment::powers_container es;
-    es.reserve(n);
-
-    for (std::size_t i = 0; i < n; ++i) {
-        power p;
-        in >> p;
-        es.emplace_back(std::move(p));
-    }
+    in >> es;
 
     obj.powers = std::move(es);
 
@@ -96,10 +86,10 @@ std::istream& io::operator>>(std::istream& in, power& obj)
     std::string name;
     in >> name;
 
-    power_class klass;
+    power_class klass = power_class::none;
     in >> klass;
 
-    unit_job jtype;
+    unit_job jtype = unit_job::none;
     in >> jtype;
 
     std::uint16_t jp_req;
@@ -154,11 +144,14 @@ std::istream& io::operator>>(std::istream& in, unit_status& obj)
     in >> obj.stamina;
     in >> obj.magica;
 
+    std::cout << "INFO: i/stamina - " << obj.stamina << '\n';
+
     return in;
 }
 
 std::ostream& io::operator<<(std::ostream& out, const unit_status& obj)
 {
+    std::cout << "INFO: o/stamina - " << obj.stamina << '\n';
     out << obj.health <<       //
         ' ' << obj.stamina <<  //
         ' ' << obj.magica;     //
@@ -209,7 +202,7 @@ std::istream& io::operator>>(std::istream& in, unit& t)
     std::size_t id;
     in >> id;
 
-    unit_job job;
+    unit_job job = unit_job::none;
     in >> job;
 
     std::uint16_t level;
@@ -227,18 +220,8 @@ std::istream& io::operator>>(std::istream& in, unit& t)
     equipment weapon;
     in >> weapon;
 
-    std::size_t n;
-    in >> n;
-
-    assert(n < 50);
     unit::powers_container powers;
-    powers.reserve(n);
-
-    for (std::size_t i = 0; i < n; ++i) {
-        power p;
-        in >> p;
-        powers.emplace_back(std::move(p));
-    }
+    in >> powers;
 
     t = unit{
         id,                 //

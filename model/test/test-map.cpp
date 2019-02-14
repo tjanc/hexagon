@@ -7,7 +7,7 @@
 
 using namespace hexagon::model;
 
-SCENARIO("Map model is created and tinkered with", "[json-value][null]")
+SCENARIO("Map model is created and tinkered with", "[model][map]")
 {
     GIVEN("A list of tiles and a given width")
     {

@@ -5,11 +5,21 @@
 
 #include "renderer.hpp"
 #include "surface.hpp"
+#include <SDL.h>
 
 using namespace hexagon::sdl;
 
-texture::texture(renderer& renderer, surface& surface)
-    : raw_{SDL_CreateTextureFromSurface(renderer.get(), surface.get())}
+namespace
+{
+    SDL_Texture* createPixelizedTextureFromSurface(renderer& r, surface& s)
+    {
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+        return SDL_CreateTextureFromSurface(r.get(), s.get());
+    }
+}  // namespace
+
+texture::texture(renderer& r, surface& s)
+    : raw_{createPixelizedTextureFromSurface(r, s)}
 {
 }
 

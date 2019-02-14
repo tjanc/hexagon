@@ -3,16 +3,21 @@
 
 #include <hexagon/protocol/move_message.hpp>
 
-#include <hexagon/protocol/io/map_io.hpp>
-#include <hexagon/protocol/io/std_io.hpp>
+#include <hexagon/protocol/io/path_io.hpp>
 
 namespace hexagon::protocol
 {
+    move_message::move_message(hexagon::model::vertex_path p,
+                               std::uint16_t c) noexcept
+        : route{std::move(p)}, cost{c}
+    {
+    }
+
     std::istream& operator>>(std::istream& in, move_message& msg)
     {
         using namespace hexagon::protocol::io;
-        in >> msg.source;
-        in >> msg.target;
+        in >> msg.route;
+        in >> msg.cost;
 
         return in;
     }
@@ -20,7 +25,7 @@ namespace hexagon::protocol
     std::ostream& operator<<(std::ostream& out, const move_message& msg)
     {
         using namespace hexagon::protocol::io;
-        out << msg.source << ' ' << msg.target;
+        out << msg.route << ' ' << msg.cost;
 
         return out;
     }

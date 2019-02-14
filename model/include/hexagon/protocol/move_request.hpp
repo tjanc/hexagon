@@ -9,21 +9,17 @@
 #include <vector>
 
 #include <hexagon/model/map.hpp>
+#include <hexagon/model/path.hpp>
 
 namespace hexagon::protocol
 {
     static constexpr const char* MOVE_REQUEST_ID = "MOVEQ";
 
     struct move_request {
-        model::basic_map_index source;
-        model::basic_map_index target;
+        model::vertex_path route;
 
         move_request() = default;
-        move_request(model::basic_map_index source,
-                              model::basic_map_index target)
-            : source{source}, target{target}
-        {
-        }
+        move_request(model::vertex_path p) : route(std::move(p)) {}
     };
 
     std::istream& operator>>(std::istream& in, move_request& msg);

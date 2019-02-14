@@ -5,10 +5,11 @@
 #define HEXAGON_PROTOCOL_STD_IO_H_
 
 #include <cassert>
+#include <deque>
 #include <iostream>
+#include <list>
 #include <utility>
 #include <vector>
-#include <list>
 
 namespace hexagon::protocol::io
 {
@@ -26,6 +27,21 @@ namespace hexagon::protocol::io
         out << obj.first           //
             << ' ' << obj.second;  //
         return out;
+    }
+
+    template <typename T>
+    std::istream& operator>>(std::istream& in, std::deque<T>& obj)
+    {
+        std::size_t n;
+        in >> n;
+
+        obj.clear();
+        for (std::size_t i = 0; i < n; ++i) {
+            T t;
+            if (in >> t) obj.emplace_back(std::move(t));
+        }
+
+        return in;
     }
 
     template <typename T>
@@ -51,13 +67,22 @@ namespace hexagon::protocol::io
         in >> n;
 
         obj.clear();
-        obj.reserve(n);
         for (std::size_t i = 0; i < n; ++i) {
             T t;
             if (in >> t) obj.emplace_back(std::move(t));
         }
 
         return in;
+    }
+
+    template <typename T>
+    std::ostream& operator<<(std::ostream& out, const std::deque<T>& obj)
+    {
+        out << obj.size();
+        for (const auto& t : obj) {
+            out << ' ' << t;
+        }
+        return out;
     }
 
     template <typename T>
