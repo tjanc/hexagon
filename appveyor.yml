@@ -42,14 +42,14 @@ artifacts:
     type: 7z
 
 deploy:
-  release: hexagon-server-win-latest
+  tag: $(appveyor_repo_tag_name)
   description: 'latest build'
   provider: GitHub
   auth_token:
     secure: TaUpI7ypXZZ50TM3OZmcGMqOmZlDM4XPMxwDbyHSEqjytPyySoTmOpTb+miGuoOX
   artifact: binary_zip
-  draft: false
+  draft: true
   prerelease: false
   force_update: true
-#  on:
-#    branch: master                 # release from master branch only
+  on:
+    APPVEYOR_REPO_TAG: true
